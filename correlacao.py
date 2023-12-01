@@ -12,7 +12,7 @@ caminho_imagens = "/home/sifapsc/scripts/matheus/imagens/"
 
 ### Renomeação das variáveis pelos arquivos
 
- # DADOS DIÁRIOS
+ # Dados Diários
 """
 casos = "casos21.csv"
 focos = "focos21.csv"
@@ -22,7 +22,7 @@ tmed = "tmed21.csv"
 tmin = "tmin21.csv"
 """
 
-# SEMANAS EPIDEMIOLÓGICAS
+ # Semanas Epidemiológicas
 
 casos = "casos21se.csv"
 focos = "focos21se.csv"
@@ -309,8 +309,60 @@ plt.show()
 #plt.savefig("resulto.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_base_tmax
 
+"""
 del prec_cidade
 del tmin_cidade
 del tmed_cidade
 del tmax_cidade
+del corr_cidade_total
+"""
+# Foco e Clima
+corr_cidade_total = corr_cidade_base.copy()
+corr_cidade_total = corr_cidade_total.merge(prec_cidade, how = "cross")
+corr_cidade_total = corr_cidade_total.rename(columns={"Florianópolis" : "Precipitação"})
+corr_cidade_total = corr_cidade_total.drop(["Palhoça"], axis = "columns")
+corr_cidade_total["Log_Precipitação"] = np.log(corr_cidade_total["Precipitação"] + 1)
+corr_cidade_total = corr_cidade_total.merge(tmin_cidade, how = "cross")
+corr_cidade_total = corr_cidade_total.rename(columns={"Florianópolis" : "Temperatura Mínima"})
+corr_cidade_total = corr_cidade_total.drop(["Palhoça"], axis = "columns")
+corr_cidade_total["Log_Temperatura_Mínima"] = np.log(corr_cidade_total["Temperatura Mínima"] + 1)
+corr_cidade_total = corr_cidade_total.merge(tmed_cidade, how = "cross")
+corr_cidade_total = corr_cidade_total.rename(columns={"Florianópolis" : "Temperatura Média"})
+corr_cidade_total = corr_cidade_total.drop(["Palhoça"], axis = "columns")
+corr_cidade_total["Log_Temperatura_Média"] = np.log(corr_cidade_total["Temperatura Média"] + 1)
+corr_cidade_total = corr_cidade_total.merge(tmax_cidade, how = "cross")
+corr_cidade_total = corr_cidade_total.rename(columns={"Florianópolis" : "Temperatura Máxima"})
+corr_cidade_total = corr_cidade_total.drop(["Palhoça"], axis = "columns")
+corr_cidade_total["Log_Temperatura_Máxima"] = np.log(corr_cidade_total["Temperatura Máxima"] + 1)
+
+del prec_cidade
+del tmin_cidade
+del tmed_cidade
+del tmax_cidade
+
+print("\n \n MATRIZ DE CORRELAÇÃO (Temperatura Máxima) \n")
+print(corr_cidade_total.info())
+print("~"*80)
+print(corr_cidade_total.dtypes)
+print("~"*80)
+print(corr_cidade_total)
+
+#correlacao_base_total = corr_cidade_total.corr(method = "pearson")#.round(4)
+correlacao_base_total = corr_cidade_total.corr(method = "spearman")#.round(4)
+#correlacao_base_total = corr_cidade_total.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_base_tmax)
+print("Método de Spearman \n", correlacao_base_tmax)
+#print("Método de Kendall \n", correlacao_base_tmax)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_base_total, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("Correlação* (Focos e Variáveis Climáticas) em Florianópolis \n *Pearson", weight = "bold", size = "medium")
+fig.suptitle("Correlação*  (Focos e Variáveis Climáticas) em Florianópolis \n *Spearman", weight = "bold", size = "medium")
+#fig.suptitle("Correlação* (Focos e Variáveis Climáticas) em Florianópolis \n *Kendall", weight = "bold", size = "medium")
+plt.show()
+#plt.savefig("resulto.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_total
