@@ -30,30 +30,31 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}")
 ### Recorte Temporal e Transformação em datetime64[ns]
 focos["data"] = pd.to_datetime(focos["data"])
 focos = focos.sort_values(by = ["data"])
-focos21 = focos.iloc[3288:4018]
+#focos21 = focos.iloc[3288:4018]
 
 casos["data"] = pd.to_datetime(casos["data"])
 casos = casos.sort_values(by = ["data"])
-casos21 = casos.iloc[364:]
+#casos21 = casos.iloc[364:]
 
 merge["Data"] = merge["data"]
 merge["data"] = pd.to_datetime(merge["data"])
 merge = merge.sort_values(by = ["data"])
-merge21 = merge.iloc[7518:]
+#merge21 = merge.iloc[7518:]
 
 tmin["data"] = pd.to_datetime(tmin["data"])
 tmin = tmin.sort_values(by = ["data"])
-tmin21 = tmin.iloc[7671:]
+#tmin21 = tmin.iloc[7671:]
 
 tmed["data"] = pd.to_datetime(tmed["data"])
 tmed = tmed.sort_values(by = ["data"])
-tmed21 = tmed.iloc[7671:]
+#tmed21 = tmed.iloc[7671:]
 
 tmax["data"] = pd.to_datetime(tmax["data"])
 tmax = tmax.sort_values(by = ["data"])
-tmax21 = tmax.iloc[7671:]
+#tmax21 = tmax.iloc[7671:]
 
-### Semanas Epidemiológicas e Agrupamentos
+"""
+### Semanas Epidemiológicas e Agrupamentos 2021
 focos21se = focos21.copy()
 focos21se["semanaE"] = focos21se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 focos21se = focos21se.groupby(["semanaE"]).sum(numeric_only = True)
@@ -77,7 +78,33 @@ tmed21se = tmed21se.groupby(["semanaE"]).mean(numeric_only = True)
 tmax21se = tmax21.copy()
 tmax21se["semanaE"] = tmax21se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmax21se = tmax21se.groupby(["semanaE"]).mean(numeric_only = True)
+"""
 
+focos_se = focos.copy()
+focos_se["semanaE"] = focos_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+focos_se = focos_se.groupby(["semanaE"]).sum(numeric_only = True)
+
+casos_se = casos.copy()
+casos_se["semanaE"] = casos_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+casos_se = casos_se.groupby(["semanaE"]).sum(numeric_only = True)
+
+merge_se = merge.copy()
+merge_se["semanaE"] = merge_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+merge_se = merge_se.groupby(["semanaE"]).sum(numeric_only = True)
+
+tmin_se = tmin.copy()
+tmin_se["semanaE"] = tmin_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+tmin_se = tmin_se.groupby(["semanaE"]).mean(numeric_only = True)
+
+tmed_se = tmed.copy()
+tmed_se["semanaE"] = tmed_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+tmed_se = tmed_se.groupby(["semanaE"]).mean(numeric_only = True)
+
+tmax_se = tmax.copy()
+tmax_se["semanaE"] = tmax_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
+tmax_se = tmax_se.groupby(["semanaE"]).mean(numeric_only = True)
+
+"""
 ### Transformação em floats de menor bits
 focos21se = focos21se.astype(np.float32)
 casos21se = casos21se.astype(np.float32)
@@ -207,4 +234,72 @@ print("~"*80)
 print(f"Máximo Temperatura Média por Semana Epidemiológica: {tmed21se.max().max()}, \n e Mínimo Temperatura Média por Semana Epidemiológica: {tmed21se.min().min()}.")
 print("~"*80)
 print(f"Máximo Temperatura Máxima por Semana Epidemiológica: {tmax21se.max().max()}, \n e Mínimo Temperatura Máxima por Semana Epidemiológica: {tmax21se.min().min()}.")
+print("="*80)
+"""
+print("\n \n FOCOS DE _Aedes aegypti_ / SEMANA EPIDEMIOLÓGICA \n")
+focos_se.to_csv(f"{caminho_dados}focos_se.csv", index = False)
+print(focos_se.info())
+print("~"*80)
+print(focos_se.dtypes)
+print("~"*80)
+print(focos_se)
+print("="*80)
+
+print("\n \n CASOS DE DENGUE / SEMANA EPIDEMIOLÓGICA \n")
+casos_se.to_csv(f"{caminho_dados}casos_se.csv", index = False)
+print(casos_se.info())
+print("~"*80)
+print(casos_se.dtypes)
+print("~"*80)
+print(casos_se)
+print("="*80)
+
+print("\n \n PRECIPITAÇÃO / SEMANA EPIDEMIOLÓGICA \n")
+merge_se.to_csv(f"{caminho_dados}merge_se.csv", index = False)
+print(merge_se.info())
+print("~"*80)
+print(merge_se.dtypes)
+print("~"*80)
+print(merge_se)
+print("="*80)
+
+print("\n \n TEMPERATURA MÍNIMA / SEMANA EPIDEMIOLÓGICA \n")
+tmin_se.to_csv(f"{caminho_dados}tmin_se.csv", index = False)
+print(tmin_se.info())
+print("~"*80)
+print(tmin_se.dtypes)
+print("~"*80)
+print(tmin_se)
+print("="*80)
+
+print("\n \n TEMPERATURA MÉDIA / SEMANA EPIDEMIOLÓGICA \n")
+tmed_se.to_csv(f"{caminho_dados}tmed_se.csv", index = False)
+print(tmed_se.info())
+print("~"*80)
+print(tmed_se.dtypes)
+print("~"*80)
+print(tmed_se)
+print("="*80)
+
+print("\n \n TEMPERATURA MÁXIMA / SEMANA EPIDEMIOLÓGICA \n")
+tmax_se.to_csv(f"{caminho_dados}tmax_se.csv", index = False)
+print(tmax_se.info())
+print("~"*80)
+print(tmax_se.dtypes)
+print("~"*80)
+print(tmax_se)
+print("="*80)
+
+print("="*80)
+print(f"Máximo Focos por Semana Epidemiológica: {focos_se.max().max()}, \n e Mínimo Focos por Semana Epidemiológica: {focos_se.min().min()}.")
+print("~"*80)
+print(f"Máximo Casos por Semana Epidemiológica: {casos_se.max().max()}, \n e Mínimo Casos por Semana Epidemiológica: {casos_se.min().min()}.")
+print("~"*80)
+print(f"Máximo Precipitação por Semana Epidemiológica: {merge_se.max().max()}, \n e Mínimo Precipitação por Semana Epidemiológica: {merge_se.min().min()}.")
+print("~"*80)
+print(f"Máximo Temperatura Mínima por Semana Epidemiológica: {tmin_se.max().max()}, \n e Mínimo Temperatura Mínima por Semana Epidemiológica: {tmin_se.min().min()}.")
+print("~"*80)
+print(f"Máximo Temperatura Média por Semana Epidemiológica: {tmed_se.max().max()}, \n e Mínimo Temperatura Média por Semana Epidemiológica: {tmed_se.min().min()}.")
+print("~"*80)
+print(f"Máximo Temperatura Máxima por Semana Epidemiológica: {tmax_se.max().max()}, \n e Mínimo Temperatura Máxima por Semana Epidemiológica: {tmax_se.min().min()}.")
 print("="*80)
