@@ -7,9 +7,10 @@ import seaborn as sns
 import statsmodels as sm
 """
 
-### Encaminhamento ao Diretório "DADOS" e "IMAGENS"
+### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
-caminho_imagens = "/home/sifapsc/scripts/matheus/imagens/"
+caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
+caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
 casos = "casos.csv"
@@ -83,26 +84,43 @@ tmax21se = tmax21se.groupby(["semanaE"]).mean(numeric_only = True)
 focos_se = focos.copy()
 focos_se["semanaE"] = focos_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 focos_se = focos_se.groupby(["semanaE"]).sum(numeric_only = True)
+focos_se.reset_index(inplace = True)
+focos_seSH = focos_se.copy()
+focos_seSH = focos_seSH.iloc[105:574, :]
 
 casos_se = casos.copy()
+"""
 casos_se["semanaE"] = casos_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 casos_se = casos_se.groupby(["semanaE"]).sum(numeric_only = True)
-
+casos_se.reset_index(inplace = True)
+"""
 merge_se = merge.copy()
 merge_se["semanaE"] = merge_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 merge_se = merge_se.groupby(["semanaE"]).sum(numeric_only = True)
+merge_se.reset_index(inplace = True)
+merge_seSH = merge_se.copy()
+merge_seSH = merge_seSH.iloc[710:, :]
 
 tmin_se = tmin.copy()
 tmin_se["semanaE"] = tmin_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmin_se = tmin_se.groupby(["semanaE"]).mean(numeric_only = True)
+tmin_se.reset_index(inplace = True)
+tmin_seSH = tmin_se.copy()
+tmin_seSH = tmin_seSH.iloc[732: , :]
 
 tmed_se = tmed.copy()
 tmed_se["semanaE"] = tmed_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmed_se = tmed_se.groupby(["semanaE"]).mean(numeric_only = True)
+tmed_se.reset_index(inplace = True)
+tmed_seSH = tmed_se.copy()
+tmed_seSH = tmed_seSH.iloc[732: , :]
 
 tmax_se = tmax.copy()
 tmax_se["semanaE"] = tmax_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmax_se = tmax_se.groupby(["semanaE"]).mean(numeric_only = True)
+tmax_se.reset_index(inplace = True)
+tmax_seSH = tmax_se.copy()
+tmax_seSH = tmax_seSH.iloc[732: , :]
 
 """
 ### Transformação em floats de menor bits
@@ -236,6 +254,60 @@ print("~"*80)
 print(f"Máximo Temperatura Máxima por Semana Epidemiológica: {tmax21se.max().max()}, \n e Mínimo Temperatura Máxima por Semana Epidemiológica: {tmax21se.min().min()}.")
 print("="*80)
 """
+print("\n \n FOCOS DE _Aedes aegypti_ - SÉRIE HISTÓRICA / SEMANA EPIDEMIOLÓGICA \n")
+focos_seSH.to_csv(f"{caminho_dados}focos_seSH.csv", index = False)
+print(focos_seSH.info())
+print("~"*80)
+print(focos_seSH.dtypes)
+print("~"*80)
+print(focos_seSH)
+print("="*80)
+
+print("\n \n CASOS DE DENGUE - ... / SEMANA EPIDEMIOLÓGICA \n")
+casos_se.to_csv(f"{caminho_dados}casos_se.csv", index = False)
+print(casos_se.info())
+print("~"*80)
+print(casos_se.dtypes)
+print("~"*80)
+print(casos_se)
+print("="*80)
+
+print("\n \n PRECIPITAÇÃO - SÉRIE HISTÓRICA / SEMANA EPIDEMIOLÓGICA \n")
+merge_seSH.to_csv(f"{caminho_dados}merge_seSH.csv", index = False)
+print(merge_seSH.info())
+print("~"*80)
+print(merge_seSH.dtypes)
+print("~"*80)
+print(merge_seSH)
+print("="*80)
+
+print("\n \n TEMPERATURA MÍNIMA - SÉRIE HISTÓRICA / SEMANA EPIDEMIOLÓGICA \n")
+tmin_seSH.to_csv(f"{caminho_dados}tmin_seSH.csv", index = False)
+print(tmin_seSH.info())
+print("~"*80)
+print(tmin_seSH.dtypes)
+print("~"*80)
+print(tmin_seSH)
+print("="*80)
+
+print("\n \n TEMPERATURA MÉDIA - SÉRIE HISTÓRICA / SEMANA EPIDEMIOLÓGICA \n")
+tmed_seSH.to_csv(f"{caminho_dados}tmed_seSH.csv", index = False)
+print(tmed_seSH.info())
+print("~"*80)
+print(tmed_seSH.dtypes)
+print("~"*80)
+print(tmed_seSH)
+print("="*80)
+
+print("\n \n TEMPERATURA MÁXIMA - SÉRIE HISTÓRICA / SEMANA EPIDEMIOLÓGICA \n")
+tmax_seSH.to_csv(f"{caminho_dados}tmax_seSH.csv", index = False)
+print(tmax_seSH.info())
+print("~"*80)
+print(tmax_seSH.dtypes)
+print("~"*80)
+print(tmax_seSH)
+print("="*80)
+"""
 print("\n \n FOCOS DE _Aedes aegypti_ / SEMANA EPIDEMIOLÓGICA \n")
 focos_se.to_csv(f"{caminho_dados}focos_se.csv", index = False)
 print(focos_se.info())
@@ -303,3 +375,11 @@ print(f"Máximo Temperatura Média por Semana Epidemiológica: {tmed_se.max().ma
 print("~"*80)
 print(f"Máximo Temperatura Máxima por Semana Epidemiológica: {tmax_se.max().max()}, \n e Mínimo Temperatura Máxima por Semana Epidemiológica: {tmax_se.min().min()}.")
 print("="*80)
+
+print(focos)
+print(casos)
+print(merge)
+print(tmin)
+print(tmed)
+print(tmax)
+"""
