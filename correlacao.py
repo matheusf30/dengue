@@ -6,14 +6,13 @@ import seaborn as sns
 import statsmodels as sm
 #import sys
 
-### Encaminhamento ao Diretório "DADOS" e "IMAGENS"
+### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação das variáveis pelos arquivos
-
- # Dados Diários
+ # Dados Diários às partir de 2021
 """
 casos = "casos21.csv"
 focos = "focos21.csv"
@@ -23,25 +22,25 @@ tmed = "tmed21.csv"
 tmin = "tmin21.csv"
 """
 
- # Semanas Epidemiológicas à partir de 2021
-
+ # Semanas Epidemiológicas à partir de 2021 / Semana Epidemiológica
+"""
 casos = "casos21se.csv"
 focos = "focos21se.csv"
 merge = "merge21se.csv"
 tmax = "tmax21se.csv"
 tmed = "tmed21se.csv"
 tmin = "tmin21se.csv"
-
+"""
 
  # Semanas Epidemiológicas da Série Histórica
-"""
+
 casos = "casos_se.csv"
-focos = "focos_se.csv"
-merge = "merge_se.csv"
-tmax = "tmax_se.csv"
-tmed = "tmed_se.csv"
-tmin = "tmin_se.csv"
-"""
+focos = "focos_seSH.csv"
+merge = "merge_seSH.csv"
+tmax = "tmax_seSH.csv"
+tmed = "tmed_seSH.csv"
+tmin = "tmin_seSH.csv"
+
 ### Abrindo Arquivos
 casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -333,8 +332,8 @@ fig, ax = plt.subplots()
 sns.heatmap(correlacao_base_total, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 #fig.suptitle("Correlação* \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Pearson", weight = "bold", size = "medium")
-fig.suptitle("Correlação*  \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Spearman", weight = "bold", size = "medium")
+fig.suptitle("Correlação*  \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Spearman (sem retroagir, à partir de 2014)", weight = "bold", size = "medium")
 #fig.suptitle("Correlação* \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Kendall", weight = "bold", size = "medium")
 plt.show()
-#plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_semRetroagir_Florianópolis.png", bbox_inches = "tight", pad_inches = 0.0)
+#plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_semRetroagir2014_Florianópolis.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_total
