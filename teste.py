@@ -1,3 +1,4 @@
+### Bibliotecas Correlatas
 import pandas as pd
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
@@ -17,7 +18,7 @@ tmin = "tmin.csv"
 """
 ## Série Histórica / Semana Epidemiológica
 
-casos = "casos_se.csv"
+casos = "casos.csv"
 focos = "focos_se.csv"
 merge = "merge_se.csv"
 tmax = "tmax_se.csv"
@@ -72,6 +73,7 @@ print("~"*80)
 print(tmin.dtypes)
 print("~"*80)
 print(tmin.iloc[732:, :])
+print("="*80)
 
 print("\n \n TEMPERATURA MÉDIA \n")
 print(tmed.info())
@@ -88,3 +90,4 @@ print(tmax.dtypes)
 print("~"*80)
 print(tmax.iloc[732:, :])
 print("="*80)
+
