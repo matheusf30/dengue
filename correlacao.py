@@ -32,9 +32,9 @@ tmed = "tmed21se.csv"
 tmin = "tmin21se.csv"
 """
 
- # Semanas Epidemiológicas da Série Histórica
+ # Semanas Epidemiológicas da Série Histórica # Casos já são por Semana Epimediológica
 
-casos = "casos_se.csv"
+casos = "casos.csv"
 focos = "focos_seSH.csv"
 merge = "merge_seSH.csv"
 tmax = "tmax_seSH.csv"
