@@ -12,7 +12,7 @@ caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação das variáveis pelos arquivos
- # Dados Diários às partir de 2021
+# Dados Diários às partir de 2021
 """
 casos = "casos21.csv"
 focos = "focos21.csv"
@@ -22,7 +22,7 @@ tmed = "tmed21.csv"
 tmin = "tmin21.csv"
 """
 
- # Semanas Epidemiológicas à partir de 2021 / Semana Epidemiológica
+# Semanas Epidemiológicas à partir de 2021 / Semana Epidemiológica
 """
 casos = "casos21se.csv"
 focos = "focos21se.csv"
@@ -32,7 +32,8 @@ tmed = "tmed21se.csv"
 tmin = "tmin21se.csv"
 """
 
- # Semanas Epidemiológicas da Série Histórica # Casos já são por Semana Epimediológica
+# Semanas Epidemiológicas da Série Histórica
+# Casos já são por Semana Epimediológica
 
 casos = "casos.csv"
 focos = "focos_seSH.csv"
@@ -41,6 +42,21 @@ tmax = "tmax_seSH.csv"
 tmed = "tmed_seSH.csv"
 tmin = "tmin_seSH.csv"
 
+# Arquivos de Matriz Retroagindo Tempos
+# fm (focos_momento-retroação) / cm (casos_momento-retroação)
+# cada momento é referente a um número inteiro de Semana Epidemiológica retroagida
+
+cidade = "Florianópolis"
+fm0cm0 = f"matriz_{cidade}_fm0cm0.csv"
+fm1cm1 = f"matriz_{cidade}_fm1cm1.csv"
+fm2cm2 = f"matriz_{cidade}_fm2cm2.csv"
+fm3cm3 = f"matriz_{cidade}_fm3cm3.csv"
+fm4cm4 = f"matriz_{cidade}_fm4cm4.csv"
+fm5cm5 = f"matriz_{cidade}_fm5cm5.csv"
+fm6cm6 = f"matriz_{cidade}_fm6cm6.csv"
+fm7cm7 = f"matriz_{cidade}_fm7cm7.csv"
+fm8cm8 = f"matriz_{cidade}_fm8cm8.csv"
+
 ### Abrindo Arquivos
 casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -48,6 +64,15 @@ merge = pd.read_csv(f"{caminho_dados}{merge}")
 tmax = pd.read_csv(f"{caminho_dados}{tmax}")
 tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
+fm0cm0 = pd.read_csv(f"{caminho_dados}{fm0cm0}")
+fm1cm1 = pd.read_csv(f"{caminho_dados}{fm1cm1}")
+fm2cm2 = pd.read_csv(f"{caminho_dados}{fm2cm2}")
+fm3cm3 = pd.read_csv(f"{caminho_dados}{fm3cm3}")
+fm4cm4 = pd.read_csv(f"{caminho_dados}{fm4cm4}")
+fm5cm5 = pd.read_csv(f"{caminho_dados}{fm5cm5}")
+fm6cm6 = pd.read_csv(f"{caminho_dados}{fm6cm6}")
+fm7cm7 = pd.read_csv(f"{caminho_dados}{fm7cm7}")
+fm8cm8 = pd.read_csv(f"{caminho_dados}{fm8cm8}")
 
 ### Transformação em floats de menor bits
 """
@@ -161,7 +186,7 @@ fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) \n *Spearm
 plt.show()
 #plt.savefig("resulto.png", bbox_inches = "tight", pad_inches = 0.0)
 
-
+"""
 ### Precipitação
 
 corr_cidade_base_prec = corr_cidade_base.copy()
@@ -294,8 +319,8 @@ fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) e Temperat
 plt.show()
 #plt.savefig("resulto.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_base_tmax
-
-### Base e Clima
+"""
+### Base e Clima (sem retroagir)
 
 corr_cidade_total = corr_cidade_base.copy()
 corr_cidade_total["Precipitação"] = merge["Florianópolis"]
@@ -306,12 +331,13 @@ corr_cidade_total["Temperatura Média"] = tmed["Florianópolis"]
 corr_cidade_total["Log_Temperatura_Média"] = np.log(corr_cidade_total["Temperatura Média"] + 1)
 corr_cidade_total["Temperatura Máxima"] = tmax["Florianópolis"]
 corr_cidade_total["Log_Temperatura_Máxima"] = np.log(corr_cidade_total["Temperatura Máxima"] + 1)
+corr_cidade_total.to_csv(f"{caminho_dados}matriz_Florianópolis_fm0cm0.csv", index = False)
 del merge
 del tmin
 del tmed
 del tmax
 
-print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima) \n")
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; sem retroagir) \n")
 print(corr_cidade_total.info())
 print("~"*80)
 print(corr_cidade_total.dtypes)
@@ -331,9 +357,71 @@ print("="*80)
 fig, ax = plt.subplots()
 sns.heatmap(correlacao_base_total, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-#fig.suptitle("Correlação* \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Pearson", weight = "bold", size = "medium")
-fig.suptitle("Correlação*  \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Spearman (sem retroagir, à partir de 2014)", weight = "bold", size = "medium")
-#fig.suptitle("Correlação* \n (Focos, Casos e Variáveis Climáticas) em Florianópolis \n *Kendall", weight = "bold", size = "medium")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; sem retroagir)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; sem retroagir)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; sem retroagir)", weight = "bold", size = "medium") 
 plt.show()
-#plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_semRetroagir2014_Florianópolis.png", bbox_inches = "tight", pad_inches = 0.0)
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_semRetroagir2014_Florianópolis.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_total
+del correlacao_base_total
+
+### Base e Clima (retroagindo)
+## 0 (testando arquivo.csv base)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; sem retroagir [TESTE]) \n")
+print(fm0cm0.info())
+print("~"*80)
+print(fm0cm0.dtypes)
+print("~"*80)
+print(fm0cm0)
+
+#correlacao_fm0cm0 = fm0cm0.corr(method = "pearson")#.round(4)
+correlacao_fm0cm0 = fm0cm0.corr(method = "spearman")#.round(4)
+#correlacao_fm0cm0 = fm0cm0.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm0cm0)
+print("Método de Spearman \n", correlacao_fm0cm0)
+#print("Método de Kendall \n", correlacao_fm0cm0)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm0cm0, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm0cm0
+del correlacao_fm0cm0
+
+## 1 (Variáveis Climáticas com 1 Semana Epidemiológica de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 1 Semana Epidemiológica) \n")
+print(fm1cm1.info())
+print("~"*80)
+print(fm1cm1.dtypes)
+print("~"*80)
+print(fm1cm1)
+
+
+#correlacao_fm1cm1 = fm1cm1.corr(method = "pearson")#.round(4)
+correlacao_fm1cm1 = fm1cm1.corr(method = "spearman")#.round(4)
+#correlacao_fm1cm1 = fm1cm1.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm1cm1)
+print("Método de Spearman \n", correlacao_fm1cm1)
+#print("Método de Kendall \n", correlacao_fm1cm1)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm1cm1, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 1 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 1 Semana Epidemiológica)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 1 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm1cm1
+del correlacao_fm1cm1
+
