@@ -343,7 +343,7 @@ print("~"*80)
 print(corr_cidade_total.dtypes)
 print("~"*80)
 print(corr_cidade_total)
-
+#
 #correlacao_base_total = corr_cidade_total.corr(method = "pearson")#.round(4)
 correlacao_base_total = corr_cidade_total.corr(method = "spearman")#.round(4)
 #correlacao_base_total = corr_cidade_total.corr(method = "kendall")#.round(4)
@@ -373,7 +373,7 @@ print("~"*80)
 print(fm0cm0.dtypes)
 print("~"*80)
 print(fm0cm0)
-
+#
 #correlacao_fm0cm0 = fm0cm0.corr(method = "pearson")#.round(4)
 correlacao_fm0cm0 = fm0cm0.corr(method = "spearman")#.round(4)
 #correlacao_fm0cm0 = fm0cm0.corr(method = "kendall")#.round(4)
@@ -391,7 +391,7 @@ ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium") 
 #fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium") 
 plt.show()
-plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm0cm0_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 del fm0cm0
 del correlacao_fm0cm0
 
@@ -402,8 +402,7 @@ print("~"*80)
 print(fm1cm1.dtypes)
 print("~"*80)
 print(fm1cm1)
-
-
+#
 #correlacao_fm1cm1 = fm1cm1.corr(method = "pearson")#.round(4)
 correlacao_fm1cm1 = fm1cm1.corr(method = "spearman")#.round(4)
 #correlacao_fm1cm1 = fm1cm1.corr(method = "kendall")#.round(4)
@@ -424,4 +423,207 @@ plt.show()
 plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 del fm1cm1
 del correlacao_fm1cm1
+
+## 2 (Variáveis Climáticas com 2 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 2 Semanas Epidemiológicas) \n")
+print(fm2cm2.info())
+print("~"*80)
+print(fm2cm2.dtypes)
+print("~"*80)
+print(fm2cm2)
+#
+#correlacao_fm2cm2 = fm2cm2.corr(method = "pearson")#.round(4)
+correlacao_fm2cm2 = fm2cm2.corr(method = "spearman")#.round(4)
+#correlacao_fm2cm2 = fm2cm2.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm2cm2)
+print("Método de Spearman \n", correlacao_fm2cm2)
+#print("Método de Kendall \n", correlacao_fm2cm2)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm2cm2, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 2 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 2 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 2 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm2cm2_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm2cm2
+del correlacao_fm2cm2
+
+## 3 (Variáveis Climáticas com 3 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 3 Semanas Epidemiológicas) \n")
+print(fm3cm3.info())
+print("~"*80)
+print(fm3cm3.dtypes)
+print("~"*80)
+print(fm3cm3)
+#
+#correlacao_fm3cm3 = fm3cm3.corr(method = "pearson")#.round(4)
+correlacao_fm3cm3 = fm3cm3.corr(method = "spearman")#.round(4)
+#correlacao_fm3cm3 = fm3cm3.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm3cm3)
+print("Método de Spearman \n", correlacao_fm3cm3)
+#print("Método de Kendall \n", correlacao_fm3cm3)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm3cm3, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 3 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 3 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 3 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm3cm3_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm3cm3
+del correlacao_fm3cm3
+
+## 4 (Variáveis Climáticas com 4 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 4 Semanas Epidemiológicas) \n")
+print(fm4cm4.info())
+print("~"*80)
+print(fm4cm4.dtypes)
+print("~"*80)
+print(fm4cm4)
+#
+#correlacao_fm4cm4 = fm4cm4.corr(method = "pearson")#.round(4)
+correlacao_fm4cm4 = fm4cm4.corr(method = "spearman")#.round(4)
+#correlacao_fm4cm4 = fm4cm4.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm4cm4)
+print("Método de Spearman \n", correlacao_fm4cm4)
+#print("Método de Kendall \n", correlacao_fm4cm4)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm4cm4, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 4 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 4 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 4 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm4cm4_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm4cm4
+del correlacao_fm4cm4
+
+## 5 (Variáveis Climáticas com 5 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 5 Semanas Epidemiológicas) \n")
+print(fm5cm5.info())
+print("~"*80)
+print(fm5cm5.dtypes)
+print("~"*80)
+print(fm5cm5)
+#
+#correlacao_fm5cm5 = fm5cm5.corr(method = "pearson")#.round(4)
+correlacao_fm5cm5 = fm5cm5.corr(method = "spearman")#.round(4)
+#correlacao_fm5cm5 = fm5cm5.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm5cm5)
+print("Método de Spearman \n", correlacao_fm5cm5)
+#print("Método de Kendall \n", correlacao_fm5cm5)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm5cm5, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 5 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 5 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 5 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm5cm5_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm5cm5
+del correlacao_fm5cm5
+
+## 6 (Variáveis Climáticas com 6 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 6 Semanas Epidemiológicas) \n")
+print(fm6cm6.info())
+print("~"*80)
+print(fm6cm6.dtypes)
+print("~"*80)
+print(fm6cm6)
+#
+#correlacao_fm6cm6 = fm6cm6.corr(method = "pearson")#.round(4)
+correlacao_fm6cm6 = fm6cm6.corr(method = "spearman")#.round(4)
+#correlacao_fm6cm6 = fm6cm6.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm6cm6)
+print("Método de Spearman \n", correlacao_fm6cm6)
+#print("Método de Kendall \n", correlacao_fm6cm6)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm6cm6, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 6 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 6 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 6 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm6cm6_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm6cm6
+del correlacao_fm6cm6
+
+## 7 (Variáveis Climáticas com 7 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 7 Semanas Epidemiológicas) \n")
+print(fm7cm7.info())
+print("~"*80)
+print(fm7cm7.dtypes)
+print("~"*80)
+print(fm7cm7)
+#
+#correlacao_fm7cm7 = fm7cm7.corr(method = "pearson")#.round(4)
+correlacao_fm7cm7 = fm7cm7.corr(method = "spearman")#.round(4)
+#correlacao_fm7cm7 = fm7cm7.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm7cm7)
+print("Método de Spearman \n", correlacao_fm7cm7)
+#print("Método de Kendall \n", correlacao_fm7cm7)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm7cm7, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 7 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 7 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 7 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm7cm7_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm7cm7
+del correlacao_fm7cm7
+
+## 8 (Variáveis Climáticas com 8 Semanas Epidemiológicas de diferença)
+print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 8 Semanas Epidemiológicas) \n")
+print(fm8cm8.info())
+print("~"*80)
+print(fm8cm8.dtypes)
+print("~"*80)
+print(fm8cm8)
+#
+#correlacao_fm8cm8 = fm8cm8.corr(method = "pearson")#.round(4)
+correlacao_fm8cm8 = fm8cm8.corr(method = "spearman")#.round(4)
+#correlacao_fm8cm8 = fm8cm8.corr(method = "kendall")#.round(4)
+#
+print("="*80)
+#print("Método de Pearson \n", correlacao_fm8cm8)
+print("Método de Spearman \n", correlacao_fm8cm8)
+#print("Método de Kendall \n", correlacao_fm8cm8)
+print("="*80)
+#
+fig, ax = plt.subplots()
+sns.heatmap(correlacao_fm8cm8, annot = True, cmap = "tab20c", linewidth = 0.5)
+ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Pearson; à partir de 2014; Retroagindo 8 Semana Epidemiológica)", weight = "bold", size = "medium")
+fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Spearman; à partir de 2014; Retroagindo 8 Semanas Epidemiológicas)", weight = "bold", size = "medium") 
+#fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; Retroagindo 8 Semana Epidemiológica)", weight = "bold", size = "medium") 
+plt.show()
+plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm8cm8_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+del fm8cm8
+del correlacao_fm8cm8
 
