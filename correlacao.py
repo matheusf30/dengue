@@ -142,6 +142,8 @@ corr_cidade_base = corr_cidade_base.rename(columns={"Florianópolis" : "Focos"})
 corr_cidade_base["Log_Focos"] = np.log(corr_cidade_base["Focos"] + 1)
 corr_cidade_base = corr_cidade_base.drop(["Palhoça"], axis = "columns")
 del focos
+# Transformação Logarítmica para tentar ajustar linearidade e simetria entre variáveis
+# É somado +1 para não perder o dado no Log de 0
 
 print("\n \n MATRIZ DE CORRELAÇÃO (Início) \n")
 print(corr_cidade_base.info())
@@ -184,7 +186,8 @@ ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) \n *Spearman", weight = "bold", size = "medium")
 #fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) \n *Kendall", weight = "bold", size = "medium")
 plt.show()
-#plt.savefig("resulto.png", bbox_inches = "tight", pad_inches = 0.0)
+corr_cidade_base.to_csv(f"{caminho_dados}matrizbase_{cidade}_fm0cm0.csv", index = False)
+plt.savefig("{caminho_correlacao}matrizbase_{cidade}_fm0cm0.png", bbox_inches = "tight", pad_inches = 0.0)
 
 """
 ### Precipitação
@@ -626,4 +629,3 @@ plt.show()
 plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm8cm8_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 del fm8cm8
 del correlacao_fm8cm8
-
