@@ -32,24 +32,33 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 ## Recorte Município (Florianópolis)
 dado_rede = focos[["Palhoça", "Florianópolis"]].iloc[: ]
 dado_rede = dado_rede.rename(columns={"Florianópolis" : "Focos"})
-dado_rede["Focos_m1"] = focos["Florianópolis"].iloc[1:-1]
-dado_rede["Focos_m2"] = focos["Florianópolis"].iloc[ :-2]
-dado_rede = dado_rede.drop(["Palhoça"], axis = "columns")
-dado_rede["Precipitação"] = merge["Florianópolis"].iloc[1: ]
-dado_rede["Precipitação_m1"] = merge["Florianópolis"].iloc[ :-1]
 dado_rede["Temperatura"] = tmed["Florianópolis"].iloc[1: ]
+dado_rede["Precipitação"] = merge["Florianópolis"].iloc[1: ]
+dado_rede = dado_rede.drop(["Palhoça"], axis = "columns")
+dado_rede["Focos_m1"] = focos["Florianópolis"].iloc[1:-1]
 dado_rede["Temperatura_m1"] = tmed["Florianópolis"].iloc[ :-1]
-
-"""
-## Manipulando Variável Categórica
-#dado_rede["Categoria"] = []
-cat = 10
-gap = focos["Florianópolis"].max - focos["Florianópolis"].min
-cte = gap/cat
-cont = 0
-#while (cont<gap
-"""
+dado_rede["Precipitação_m1"] = merge["Florianópolis"].iloc[ :-1]
+dado_rede["Focos_m2"] = focos["Florianópolis"].iloc[ :-2]
+dado_rede["Temperatura_m2"] = tmed["Florianópolis"].iloc[ :-1]
+dado_rede["Precipitação_m2"] = merge["Florianópolis"].iloc[ :-1]
+dado_rede["Focos_m3"] = focos["Florianópolis"]
+dado_rede["Temperatura_m3"] = tmed["Florianópolis"]
+dado_rede["Precipitação_m3"] = merge["Florianópolis"]
+dado_rede["Focos_m4"] = focos["Florianópolis"]
+dado_rede["Temperatura_m4"] = tmed["Florianópolis"]
+dado_rede["Precipitação_m4"] = merge["Florianópolis"]
+dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_rede["Focos"].quantile(.1) \
+                                                  else "2" if x < dado_rede["Focos"].quantile(.2) \
+                                                  else "3" if x < dado_rede["Focos"].quantile(.3) \
+                                                  else "4" if x < dado_rede["Focos"].quantile(.4) \
+                                                  else "5" if x < dado_rede["Focos"].quantile(.5) \
+                                                  else "6" if x < dado_rede["Focos"].quantile(.6) \
+                                                  else "7" if x < dado_rede["Focos"].quantile(.7) \
+                                                  else "8" if x < dado_rede["Focos"].quantile(.8) \
+                                                  else "9" if x < dado_rede["Focos"].quantile(.9) \
+                                                  else "10")
 del focos
+dado_rede.to_csv(f"{caminho_dados}dado_rede.csv", index = False)
 
 print("\n \n BASE DE DADOS PARA REDE NEURAL \n")
 print(dado_rede.info())
@@ -58,10 +67,3 @@ print(dado_rede.dtypes)
 print("~"*80)
 print(dado_rede)
 print("="*80)
-"""
-print(f"São {cat} categorias, tendo {cte} como constante e {gap} como intervalo.")
-print("~"*80)
-print(cont)
-print("~"*80)
-print(dado_rede)
-"""
