@@ -58,6 +58,7 @@ dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_red
                                                   else "9" if x < dado_rede["Focos"].quantile(.9) \
                                                   else "10")
 dado_rede.dropna(axis = 0, inplace = True)
+dado_rede = dado_rede.round(2)
 del focos
 dado_rede.to_csv(f"{caminho_dados}dado_rede.csv", index = False)
 
