@@ -16,42 +16,12 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 # cada momento é referente a um número inteiro de Semana Epidemiológica retroagida
 
 cidade = "Florianópolis"
-fm0cm0 = f"matriz_{cidade}_fm0cm0.csv"
-fm1cm1 = f"matriz_{cidade}_fm1cm1.csv"
-fm2cm2 = f"matriz_{cidade}_fm2cm2.csv"
-fm3cm3 = f"matriz_{cidade}_fm3cm3.csv"
-fm4cm4 = f"matriz_{cidade}_fm4cm4.csv"
-fm5cm5 = f"matriz_{cidade}_fm5cm5.csv"
-fm6cm6 = f"matriz_{cidade}_fm6cm6.csv"
-fm7cm7 = f"matriz_{cidade}_fm7cm7.csv"
-fm8cm8 = f"matriz_{cidade}_fm8cm8.csv"
-fm9cm9 = f"matriz_{cidade}_fm9cm9.csv"
-fm10cm10 = f"matriz_{cidade}_fm10cm10.csv"
-fm11cm11 = f"matriz_{cidade}_fm11cm11.csv"
-fm12cm12 = f"matriz_{cidade}_fm12cm12.csv"
-fm13cm13 = f"matriz_{cidade}_fm13cm13.csv"
-fm14cm14 = f"matriz_{cidade}_fm14cm14.csv"
-fm15cm15 = f"matriz_{cidade}_fm15cm15.csv"
-fm16cm16 = f"matriz_{cidade}_fm16cm16.csv"
+#fm0cm0 = f"matriz_{cidade}_fm0cm0.csv"
+#fm0cm0 = f"matriz21_{cidade}_fm0cm0.csv" # à partir de 2021
+fm0cm0 = f"matriz22_{cidade}_fm0cm0.csv"  # apenas 2022
 
 ### Abrindo Arquivos
 fm0cm0 = pd.read_csv(f"{caminho_dados}{fm0cm0}")
-fm1cm1 = pd.read_csv(f"{caminho_dados}{fm1cm1}")
-fm2cm2 = pd.read_csv(f"{caminho_dados}{fm2cm2}")
-fm3cm3 = pd.read_csv(f"{caminho_dados}{fm3cm3}")
-fm4cm4 = pd.read_csv(f"{caminho_dados}{fm4cm4}")
-fm5cm5 = pd.read_csv(f"{caminho_dados}{fm5cm5}")
-fm6cm6 = pd.read_csv(f"{caminho_dados}{fm6cm6}")
-fm7cm7 = pd.read_csv(f"{caminho_dados}{fm7cm7}")
-fm8cm8 = pd.read_csv(f"{caminho_dados}{fm8cm8}")
-fm9cm9 = pd.read_csv(f"{caminho_dados}{fm9cm9}")
-fm10cm10 = pd.read_csv(f"{caminho_dados}{fm10cm10}")
-fm11cm11 = pd.read_csv(f"{caminho_dados}{fm11cm11}")
-fm12cm12 = pd.read_csv(f"{caminho_dados}{fm12cm12}")
-fm13cm13 = pd.read_csv(f"{caminho_dados}{fm13cm13}")
-fm14cm14 = pd.read_csv(f"{caminho_dados}{fm14cm14}")
-fm15cm15 = pd.read_csv(f"{caminho_dados}{fm15cm15}")
-fm16cm16 = pd.read_csv(f"{caminho_dados}{fm16cm16}")
 
 ### Base e Clima (retroagindo)
 ## 0 (testando arquivo.csv base)
@@ -80,10 +50,17 @@ fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATO
 #fig.suptitle("MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de Kendall; à partir de 2014; sem retroagir [TESTE])", weight = "bold", size = "medium") 
 plt.show()
 plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_2014fm0cm0_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-del fm0cm0
+#del fm0cm0
 del correlacao_fm0cm0
 
 ## 1 (Variáveis Climáticas com 1 Semana Epidemiológica de diferença)
+fm1cm1 = fm0cm0.copy()
+clima = ["Precipitação", "Log_Precipitação", "Temperatura Mínima", "Log_Temperatura_Mínima", \
+         "Temperatura Média", "Log_Temperatura_Média", "Temperatura Máxima", "Log_Temperatura_Máxima"]
+#retroacao = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+fm1cm1[clima] = fm1cm1[clima].shift(1)#(periods = retroacao)
+fm1cm1.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 1 Semana Epidemiológica) \n")
 print(fm1cm1.info())
 print("~"*80)
@@ -113,6 +90,10 @@ del fm1cm1
 del correlacao_fm1cm1
 
 ## 2 (Variáveis Climáticas com 2 Semanas Epidemiológicas de diferença)
+fm2cm2 = fm0cm0.copy()
+fm2cm2[clima] = fm2cm2[clima].shift(2)
+fm2cm2.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 2 Semanas Epidemiológicas) \n")
 print(fm2cm2.info())
 print("~"*80)
@@ -129,7 +110,9 @@ print("="*80)
 print("Método de Spearman \n", correlacao_fm2cm2)
 #print("Método de Kendall \n", correlacao_fm2cm2)
 print("="*80)
-#
+#fm2cm2 = fm0cm0.copy()
+fm2cm2[clima] = fm2cm2[clima].shift(2)
+fm2cm2.dropna(axis = 0, inplace = True)
 fig, ax = plt.subplots()
 sns.heatmap(correlacao_fm2cm2, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
@@ -142,6 +125,10 @@ del fm2cm2
 del correlacao_fm2cm2
 
 ## 3 (Variáveis Climáticas com 3 Semanas Epidemiológicas de diferença)
+fm3cm3 = fm0cm0.copy()
+fm3cm3[clima] = fm3cm3[clima].shift(3)
+fm3cm3.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 3 Semanas Epidemiológicas) \n")
 print(fm3cm3.info())
 print("~"*80)
@@ -171,6 +158,10 @@ del fm3cm3
 del correlacao_fm3cm3
 
 ## 4 (Variáveis Climáticas com 4 Semanas Epidemiológicas de diferença)
+fm4cm4 = fm0cm0.copy()
+fm4cm4[clima] = fm4cm4[clima].shift(4)
+fm4cm4.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 4 Semanas Epidemiológicas) \n")
 print(fm4cm4.info())
 print("~"*80)
@@ -200,6 +191,10 @@ del fm4cm4
 del correlacao_fm4cm4
 
 ## 5 (Variáveis Climáticas com 5 Semanas Epidemiológicas de diferença)
+fm5cm5 = fm0cm0.copy()
+fm5cm5[clima] = fm5cm5[clima].shift(5)
+fm5cm5.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 5 Semanas Epidemiológicas) \n")
 print(fm5cm5.info())
 print("~"*80)
@@ -229,6 +224,10 @@ del fm5cm5
 del correlacao_fm5cm5
 
 ## 6 (Variáveis Climáticas com 6 Semanas Epidemiológicas de diferença)
+fm6cm6 = fm0cm0.copy()
+fm6cm6[clima] = fm6cm6[clima].shift(6)
+fm6cm6.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 6 Semanas Epidemiológicas) \n")
 print(fm6cm6.info())
 print("~"*80)
@@ -258,6 +257,10 @@ del fm6cm6
 del correlacao_fm6cm6
 
 ## 7 (Variáveis Climáticas com 7 Semanas Epidemiológicas de diferença)
+fm7cm7 = fm0cm0.copy()
+fm7cm7[clima] = fm7cm7[clima].shift(7)
+fm7cm7.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 7 Semanas Epidemiológicas) \n")
 print(fm7cm7.info())
 print("~"*80)
@@ -287,6 +290,10 @@ del fm7cm7
 del correlacao_fm7cm7
 
 ## 8 (Variáveis Climáticas com 8 Semanas Epidemiológicas de diferença)
+fm8cm8 = fm0cm0.copy()
+fm8cm8[clima] = fm8cm8[clima].shift(8)
+fm8cm8.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 8 Semanas Epidemiológicas) \n")
 print(fm8cm8.info())
 print("~"*80)
@@ -316,6 +323,10 @@ del fm8cm8
 del correlacao_fm8cm8
 
 ## 9 (Variáveis Climáticas com 9 Semanas Epidemiológicas de diferença)
+fm9cm9 = fm0cm0.copy()
+fm9cm9[clima] = fm9cm9[clima].shift(9)
+fm9cm9.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 9 Semanas Epidemiológicas) \n")
 print(fm9cm9.info())
 print("~"*80)
@@ -345,6 +356,10 @@ del fm9cm9
 del correlacao_fm9cm9
 
 ## 10 (Variáveis Climáticas com 10 Semanas Epidemiológicas de diferença)
+fm10cm10 = fm0cm0.copy()
+fm10cm10[clima] = fm10cm10[clima].shift(10)
+fm10cm10.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 10 Semanas Epidemiológicas) \n")
 print(fm10cm10.info())
 print("~"*80)
@@ -374,6 +389,10 @@ del fm10cm10
 del correlacao_fm10cm10
 
 ## 11 (Variáveis Climáticas com 11 Semanas Epidemiológicas de diferença)
+fm11cm11 = fm0cm0.copy()
+fm11cm11[clima] = fm11cm11[clima].shift(11)
+fm11cm11.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 11 Semanas Epidemiológicas) \n")
 print(fm11cm11.info())
 print("~"*80)
@@ -403,6 +422,10 @@ del fm11cm11
 del correlacao_fm11cm11
 
 ## 12 (Variáveis Climáticas com 12 Semanas Epidemiológicas de diferença)
+fm12cm12 = fm0cm0.copy()
+fm12cm12[clima] = fm12cm12[clima].shift(12)
+fm12cm12.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 12 Semanas Epidemiológicas) \n")
 print(fm12cm12.info())
 print("~"*80)
@@ -432,6 +455,10 @@ del fm12cm12
 del correlacao_fm12cm12
 
 ## 13 (Variáveis Climáticas com 13 Semanas Epidemiológicas de diferença)
+fm13cm13 = fm0cm0.copy()
+fm13cm13[clima] = fm13cm13[clima].shift(13)
+fm13cm13.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 13 Semanas Epidemiológicas) \n")
 print(fm13cm13.info())
 print("~"*80)
@@ -461,6 +488,10 @@ del fm13cm13
 del correlacao_fm13cm13
 
 ## 14 (Variáveis Climáticas com 14 Semanas Epidemiológicas de diferença)
+fm14cm14 = fm0cm0.copy()
+fm14cm14[clima] = fm14cm14[clima].shift(14)
+fm14cm14.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 14 Semanas Epidemiológicas) \n")
 print(fm14cm14.info())
 print("~"*80)
@@ -490,6 +521,10 @@ del fm14cm14
 del correlacao_fm14cm14
 
 ## 15 (Variáveis Climáticas com 15 Semanas Epidemiológicas de diferença)
+fm15cm15 = fm0cm0.copy()
+fm15cm15[clima] = fm15cm15[clima].shift(15)
+fm15cm15.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 15 Semanas Epidemiológicas) \n")
 print(fm15cm15.info())
 print("~"*80)
@@ -519,6 +554,10 @@ del fm15cm15
 del correlacao_fm15cm15
 
 ## 16 (Variáveis Climáticas com 16 Semanas Epidemiológicas de diferença)
+fm16cm16 = fm0cm0.copy()
+fm16cm16[clima] = fm16cm16[clima].shift(16)
+fm16cm16.dropna(axis = 0, inplace = True)
+
 print("\n \n MATRIZ DE CORRELAÇÃO (Base e Clima; retroagindo 16 Semanas Epidemiológicas) \n")
 print(fm16cm16.info())
 print("~"*80)
