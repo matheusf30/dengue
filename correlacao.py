@@ -32,16 +32,26 @@ tmed = "tmed21se.csv"
 tmin = "tmin21se.csv"
 """
 
+# Semanas Epidemiológicas de 2022
+
+casos = "casos22se.csv"
+focos = "focos22se.csv"
+merge = "merge22se.csv"
+tmax = "tmax22se.csv"
+tmed = "tmed22se.csv"
+tmin = "tmin22se.csv"
+
+
 # Semanas Epidemiológicas da Série Histórica
 # Casos já são por Semana Epimediológica
-
+"""
 casos = "casos.csv"
 focos = "focos_seSH.csv"
 merge = "merge_seSH.csv"
 tmax = "tmax_seSH.csv"
 tmed = "tmed_seSH.csv"
 tmin = "tmin_seSH.csv"
-
+"""
 ### Abrindo Arquivos
 casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -162,7 +172,9 @@ ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) \n *Spearman", weight = "bold", size = "medium")
 #fig.suptitle("Correlação* Base \n (Focos e Casos em Florianópolis) \n *Kendall", weight = "bold", size = "medium")
 plt.show()
-corr_cidade_base.to_csv(f"{caminho_dados}matrizbase_{cidade}_fm0cm0.csv", index = False)
+#corr_cidade_base.to_csv(f"{caminho_dados}matrizbase_{cidade}_fm0cm0.csv", index = False)
+#corr_cidade_base.to_csv(f"{caminho_dados}matrizbase21_{cidade}_fm0cm0.csv", index = False)
+corr_cidade_base.to_csv(f"{caminho_dados}matrizbase22_{cidade}_fm0cm0.csv", index = False)
 plt.savefig("{caminho_correlacao}matrizbase_{cidade}_fm0cm0.png", bbox_inches = "tight", pad_inches = 0.0)
 
 
@@ -310,7 +322,9 @@ corr_cidade_total["Temperatura Média"] = tmed["Florianópolis"]
 corr_cidade_total["Log_Temperatura_Média"] = np.log(corr_cidade_total["Temperatura Média"] + 1)
 corr_cidade_total["Temperatura Máxima"] = tmax["Florianópolis"]
 corr_cidade_total["Log_Temperatura_Máxima"] = np.log(corr_cidade_total["Temperatura Máxima"] + 1)
-corr_cidade_total.to_csv(f"{caminho_dados}matriz_Florianópolis_fm0cm0.csv", index = False)
+#corr_cidade_total.to_csv(f"{caminho_dados}matriz_{cidade}_fm0cm0.csv", index = False)
+#corr_cidade_total.to_csv(f"{caminho_dados}matriz21_{cidade}_fm0cm0.csv", index = False)
+corr_cidade_total.to_csv(f"{caminho_dados}matriz22_{cidade}_fm0cm0.csv", index = False)
 del merge
 del tmin
 del tmed
