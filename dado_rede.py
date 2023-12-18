@@ -32,21 +32,21 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 ## Recorte Município (Florianópolis)
 dado_rede = focos[["Palhoça", "Florianópolis"]].iloc[: ]
 dado_rede = dado_rede.rename(columns={"Florianópolis" : "Focos"})
-dado_rede["Temperatura"] = tmed["Florianópolis"].iloc[1: ]
-dado_rede["Precipitação"] = merge["Florianópolis"].iloc[1: ]
+dado_rede["Temperatura"] = tmed["Florianópolis"]
+dado_rede["Precipitação"] = merge["Florianópolis"]
 dado_rede = dado_rede.drop(["Palhoça"], axis = "columns")
-dado_rede["Focos_m1"] = focos["Florianópolis"].iloc[1:-1]
-dado_rede["Temperatura_m1"] = tmed["Florianópolis"].iloc[ :-1]
-dado_rede["Precipitação_m1"] = merge["Florianópolis"].iloc[ :-1]
-dado_rede["Focos_m2"] = focos["Florianópolis"].iloc[ :-2]
-dado_rede["Temperatura_m2"] = tmed["Florianópolis"].iloc[ :-1]
-dado_rede["Precipitação_m2"] = merge["Florianópolis"].iloc[ :-1]
-dado_rede["Focos_m3"] = focos["Florianópolis"]
-dado_rede["Temperatura_m3"] = tmed["Florianópolis"]
-dado_rede["Precipitação_m3"] = merge["Florianópolis"]
-dado_rede["Focos_m4"] = focos["Florianópolis"]
-dado_rede["Temperatura_m4"] = tmed["Florianópolis"]
-dado_rede["Precipitação_m4"] = merge["Florianópolis"]
+dado_rede["Focos_m1"] = focos["Florianópolis"].shift(1)
+dado_rede["Temperatura_m1"] = tmed["Florianópolis"].shift(1)
+dado_rede["Precipitação_m1"] = merge["Florianópolis"].shift(1)
+dado_rede["Focos_m2"] = focos["Florianópolis"].shift(2)
+dado_rede["Temperatura_m2"] = tmed["Florianópolis"].shift(2)
+dado_rede["Precipitação_m2"] = merge["Florianópolis"].shift(2)
+dado_rede["Focos_m3"] = focos["Florianópolis"].shift(3)
+dado_rede["Temperatura_m3"] = tmed["Florianópolis"].shift(3)
+dado_rede["Precipitação_m3"] = merge["Florianópolis"].shift(3)
+dado_rede["Focos_m4"] = focos["Florianópolis"].shift(4)
+dado_rede["Temperatura_m4"] = tmed["Florianópolis"].shift(4)
+dado_rede["Precipitação_m4"] = merge["Florianópolis"].shift(4)
 dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_rede["Focos"].quantile(.1) \
                                                   else "2" if x < dado_rede["Focos"].quantile(.2) \
                                                   else "3" if x < dado_rede["Focos"].quantile(.3) \
@@ -57,6 +57,7 @@ dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_red
                                                   else "8" if x < dado_rede["Focos"].quantile(.8) \
                                                   else "9" if x < dado_rede["Focos"].quantile(.9) \
                                                   else "10")
+dado_rede.dropna(axis = 0, inplace = True)
 del focos
 dado_rede.to_csv(f"{caminho_dados}dado_rede.csv", index = False)
 
