@@ -48,15 +48,17 @@ print(focos.info())
 print("~"*80)
 print(focos.dtypes)
 print("~"*80)
-print(focos.iloc[105:574, :])
+#print(focos.iloc[105:574, :]) #jan2014-dez2022
+print(focos.iloc[522:574, :]) #jan2022-dez2022
 print("="*80)
 
 print("\n \n CASOS DE DENGUE \n")
 print(casos.info())
 print("~"*80)
-print(casos.dtypes)
+print(casos.dtypes) 
 print("~"*80)
-print(casos)
+#print(casos) #jan2014-dez2022
+print(casos.iloc[417:, :]) #jan2022-dez2022
 print("="*80)
 
 print("\n \n PRECIPITAÇÃO \n")
@@ -64,7 +66,8 @@ print(merge.info())
 print("~"*80)
 print(merge.dtypes)
 print("~"*80)
-print(merge.iloc[710:, :])
+#print(merge.iloc[710:, :]) #jan2014-dez2022
+print(merge.iloc[1127:, :]) #jan2022-dez2022
 print("="*80)
 
 print("\n \n TEMPERATURA MÍNIMA \n")
@@ -72,7 +75,8 @@ print(tmin.info())
 print("~"*80)
 print(tmin.dtypes)
 print("~"*80)
-print(tmin.iloc[732:, :])
+#print(tmin.iloc[732:, :]) #jan2014-dez2022
+print(tmin.iloc[1149:, :]) #jan2022-dez2022
 print("="*80)
 
 print("\n \n TEMPERATURA MÉDIA \n")
@@ -80,7 +84,8 @@ print(tmed.info())
 print("~"*80)
 print(tmed.dtypes)
 print("~"*80)
-print(tmed.iloc[732:, :])
+#print(tmed.iloc[732:, :]) #jan2014-dez2022
+print(tmed.iloc[1149:, :]) #jan2022-dez2022
 print("="*80)
 
 print("\n \n TEMPERATURA MÁXIMA \n")
@@ -88,6 +93,6 @@ print(tmax.info())
 print("~"*80)
 print(tmax.dtypes)
 print("~"*80)
-print(tmax.iloc[732:, :])
+#print(tmax.iloc[732:, :]) #jan2014-dez2022
+print(tmax.iloc[1149:, :]) #jan2022-dez2022
 print("="*80)
-
