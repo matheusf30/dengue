@@ -21,6 +21,7 @@ retro_clima = list(range(2,17))
 casos = ["Casos", "Log_Casos"]
 clima = ["Precipitação", "Log_Precipitação", "Temperatura Mínima", "Log_Temperatura_Mínima", \
          "Temperatura Média", "Log_Temperatura_Média", "Temperatura Máxima", "Log_Temperatura_Máxima"]
+#cbar = https://matplotlib.org/3.1.0/tutorials/colors/colorbar_only.html
 
 ### Arquivos de Matriz Retroagindo Tempos
 	# fm (focos_momento-retroação) / cm (casos_momento-retroação)
