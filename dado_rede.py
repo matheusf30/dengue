@@ -13,12 +13,19 @@ caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
+"""
 #casos = "casos.csv"
 focos = "focos_seSH.csv"
 merge = "merge_seSH.csv"
 #tmax = "tmax_seSH.csv"
 tmed = "tmed_seSH.csv"
 #tmin = "tmin_seSH.csv"
+"""
+## 2022
+focos = "focos22se.csv"
+merge = "merge22se.csv"
+tmed = "tmed22se.csv"
+
 
 ### Abrindo Arquivos
 #casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -47,6 +54,7 @@ dado_rede["Precipitação_m3"] = merge["Florianópolis"].shift(3)
 dado_rede["Focos_m4"] = focos["Florianópolis"].shift(4)
 dado_rede["Temperatura_m4"] = tmed["Florianópolis"].shift(4)
 dado_rede["Precipitação_m4"] = merge["Florianópolis"].shift(4)
+"""
 dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_rede["Focos"].quantile(.25) \
                                                   else "2" if x < dado_rede["Focos"].quantile(.5) \
                                                   else "3" if x < dado_rede["Focos"].quantile(.75) \
@@ -62,12 +70,13 @@ dado_rede["Categoria"] = dado_rede["Focos"].apply(lambda x: "1" if x <= dado_red
                                                   else "8" if x < dado_rede["Focos"].quantile(.8) \
                                                   else "9" if x < dado_rede["Focos"].quantile(.9) \
                                                   else "10")
-"""
 dado_rede.dropna(axis = 0, inplace = True)
 dado_rede = dado_rede.round(2)
 del focos
 # dado_rede.to_csv(f"{caminho_dados}dado_rede.csv", index = False)
-dado_rede.to_csv(f"{caminho_dados}dado_rede4cat.csv", index = False)
+# dado_rede.to_csv(f"{caminho_dados}dado_rede4cat.csv", index = False)
+# dado_rede.to_csv(f"{caminho_dados}dado_rede4cat22.csv", index = False)
+dado_rede.to_csv(f"{caminho_dados}dado_rede22.csv", index = False)
 
 print("\n \n BASE DE DADOS PARA REDE NEURAL \n")
 print(dado_rede.info())

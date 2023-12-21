@@ -99,15 +99,19 @@ casos22se = casos.iloc[417:, :]
 
 merge22se = merge.copy()
 merge22se = merge.iloc[1127:, :]
+merge22se = merge22se.round(2)
 
 tmin22se = tmin.copy()
 tmin22se = tmin22se.iloc[1149:, :]
+tmin22se = tmin22se.round(2)
 
 tmed22se = tmed.copy()
 tmed22se = tmed22se.iloc[1149:, :]
+tmed22se = tmed22se.round(2)
 
 tmax22se = tmax.copy()
 tmax22se = tmax22se.iloc[1149:, :]
+tmax22se = tmax22se.round(2)
 
 """
 
@@ -519,10 +523,6 @@ print("="*80)
 print(focos)
 print(casos)
 print(merge)
-print(tmin)
-print(tmed)
-print(tmax)
-"""
 print(tmin)
 print(tmed)
 print(tmax)

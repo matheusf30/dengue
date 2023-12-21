@@ -1,10 +1,14 @@
-### Bibliotecas Correlatas            
+### Bibliotecas Correlatas
+import matplotlib.pyplot as plt               
 import pandas as pd
+import numpy as np
+import seaborn as sns
+import statsmodels as sm
+#import sys
 
 ### Encaminhamento ao Diretório "DADOS" e "IMAGENS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
-caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+caminho_imagens = "/home/sifapsc/scripts/matheus/imagens/"
 
 ### Renomeação variáveis pelos arquivos
 casos = "serie_casos_sc.csv"
@@ -327,7 +331,6 @@ lista = {"date": "Data",
  '4219705': 'Xaxim',
  '4219853': 'Zortéa',
  '4220000': 'Balneário Rincão'}
-
 dicionario = {'data_caso': 'Data',
  'data_foco': 'Data',
  'Abdon_Batista': 'Abdon Batista',
@@ -507,8 +510,7 @@ dicionario = {'data_caso': 'Data',
  'Nova_Veneza': 'Nova Veneza',
  'Novo_Horizonte': 'Novo Horizonte',
  'Orleans': 'Orleans',
- 'Otacilio_Costa': 'Otacílio Costa',caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+ 'Otacilio_Costa': 'Otacílio Costa',
  'Ouro': 'Ouro',
  'Ouro_Verde': 'Ouro Verde',
  'Paial': 'Paial',
@@ -641,24 +643,29 @@ casos = casos.rename(columns = dicionario)
 merge["data"] = merge["date"]
 merge["date"] = pd.to_datetime(merge["date"])
 merge = merge.sort_values(by = ["date"])
+merge = merge.drop(columns = ["lon", "lat"])
 merge = merge.rename(columns = lista)
 
 tmin["data"] = tmin["date"]
 tmin["date"] = pd.to_datetime(tmin["date"])
 tmin = tmin.sort_values(by = ["date"])
+tmin = tmin.drop(columns = ["lon", "lat"])
 tmin = tmin.rename(columns = lista)
 
 tmed["data"] = tmed["date"]
 tmed["date"] = pd.to_datetime(tmed["date"])
 tmed = tmed.sort_values(by = ["date"])
+tmed = tmed.drop(columns = ["lon", "lat"])
 tmed = tmed.rename(columns = lista)
 
 tmax["data"] = tmax["date"]
 tmax["date"] = pd.to_datetime(tmax["date"])
 tmax = tmax.sort_values(by = ["date"])
+tmax = tmax.drop(columns = ["lon", "lat"])
 tmax = tmax.rename(columns = lista)
 
 ### Printando dados e informações
+"""
 print(focos.info())
 print(focos.dtypes)
 print(focos)
@@ -683,58 +690,100 @@ print(tmed)
 print(tmax.info())
 print(tmax.dtypes)
 print(tmax)
+"""
 
-### Salvando Variáveis
-focos.to_csv(f"{caminho_dados}focos.csv", index = False)
-print("\n \n FOCOS DE _Aedes aegypti_ >> OK \n")
-print(focos.info())
-print("~"*80)
-print(focos.dtypes)
-print("~"*80)
-print(focos.head())
-print("="*80)
+### Manipulando Correlações e Deletando Variáveis do Sistema
 
-casos.to_csv(f"{caminho_dados}casos.csv", index = False)
-print("\n \n CASOS DE DENGUE >> OK \n")
-print(casos.info())
-print("~"*80)
-print(casos.dtypes)
-print("~"*80)
-print(casos.head())
-print("="*80)
+corr_floripa = focos[["Palhoça", "Florianópolis"]].iloc[:4018]
+corr_floripa = corr_floripa.rename(columns={"Florianópolis" : "Focos"})
+prec = merge.iloc[4230:]
+prec_floripa = prec[["Data", "Florianópolis"]]
+corr_floripa = corr_floripa.merge(prec_floripa, how = "cross")
+corr_floripa = corr_floripa.rename(columns={"Florianópolis" : "Precipitação"})
+corr_floripa = corr_floripa.drop(["Palhoça"], axis = "columns")
+corr_floripa.set_index("Data", inplace = True)
+del focos
+del merge
 
-merge.to_csv(f"{caminho_dados}merge_novo.csv", index = False)
-print("\n \n PRECIPITAÇÃO >> OK \n")
-print(merge.info())
-print("~"*80)
-print(merge.dtypes)
-print("~"*80)
-print(merge.head())
-print("="*80)
+tmin2 = tmin.iloc[4383:]
+tmin_floripa = tmin2[["Data", "Florianópolis"]]
+corr_floripa = corr_floripa.merge(tmin_floripa, how = "cross")
+corr_floripa = corr_floripa.rename(columns={"Florianópolis" : "T.Mínima"})
+corr_floripa["Log_Focos"] = np.log(corr_floripa["Focos"] + 1)
+corr_floripa["Log_Precipitação"] = np.log(corr_floripa["Precipitação"] + 1)
+correlacao = corr_floripa.corr().round(4)
+sns.heatmap(correlacao, annot = True, cmap = "tab20c", linewidth = 0.5)
+print(corr_floripa)
+"""
+### Zerando Variáveis
+#sys.stdout.flush()
+#gc.collect()
+#gc.get_stats()
+del caminho_dados
+del caminho_imagens
+del casos
+del focos
+del merge
+del tmax
+del tmed
+del tmin
+del dicionario
+del lista
+del tmin2
 
-tmin.to_csv(f"{caminho_dados}tmin.csv", index = False)
-print("\n \n TEMPERATURA MÍNIMA >> OK \n")
-print(tmin.info())
-print("~"*80)
-print(tmin.dtypes)
-print("~"*80)
-print(tmin.head())
-print("="*80)
 
-tmed.to_csv(f"{caminho_dados}tmed.csv", index = False)
-print("\n \n TEMPERATURA MÉDIA >> OK \n")
-print(tmed.info())
-print("~"*80)
-print(tmed.dtypes)
-print("~"*80)
-print(tmed.head())
-print("="*80)
+#
 
-tmax.to_csv(f"{caminho_dados}tmax.csv", index = False)
-print("\n \n TEMPERATURA MÁXIMA >> OK \n")
-print(tmax.info())
-print("~"*80)
-print(tmax.dtypes)
-print("~"*80)
-print(tmax.head())
-print("="*80)
+
+
+
+
+#
+#correlacao = geo_dados.corr(numeric_only = True)
+#sns.heatmap(correlacao, annot = True, cmap = "RdYlBu", linewidth = 0.5)
+"""
+"""
+df = pd.DataFrame(np.random.random((6, 4)), columns=list('ABCD'))
+fig, ax = plt.subplots()
+sns.heatmap(df.corr(method='pearson'), annot=True, fmt='.4f', 
+            cmap=plt.get_cmap('coolwarm'), cbar=False, ax=ax)
+ax.set_yticklabels(ax.get_yticklabels(), rotation="horizontal")
+plt.savefig('result.png', bbox_inches='tight', pad_inches=0.0)
+
+
+df = pd.DataFrame(np.random.random((6, 4)), columns=list('ABCD'))
+corr = df.corr(method='pearson')
+
+fig, ax = plt.subplots()
+data = corr.values
+heatmap = ax.pcolor(data, cmap=plt.get_cmap('coolwarm'), 
+                    vmin=np.nanmin(data), vmax=np.nanmax(data))
+ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+ax.invert_yaxis()
+row_labels = corr.index
+column_labels = corr.columns
+ax.set_xticklabels(row_labels, minor=False)
+ax.set_yticklabels(column_labels, minor=False)
+
+def _annotate_heatmap(ax, mesh):
+"""
+    #**Taken from seaborn/matrix.py**
+    #Add textual labels with the value in each cell.
+"""
+    mesh.update_scalarmappable()
+    xpos, ypos = np.meshgrid(ax.get_xticks(), ax.get_yticks())
+    for x, y, val, color in zip(xpos.flat, ypos.flat,
+                                mesh.get_array(), mesh.get_facecolors()):
+        if val is not np.ma.masked:
+            _, l, _ = colorsys.rgb_to_hls(*color[:3])
+            text_color = ".15" if l > .5 else "w"
+            val = ("{:.3f}").format(val)
+            text_kwargs = dict(color=text_color, ha="center", va="center")
+            # text_kwargs.update(self.annot_kws)
+            ax.text(x, y, val, **text_kwargs)
+
+_annotate_heatmap(ax, heatmap)
+plt.savefig('result.png', bbox_inches='tight', pad_inches=0.0)
+"""
+

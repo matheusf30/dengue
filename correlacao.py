@@ -357,3 +357,4 @@ plt.show()
 plt.savefig(f"{caminho_correlacao}CorrelaçãoSpearman_semRetroagir2014_Florianópolis.png", bbox_inches = "tight", pad_inches = 0.0)
 del corr_cidade_total
 del correlacao_base_total
+
