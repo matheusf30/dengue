@@ -76,8 +76,13 @@ print(".DTYPES \n \n", dados.dtypes)
 print("="*80)
 
 ### Visualização Gráfica
+#focos_n_nulos = dados.query("Focos >= 1")["Focos"]#[dados["Focos"] >= 1]
+#focos_m_10 = dados.query("Focos >= 10")["Focos"]
+focos_m_20 = dados.query("Focos >= 20")["Focos"]
 ax = sns.scatterplot(data = dados, x = dados["Focos"], y = dados["Temperatura Mínima"])
 sns.rugplot(data = dados, x = dados["Focos"], y = dados["Temperatura Mínima"], height = -0.02, clip_on = False)
+sns.kdeplot(data = dados, x = "Focos", y = "Temperatura Mínima")
+sns.lmplot(data = dados, x = "Focos", y = "Temperatura Mínima")
 ax.set_title("Dispersão dos Dados")
 ax.set_xlabel("Focos")
 ax.set_ylabel("Temperatura Mínima")
