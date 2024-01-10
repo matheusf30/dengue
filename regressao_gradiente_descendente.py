@@ -17,24 +17,24 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 ### Variáveis
 cidade = "Florianópolis"
 # Semanas Epidemiológicas de 2022
-
+"""
 focos = "focos22se.csv"
 casos = "casos22se.csv"
 merge = "merge22se.csv"
 tmin = "tmin22se.csv"
 tmed = "tmed22se.csv"
 tmax = "tmax22se.csv"
-
+"""
 # Semanas Epidemiológicas da Série Histórica
 # Casos já são por Semana Epimediológica
-"""
+
 casos = "casos.csv"
 focos = "focos_seSH.csv"
 merge = "merge_seSH.csv"
 tmax = "tmax_seSH.csv"
 tmed = "tmed_seSH.csv"
 tmin = "tmin_seSH.csv"
-"""
+
 ### Abrindo Arquivos
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -53,6 +53,7 @@ tmax = tmax[f"{cidade}"].copy()
 
 ### Transformação em floats de menor bits
 focos = focos.astype(np.float16)
+#focos = np.nan_to_num(focos) # ValueError: array must not contain infs or NaNs
 casos = casos.astype(np.float16)
 merge = merge.astype(np.float16)
 tmin = tmin.astype(np.float16)
@@ -79,7 +80,7 @@ print("="*80)
 ### Visualização Gráfica
 #focos_n_nulos = dados.query("Focos >= 1")["Focos"]#[dados["Focos"] >= 1]
 #focos_m_10 = dados.query("Focos >= 10")["Focos"]
-focos_m_20 = dados.query("Focos >= 20")["Focos"]
+#focos_m_20 = dados.query("Focos >= 20")["Focos"]
 ax = sns.scatterplot(data = dados, x = dados["Focos"], y = dados["Temperatura Mínima"])
 sns.rugplot(data = dados, x = dados["Focos"], y = dados["Temperatura Mínima"], height = -0.02, clip_on = False)
 sns.kdeplot(data = dados, x = "Focos", y = "Temperatura Mínima")
