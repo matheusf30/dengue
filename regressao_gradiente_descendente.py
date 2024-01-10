@@ -18,24 +18,24 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 ### Variáveis
 cidade = "Florianópolis"
 # Semanas Epidemiológicas de 2022
-"""
+
 focos = "focos22se.csv"
 casos = "casos22se.csv"
 merge = "merge22se.csv"
 tmin = "tmin22se.csv"
 tmed = "tmed22se.csv"
 tmax = "tmax22se.csv"
-"""
+
 # Semanas Epidemiológicas da Série Histórica
 # Casos já são por Semana Epimediológica
-
+"""
 casos = "casos.csv"
 focos = "focos_seSH.csv"
 merge = "merge_seSH.csv"
 tmax = "tmax_seSH.csv"
 tmed = "tmed_seSH.csv"
 tmin = "tmin_seSH.csv"
-
+"""
 ### Abrindo Arquivos
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -72,7 +72,9 @@ print(dados)
 print("~"*80)
 print(dados.info())
 print("~"*80)
-print(".DTYPES \n \n", dados.dtypes)
+print(dados.dtypes) #".DTYPES \n \n", 
+print("~"*80)
+print(dados.describe())
 print("="*80)
 
 ### Visualização Gráfica
@@ -96,3 +98,29 @@ ax_log.set_title("Dispersão dos Dados (Logarítmica)")
 ax_log.set_xlabel("Focos")
 ax_log.set_ylabel("Temperatura Mínima")
 plt.show()
+"""
+### Definindo Funções (EQM)
+def prever(x_i, theta1, theta0):
+    return x_i * theta1 + theta0
+
+def erro_quadratico_medio(previsto, y):
+    return np.array([(y_i - y_previsto) ** 2 for y_i, y_previsto in zip(y, previsto)]).mean()
+
+def minimos_quadrados(x, y):
+    theta1 = np.corrcoef(x, y)[0, 1] * (y.std()/ x.std())
+    theta0 = y.mean() - theta1 * x.mean()
+
+    return theta1, theta0
+
+theta1, theta0 = minimos_quadrados(dados["log_focos"], dados["log_temperatura_minima"])
+
+print(theta1, theta0)
+
+previstos = prever(dados["log_temperatura_minima"], theta1, theta0)
+print(erro_quadratico_medio(previstos, dados["log_focos"]))
+
+previstos = prever(dados["Temperatura Mínima"], theta1, theta0)
+print(erro_quadratico_medio(previstos, dados["Focos"]))
+"""
+#print(np.seterr())
+# https://numpy.org/doc/stable/reference/generated/numpy.seterr.html
