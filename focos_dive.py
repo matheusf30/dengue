@@ -17,15 +17,16 @@ municipios = "SC_Municipios_2022.shp"
 focosdive = pd.read_csv(f"{caminho_dados}{focosdive}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
-### Limpeza de Dados
+### Limpeza de Dados / Unindo Tabelas
 focosdive = focosdive[["Regional", "Município", "Imóvel", "Depósito", "Data da Coleta"]]
-#focosdive["Município"] = focosdive["Município"].str.upper()
-
-pontos = municipios[["NM_MUN", "geometry"]]
-pontos["municipio"] = pontos["NM_MUN"].str.upper()
+cidades = municipios[["NM_MUN", "geometry"]]
+cidades["Município"] = cidades["NM_MUN"].str.upper()
+pontos = cidades.copy()
 pontos["ponto"] = pontos["geometry"].centroid
-pontos = pontos[["municipio", "ponto"]]
-print(pontos)
+pontos = pontos[["NM_MUN", "Município", "ponto"]]
+focos_timespace = pd.merge(focosdive, pontos, on = "Município", how = "left")
+focos_timespace = pd.merge(focos_timespace, cidades, on = "Município", how = "left")
+focos_timespace = focos_timespace.drop(columns = ["NM_MUN_x", "NM_MUN_y"])
 
 ### Printando Informações
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
@@ -52,8 +53,15 @@ print("~"*80)
 print(pontos)
 print("="*80)
 
+print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE + centróide) \n")
+print(focos_timespace.info())
+print("~"*80)
+print(focos_timespace.dtypes)
+print("~"*80)
+print(focos_timespace)
+print("="*80)
+
+focos_timespace.to_csv(f"{caminho_dados}focos_timespace.csv", index = False)
+
 municipios.plot()
 plt.show()
-
-
-
