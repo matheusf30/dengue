@@ -17,6 +17,16 @@ municipios = "SC_Municipios_2022.shp"
 focosdive = pd.read_csv(f"{caminho_dados}{focosdive}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
+### Limpeza de Dados
+focosdive = focosdive[["Regional", "Município", "Imóvel", "Depósito", "Data da Coleta"]]
+#focosdive["Município"] = focosdive["Município"].str.upper()
+
+pontos = municipios[["NM_MUN", "geometry"]]
+pontos["municipio"] = pontos["NM_MUN"].str.upper()
+pontos["ponto"] = pontos["geometry"].centroid
+pontos = pontos[["municipio", "ponto"]]
+print(pontos)
+
 ### Printando Informações
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(focosdive.info())
@@ -33,22 +43,17 @@ print(municipios.dtypes)
 print("~"*80)
 print(municipios)
 print("="*80)
+
+print("\n \n MUNICÍPIOS DE SANTA CATARINA (IBGE- centróide) \n")
+print(pontos.info())
+print("~"*80)
+print(pontos.dtypes)
+print("~"*80)
+print(pontos)
+print("="*80)
+
 municipios.plot()
 plt.show()
 
 
-### Limpeza de Dados
-pontos = municipios[["CD_MUN", "NM_MUN", "geometry"]]
-pontos["municipio"] = pontos["NM_MUN"]
-#print(type(pontos))
-pontos["ponto"] = pontos["geometry"].centroid
-pontos = pontos[["CD_MUN", "municipio", "ponto"]]
-#print(type(pontos))
-pontos['latitude'] = pontos["ponto"].y
-pontos['longitude'] = pontos["ponto"].x
-# pontos['lat'] = pontos["ponto"].apply(lambda p: p.y)
-# pontos['lon'] = pontos["ponto"].apply(lambda p: p.x)
-pontos = pontos[["municipio", "latitude", "longitude"]]
-#pontos.to_csv("pontos_sc.csv")
-#print(type(pontos))
-print(pontos)
+
