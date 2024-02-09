@@ -3,6 +3,7 @@ import pandas as pd
 import geopandas as gpd
 #import matplotlib.pyplot as plt
 #import folium
+#from folium.plugins import HeatMapWithTime
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
@@ -28,14 +29,15 @@ focos_timespace = focos_timespace.sort_values(by = ["Semana"])
 focos_timespace = focos_timespace.drop(columns = ["ponto", "geometry"])
 cidades = municipios[["NM_MUN", "geometry"]]
 cidades["Município"] = cidades["NM_MUN"].str.upper()
-focos_timespace_shp = pd.merge(focos_timespace, cidades, on = "Município", how = "left")
-focos_timespace_shp = pd.merge(focos_timespace, cidades, on = "Município", how = "left")
-
+focos_timespace_poligono = pd.merge(focos_timespace, cidades, on = "Município", how = "left")
+focos_timespace_poligono = focos_timespace_poligono.drop(columns = ["NM_MUN"])
+focos_timespace_poligono.to_file(f"{caminho_dados}focos_timespace_poligono.shp") 
 pontos = cidades.copy()
 pontos["ponto"] = pontos["geometry"].centroid
 pontos = pontos[["NM_MUN", "Município", "ponto"]]
 focos_timespace_centroide = pd.merge(focos_timespace, pontos, on = "Município", how = "left")
-
+focos_timespace_centroide = focos_timespace_centroide.drop(columns = ["NM_MUN"])
+focos_timespace_centroide.to_file(f"{caminho_dados}focos_timespace_centroide.shp") 
 """
 crs = {"proj" : "latlong",
        "ellps" : "WGS84",
@@ -60,7 +62,7 @@ print(focos_timespace)
 print("="*80)
 
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE + centróide) \n")
-print("\n SHAPEFILE \n")
+print("\n POLÍGONO E MULTIPOLÍGONO \n")
 print(focos_timespace_shp.info())
 print("~"*80)
 print(focos_timespace_shp.dtypes)
