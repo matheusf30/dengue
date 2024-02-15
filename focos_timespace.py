@@ -1,9 +1,10 @@
 ### Bibliotecas Correlatas
 import pandas as pd
 import geopandas as gpd
-#import matplotlib.pyplot as plt
-#import folium
-#from folium.plugins import HeatMapWithTime
+import matplotlib.pyplot as plt
+import folium
+from folium.plugins import HeatMapWithTime
+#from IPython import display
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
@@ -33,7 +34,7 @@ focos_timespace_poligono = pd.merge(focos_timespace, cidades, on = "Município",
 focos_timespace_poligono = focos_timespace_poligono.drop(columns = ["NM_MUN"])
 #focos_timespace_poligono.to_file(f"{caminho_dados}focos_timespace_poligono.shp") 
 pontos = cidades.copy()
-pontos["ponto"] = pontos["geometry"].centroid
+pontos["ponto"] = pontos["geometry"].centroid.copy()
 pontos = pontos[["NM_MUN", "Município", "ponto"]]
 focos_timespace_centroide = pd.merge(focos_timespace, pontos, on = "Município", how = "left")
 focos_timespace_centroide = focos_timespace_centroide.drop(columns = ["NM_MUN"])
@@ -52,8 +53,14 @@ focos_timespace = focos_timespace[focos_timespace['geometry'].geom_type == 'POLY
 focos_timespace = gpd.GeoDataFrame(focos_timespace)
 #focos_timespace = gpd.GeoDataFrame(focos_timespace, geometry = "geometry")
 """
+mapa = folium.Map([-27.00, -50.00], tiles="cartodbdark_matter", zoom_start=8)
+HeatMapWithTime(focos_timespace_centroide, auto_play = True, index = focos_timespace_centroide["Semana"], speed_step=0.2).add_to(mapa)
+mapa
+mapa.save(f"{caminho_dados}focos_timespace.html")
+print(mapa)
+
 ### Exibindo Informações
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE + centróide) \n")
+print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(focos_timespace.info())
 print("~"*80)
 print(focos_timespace.dtypes)
@@ -61,6 +68,14 @@ print("~"*80)
 print(focos_timespace)
 print("="*80)
 
+print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE) \n")
+print("\n POLÍGONO \n")
+print(focos_timespace_poligono.info())
+print("~"*80)
+print(focos_timespace_poligono.dtypes)
+print("~"*80)
+print(focos_timespace_poligono)
+print("="*80)
 
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE + centróide) \n")
 print("\n CENTRÓIDE \n")
