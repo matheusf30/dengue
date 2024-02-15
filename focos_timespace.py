@@ -16,13 +16,12 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 focos_timespace = "focos_se_timespace.csv" # Semanas Epidemiológicas
 #focos_timespace = "SC_Municipios_2022.shp" # Shapefile (?)
 municipios = "SC_Municipios_2022.shp"
-focos_timespace_2 = "focos_timespace_centroide.csv"
 
 ### Abrindo Arquivo
 focos_timespace = pd.read_csv(f"{caminho_dados}{focos_timespace}")
 #focos_timespace = gpd.read_file(f"{caminho_dados}{focos_timespace}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
-focos_timespace_2 = pd.read_csv(f"{caminho_dados}{focos_timespace_2}")
+
 
 ### Convertendo e Incluindo Tipagens de Variáveis
 # Datetime64[ns]
@@ -56,10 +55,9 @@ focos_timespace_centroide = gpd.GeodataFrame(focos_timespace_centroide)
 #focos_timespace_poligono = gpd.GeoDataFrame(focos_timespace_poligono)
 #focos_timespace = gpd.GeoDataFrame(focos_timespace, geometry = "geometry")
 """
-focos_timespace_2["Semana"] = pd.to_datetime(focos_timespace_2["Semana"])
-focos_timespace_2 = focos_timespace_2.sort_values(by = ["Semana"])
+
 mapa = folium.Map([-27.00, -50.00], tiles="cartodbdark_matter", zoom_start=8)
-HeatMapWithTime(focos_timespace_2, auto_play = True, index = focos_timespace_2["Semana"], speed_step=0.2).add_to(mapa)
+HeatMapWithTime(focos_timespace, auto_play = True, index = focos_timespace["Semana"], speed_step=0.2).add_to(mapa)
 mapa
 mapa.save(f"{caminho_dados}focos_timespace.html")
 mapa.show_in_browser()
@@ -89,13 +87,4 @@ print("~"*80)
 print(focos_timespace_centroide.dtypes)
 print("~"*80)
 print(focos_timespace_centroide)
-print("="*80)
-
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
-print("\n 2 \n")
-print(focos_timespace_2.info())
-print("~"*80)
-print(focos_timespace_2.dtypes)
-print("~"*80)
-print(focos_timespace_2)
 print("="*80)
