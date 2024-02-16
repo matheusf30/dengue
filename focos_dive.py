@@ -48,16 +48,22 @@ crs = {"proj" : "latlong",
        "no_defs" : True}
 pontos = gpd.GeoDataFrame(pontos, crs = crs, geometry = )
 """
+pontos = cidades.copy()
 pontos["ponto"] = cidades["geometry"].centroid
 pontos = pontos[["NM_MUN", "Município", "ponto"]]
 focos_timespace_poligono = pd.merge(focosdive, cidades, on = "Município", how = "left") # Data de Coleta e Polígonos
 focos_timespace_centroide = pd.merge(focosdive, pontos, on = "Município", how = "left") # Data da Coleta e Centróides
 focos_timespace_se_poligono = pd.merge(focossemana, cidades, on = "Município", how = "left") # Semanas Epidemiológicas e Polígonos
-focos_timespace_se_centroide = pd.merge(focossemana, pontos, on = "Município", how = "left") # Semanas Epidemiológicas e Centróides
+focos_timespace_se_centroide = pd.merge(focossemana, pontos, on = "Município", how = "left")# Semanas Epidemiológicas e Centróides
 focos_timespace_poligono = focos_timespace_poligono.drop(columns = ["NM_MUN"])
 focos_timespace_centroide = focos_timespace_centroide.drop(columns = ["NM_MUN"])
 focos_timespace_se_poligono = focos_timespace_se_poligono.drop(columns = ["NM_MUN"])
 focos_timespace_se_centroide = focos_timespace_se_centroide.drop(columns = ["NM_MUN"])
+xy = pontos.copy()
+xy["latitude"] = cidades["geometry"].centroid.y
+xy["longitude"] = cidades["geometry"].centroid.x
+focos_timespace_xy = pd.merge(focossemana, xy, on = "Município", how = "left")
+focos_timespace_xy = focos_timespace_xy.drop(columns = ["NM_MUN", "ponto"])
 """
 ### Salvando Arquivos
 focos_timespace_poligono.to_csv(f"{caminho_dados}focos_timespace_poligono.csv", index = False) # Série Histórica e Polígonos
@@ -65,6 +71,8 @@ focos_timespace_centroide.to_csv(f"{caminho_dados}focos_timespace_centroide.csv"
 focos_timespace_se_poligono.to_csv(f"{caminho_dados}focos_timespace_se_poligono.csv", index = False) # Semanas Epidemiológicas e Polígonos
 focos_timespace_se_centroide.to_csv(f"{caminho_dados}focos_timespace_se_centroide.csv", index = False) # Semanas Epidemiológicas e Centróides
 """
+focos_timespace_xy.to_csv(f"{caminho_dados}focos_timespace_xy", index = False) # Semanas Epidemiológicas, Latitudes e Longitudes
+
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(focosdive.info())
@@ -139,6 +147,14 @@ print("~"*80)
 print(focos_timespace_se_centroide)
 print("="*80)
 
+print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (Lat/Lon) \n")
+print("\n XY - Latitude e Longitude \n")
+print(focos_timespace_xy.info())
+print("~"*80)
+print(focos_timespace_xy.dtypes)
+print("~"*80)
+print(focos_timespace_xy)
+print("="*80)
 
 """
 rows_with_nan = focos_timespace[focos_timespace.isna().any(axis=1)]
