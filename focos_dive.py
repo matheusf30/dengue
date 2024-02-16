@@ -71,7 +71,7 @@ focos_timespace_centroide.to_csv(f"{caminho_dados}focos_timespace_centroide.csv"
 focos_timespace_se_poligono.to_csv(f"{caminho_dados}focos_timespace_se_poligono.csv", index = False) # Semanas Epidemiológicas e Polígonos
 focos_timespace_se_centroide.to_csv(f"{caminho_dados}focos_timespace_se_centroide.csv", index = False) # Semanas Epidemiológicas e Centróides
 """
-focos_timespace_xy.to_csv(f"{caminho_dados}focos_timespace_xy", index = False) # Semanas Epidemiológicas, Latitudes e Longitudes
+focos_timespace_xy.to_csv(f"{caminho_dados}focos_timespace_xy.csv", index = False) # Semanas Epidemiológicas, Latitudes e Longitudes
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
