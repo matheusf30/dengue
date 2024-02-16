@@ -13,8 +13,9 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
 #focos_timespace = "focos_timespace.csv" # Data de Coleta
-focos_timespace = "focos_se_timespace.csv" # Semanas Epidemiológicas
+#focos_timespace = "focos_se_timespace.csv" # Semanas Epidemiológicas
 #focos_timespace = "SC_Municipios_2022.shp" # Shapefile (?)
+focos_timespace = "focos_timespace.csv" # Semanas Epidemiológicas, Latitudes e Longitudes
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivo
@@ -28,6 +29,8 @@ municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 focos_timespace["Semana"] = pd.to_datetime(focos_timespace["Semana"])
 focos_timespace = focos_timespace.sort_values(by = ["Semana"])
 # Geometry
+focos_timespace = gpd.GeoDataFrame(focos_timespace.poinst_from_xy(focos_timespace["longitude"], focos_timespace["latitude"]))
+"""
 focos_timespace = focos_timespace.drop(columns = ["ponto", "geometry"])
 cidades = municipios[["NM_MUN", "geometry"]]
 cidades["Município"] = cidades["NM_MUN"].str.upper()
@@ -40,7 +43,7 @@ pontos = pontos[["NM_MUN", "Município", "ponto"]]
 focos_timespace_centroide = pd.merge(focos_timespace, pontos, on = "Município", how = "left")
 focos_timespace_centroide = focos_timespace_centroide.drop(columns = ["NM_MUN"])
 focos_timespace_centroide.to_csv(f"{caminho_dados}focos_timespace_centroide.csv") 
-"""
+
 crs = {"proj" : "latlong",
        "ellps" : "WGS84",
        "datum" : "WGS84",
@@ -56,21 +59,21 @@ focos_timespace_centroide = gpd.GeodataFrame(focos_timespace_centroide)
 #focos_timespace = gpd.GeoDataFrame(focos_timespace, geometry = "geometry")
 """
 
-mapa = folium.Map([-27.00, -50.00], tiles="cartodbdark_matter", zoom_start=8)
+mapa = folium.Map([-27.50, -50.00], tiles="cartodbdark_matter", zoom_start=8)
 HeatMapWithTime(focos_timespace, auto_play = True, index = focos_timespace["Semana"], speed_step=0.2).add_to(mapa)
 mapa
 mapa.save(f"{caminho_dados}focos_timespace.html")
 mapa.show_in_browser()
 
 ### Exibindo Informações
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA EM SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS_xy_LATLON (IBGE) ")
 print(focos_timespace.info())
 print("~"*80)
 print(focos_timespace.dtypes)
 print("~"*80)
 print(focos_timespace)
 print("="*80)
-
+"""
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE) \n")
 print("\n POLÍGONO \n")
 print(focos_timespace_poligono.info())
@@ -88,3 +91,4 @@ print(focos_timespace_centroide.dtypes)
 print("~"*80)
 print(focos_timespace_centroide)
 print("="*80)
+"""
