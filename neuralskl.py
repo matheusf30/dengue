@@ -11,10 +11,10 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
 #dado = "dado_rede22.csv"
-dado = "dado_rede4cat22.csv"
+#dado = "dado_rede4cat22.csv"
 #dado = "dado_rede4cat.csv"
 #dado = "dado_rede.csv"
-#dado = "dado_rede_neural.csv"
+dado = "dado_rede_neural.csv"
 
 ### Abrindo Arquivo
 dado = pd.read_csv(f"{caminho_dados}{dado}")
@@ -31,13 +31,112 @@ print("="*80)
 
 ######################## Reformular
 
-x= dados[["principal","como_funciona","contato"]] # Variáveis Explicativas
-y= dados[["comprou"]] #Variável Dependente
+x = dado[["Focos", "Temperatura", "Precipitação", "Focos_m1", "Temperatura_m1", "Precipitação_m1", "Focos_m2", "Temperatura_m2", "Precipitação_m2", "Focos_m3", "Temperatura_m3", "Precipitação_m3", "Focos_m4", "Temperatura_m4", "Precipitação_m4"]]
+y = dado["Categoria"] 
+
+#from sklearn import *
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+SEED = 5
+np.random.seed(SEED)
+raw_treino_x, raw_teste_x, treino_y, teste_y = train_test_split(x, y, test_size = 0.25,
+                                                         stratify = y)
+
+scaler = StandardScaler()
+scaler.fit(raw_treino_x)
+treino_x = scaler.transform(raw_treino_x)
+teste_x = scaler.transform(raw_teste_x)
+
+print(f"Treinamos com {len(treino_x)} elementos e testamos com {len(teste_x)} elementos.")
+
+modelo = SVC()
+modelo.fit(treino_x, treino_y)
+previsoes = modelo.predict(teste_x)
+
+acuracia = accuracy_score(teste_y, previsoes) * 100
+print(f"A acurácia do Support Vector Classifier foi de {acuracia.round(2)}%" )
+
+from sklearn.dummy import DummyClassifier
+
+dummy = DummyClassifier(strategy='stratified')
+dummy.fit(treino_x, treino_y)
+previsoes_dummy = dummy.predict(teste_x)
+
+acuracia_dummy = accuracy_score(teste_y, previsoes_dummy) * 100
+print(f"A acurácia do Dummy Stratified foi de {acuracia_dummy.round(2)}%" )
+
+
+### ÁRVORE DE DECISÃO
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+SEED = 5
+np.random.seed(SEED)
+raw_treino_x, raw_teste_x, treino_y, teste_y = train_test_split(x, y, test_size = 0.25,
+                                                         stratify = y)
+#print(f"Treinamos com {len(treino_x)} elementos e testamos com {len(teste_x)} elementos.")
+
+modelo = DecisionTreeClassifier(max_depth = 8)
+modelo.fit(raw_treino_x, treino_y)
+previsoes = modelo.predict(raw_teste_x)
+
+acuracia = accuracy_score(teste_y, previsoes) * 100
+print(f"A acurácia da Árvore de Decisão foi de {acuracia.round(2)}%" )
+
+from sklearn.tree import export_graphviz
+#!pip install graphviz
+#!apt-get install graphviz
+import graphviz
+
+features = x.columns
+dot_data = export_graphviz(modelo, out_file = None,
+                           filled = True, rounded = True,
+                           feature_names = features)#,
+                           #class_names = dado["Categoria"].values)
+grafico = graphviz.Source(dot_data)
+grafico
+
+"""
+data_x = teste_x[:,0]
+data_y = teste_x[:,1]
+
+x_min = data_x.min()
+x_max = data_x.max()
+y_min = data_y.min()
+y_max = data_y.max()
+pixels = 100
+eixo_x = np.arange(x_min, x_max, (x_max - x_min) / pixels)
+eixo_y = np.arange(y_min, y_max, (y_max - y_min) / pixels)
+
+xx, yy = np.meshgrid(eixo_x, eixo_y)
+pontos = np.c_[xx.ravel(), yy.ravel()]
+
+Z = modelo.predict(pontos)
+Z = Z.reshape(xx.shape)
+
+import matplotlib.pyplot as plt
+
+plt.contourf(xx, yy, Z, alpha=0.3)
+plt.scatter(data_x, data_y, c=teste_y, s=1)
+
+import seaborn as sns
+
+sns.scatterplot(x = "Focos", y = "Categoria", hue = "Categoria", data = dado)
+
+sns.relplot(x = "Focos", y = "Categoria", hue = "Categoria", data = dado)#, col = "Categoria", )
+#######
 
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 seed = 20
+
 treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         random_state = seed,
                                                         test_size =0.25,
@@ -51,13 +150,6 @@ previsoes = modelo.predict(teste_x)
 
 acuracia = accuracy_score(teste_y, previsoes) * 100
 print(f"A acurácia foi {acuracia.round(2)}%")
-
-import seaborn as sns
-
-sns.scatterplot(x="horas_esperadas", y="preco", hue="finalizado", data=dados)
-
-sns.relplot(x="horas_esperadas", y="preco", hue="finalizado", col="finalizado", data=dados)
-
 
 ########
 x_min = teste_x.horas_esperadas.min()
@@ -81,60 +173,7 @@ plt.contourf(xx, yy, z, alpha = 0.2)
 plt.scatter(teste_x["horas_esperadas"], teste_x["preco"], c = teste_y, s = 1)
 
 ####################
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
 
-SEED = 5
-np.random.seed(SEED)
-raw_treino_x, raw_teste_x, treino_y, teste_y = train_test_split(x, y, test_size = 0.25,
-                                                         stratify = y)
-print(f"Treinaremos com {len(treino_x)} elementos e testaremos com {len(teste_x)} elementos.")
-
-scaler = StandardScaler()
-scaler.fit(raw_treino_x)
-treino_x = scaler.transform(raw_treino_x)
-teste_x = scaler.transform(raw_teste_x)
-
-modelo = SVC()
-modelo.fit(treino_x, treino_y)
-previsoes = modelo.predict(teste_x)
-
-acuracia = accuracy_score(teste_y, previsoes) * 100
-print(f"A acurácia foi {acuracia.round(2)}%" )
-
-data_x = teste_x[:,0]
-data_y = teste_x[:,1]
-
-x_min = data_x.min()
-x_max = data_x.max()
-y_min = data_y.min()
-y_max = data_y.max()
-
-pixels = 100
-eixo_x = np.arange(x_min, x_max, (x_max - x_min) / pixels)
-eixo_y = np.arange(y_min, y_max, (y_max - y_min) / pixels)
-
-xx, yy = np.meshgrid(eixo_x, eixo_y)
-pontos = np.c_[xx.ravel(), yy.ravel()]
-
-Z = modelo.predict(pontos)
-Z = Z.reshape(xx.shape)
-
-import matplotlib.pyplot as plt
-
-plt.contourf(xx, yy, Z, alpha=0.3)
-plt.scatter(data_x, data_y, c=teste_y, s=1)
-
-from sklearn.dummy import DummyClassifier
-
-dummy = DummyClassifier(strategy='stratified')
-dummy.fit(treino_x, treino_y)
-previsoes = dummy.predict(teste_x)
-
-acuracia = accuracy_score(teste_y, previsoes) * 100
-print(f"A acurácia do Dummy Stratified foi {acuracia.round(2)}%" )
 
 ### ÁRVORE DECISÃO
 
@@ -165,35 +204,6 @@ dot_data = export_graphviz(modelo, out_file = None)
 grafico = graphviz.Source(dot_data)
 grafico
 ###########
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
 
-SEED = 5
-np.random.seed(SEED)
-raw_treino_x, raw_teste_x, treino_y, teste_y = train_test_split(x, y, test_size = 0.25,
-                                                         stratify = y)
-print(f"Treinaremos com {len(treino_x)} elementos e testaremos com {len(teste_x)} elementos.")
-
-modelo = DecisionTreeClassifier(max_depth = 2)
-modelo.fit(raw_treino_x, treino_y)
-previsoes = modelo.predict(raw_teste_x)
-
-acuracia = accuracy_score(teste_y, previsoes) * 100
-print(f"A acurácia foi {acuracia.round(2)}%" )
-
-from sklearn.tree import export_graphviz
-!pip install graphviz
-!apt-get install graphviz
-import graphviz
-
-features = x.columns
-dot_data = export_graphviz(modelo, out_file = None,
-                           filled = True, rounded = True,
-                           feature_names = features,
-                           class_names = ["não", "sim"])
-grafico = graphviz.Source(dot_data)
-grafico
-
+"""
 
