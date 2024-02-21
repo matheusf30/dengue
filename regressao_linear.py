@@ -50,7 +50,7 @@ merge = merge[f"{cidade}"].copy()
 tmin = tmin[f"{cidade}"].copy()
 tmed = tmed[f"{cidade}"].copy()
 tmax = tmax[f"{cidade}"].copy()
-
+"""
 ### Transformação em floats de menor bits
 focos = focos.astype(np.float16)
 #focos = np.nan_to_num(focos) # ValueError: array must not contain infs or NaNs
@@ -59,7 +59,7 @@ merge = merge.astype(np.float16)
 tmin = tmin.astype(np.float16)
 tmed = tmed.astype(np.float16)
 tmax = tmax.astype(np.float16)
-
+"""
 ### Montando Tabela
 dados = pd.DataFrame()
 dados["Focos"], dados["Precipitação"], dados["Casos"] = focos, merge, casos
