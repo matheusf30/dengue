@@ -39,7 +39,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC, SVR
 from sklearn.metrics import accuracy_score
 
-SEED = 5
+SEED = 0
 np.random.seed(SEED)
 raw_treino_x, raw_teste_x, treino_y, teste_y = train_test_split(x, y, test_size = 0.25,
                                                          stratify = y)
@@ -68,6 +68,8 @@ print(previsoes)
 #ValueError: Precomputed matrix must be a square matrix. Input is a 348x15 matrix (precomputed)
 #ValueError: Expected 2D array, got 1D array instead: Reshape your data either using array.reshape(-1, 1) if your data has a single feature or array.reshape(1, -1) if it contains a single sample.
 #AttributeError: 'SVR' object has no attribute 'reshape'
+#ValueError: Found input variables with inconsistent numbers of samples: [117, 465]
+
 
 from sklearn.dummy import DummyClassifier
 
