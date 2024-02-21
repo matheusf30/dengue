@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
@@ -32,12 +31,12 @@ print("="*80)
 ######################## Reformular
 
 x = dado[["Focos", "Temperatura", "Precipitação", "Focos_m1", "Temperatura_m1", "Precipitação_m1", "Focos_m2", "Temperatura_m2", "Precipitação_m2", "Focos_m3", "Temperatura_m3", "Precipitação_m3", "Focos_m4", "Temperatura_m4", "Precipitação_m4"]]
-y = dado["Categoria"] 
+y = dado["Categoria"]
 
 #from sklearn import *
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
+from sklearn.svm import SVC, SVR
 from sklearn.metrics import accuracy_score
 
 SEED = 5
@@ -55,9 +54,20 @@ print(f"Treinamos com {len(treino_x)} elementos e testamos com {len(teste_x)} el
 modelo = SVC()
 modelo.fit(treino_x, treino_y)
 previsoes = modelo.predict(teste_x)
-
 acuracia = accuracy_score(teste_y, previsoes) * 100
 print(f"A acurácia do Support Vector Classifier foi de {acuracia.round(2)}%" )
+
+modelo = SVR(kernel = "rbf", gamma = "auto", C = 100)
+modelo.fit(treino_x, treino_y)
+previsoes = modelo.predict(teste_x)
+#acuracia = modelo.score(teste_y, previsoes) * 100
+#print(f"A acurácia do Support Vector Regression foi de {acuracia.round(2)}%" )
+print(previsoes)
+# np.array().reshape(len(dado), 1) 
+#ValueError: Classification metrics can't handle a mix of multiclass and continuous targets (sigmoid, rbf, poly)
+#ValueError: Precomputed matrix must be a square matrix. Input is a 348x15 matrix (precomputed)
+#ValueError: Expected 2D array, got 1D array instead: Reshape your data either using array.reshape(-1, 1) if your data has a single feature or array.reshape(1, -1) if it contains a single sample.
+#AttributeError: 'SVR' object has no attribute 'reshape'
 
 from sklearn.dummy import DummyClassifier
 
@@ -97,10 +107,10 @@ import graphviz
 features = x.columns
 dot_data = export_graphviz(modelo, out_file = None,
                            filled = True, rounded = True,
-                           feature_names = features)#,
-                           #class_names = dado["Categoria"].values)
+                           feature_names = features,
+                           class_names = dado["Categoria"].values.astype(str))
 grafico = graphviz.Source(dot_data)
-grafico
+grafico.render(format = "png", view=True)
 
 """
 data_x = teste_x[:,0]
@@ -130,6 +140,7 @@ import seaborn as sns
 sns.scatterplot(x = "Focos", y = "Categoria", hue = "Categoria", data = dado)
 
 sns.relplot(x = "Focos", y = "Categoria", hue = "Categoria", data = dado)#, col = "Categoria", )
+
 #######
 
 from sklearn.svm import LinearSVC
