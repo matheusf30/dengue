@@ -110,9 +110,21 @@ for kernel in kernels:
     x1d = np.array(focos).T
     x2d = np.atleast_2d(focos).T
     # Plot prior
-    plt.figure(figsize=(8, 8))
-    plt.subplot(2, 1, 1)
+    #plt.figure(figsize=(8, 8))
+    #plt.subplot(2, 1, 1)
     y_mean, y_std = gp.predict(x, return_std=True)
+    print("="*80)
+    print("\n x = np.array(focos).reshape(-1, 1).T\n", x)
+    print("="*80)
+    print("\nx1d = np.array(focos).T\n", x1d)
+    print("="*80)
+    print("\nx2d = np.atleast_2d(focos).T\n", x2d)
+    print("="*80)
+    print("\ny_mean\n", y_mean)
+    print("="*80)
+    print("\ny_std\n", y_std)
+    print("="*80)
+"""
     plt.plot(x1d, y_mean, 'k', lw=3, zorder=9)
     plt.fill_between(x, y_mean - y_std, y_mean + y_std,
                      alpha=0.2, color='k')
@@ -140,7 +152,7 @@ for kernel in kernels:
     plt.tight_layout()
 
 plt.show()
-
+"""
 """
 #raise ValueError(f"{name!r} is not 1-dimensional")
 #ValueError: 'y1' is not 1-dimensional
