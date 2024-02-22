@@ -107,7 +107,7 @@ for kernel in kernels:
 
     gp = GaussianProcessRegressor(kernel=kernel)
     # x = np.atleast_2d(focos).T
-    x = np.array(focos).T
+    x = np.array(focos).reshape(-1, 1).T
 
     # Plot prior
     plt.figure(figsize=(8, 8))
