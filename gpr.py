@@ -77,7 +77,7 @@ x = np.atleast_2d(focos).T
 print(f"\n \nARRAY BASE DO MUNICÍPIO DE {cidade.upper()} (VARIÁVEIS EXPLICATIVAS = ELEMENTOS CLIMÁTICOS) \n")
 print(y)
 print("="*80)
-print(f"\n \nARRAY BASE DO MUNICÍPIO DE {cidade.upper()} (VARIÁVEL DEPENDENTE = FOCOS) \n")
+print(f"\n \nARRAY (at_least_2D) BASE DO MUNICÍPIO DE {cidade.upper()} (VARIÁVEL DEPENDENTE = FOCOS) \n")
 print(x)
 print("="*80)
 
@@ -106,6 +106,8 @@ kernels = [1.0 * RBF(length_scale=1.0, length_scale_bounds=(1e-1, 10.0)),
 for kernel in kernels:
 
     gp = GaussianProcessRegressor(kernel=kernel)
+    # x = np.atleast_2d(focos).T
+    x = np.array(focos).T
 
     # Plot prior
     plt.figure(figsize=(8, 8))
