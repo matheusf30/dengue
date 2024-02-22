@@ -106,14 +106,14 @@ kernels = [1.0 * RBF(length_scale=1.0, length_scale_bounds=(1e-1, 10.0)),
 for kernel in kernels:
 
     gp = GaussianProcessRegressor(kernel=kernel)
-    # x = np.atleast_2d(focos).T
     x = np.array(focos).reshape(-1, 1).T
-
+    x1d = np.array(focos).T
+    x2d = np.atleast_2d(focos).T
     # Plot prior
     plt.figure(figsize=(8, 8))
     plt.subplot(2, 1, 1)
     y_mean, y_std = gp.predict(x, return_std=True)
-    plt.plot(x, y_mean, 'k', lw=3, zorder=9)
+    plt.plot(x1d, y_mean, 'k', lw=3, zorder=9)
     plt.fill_between(x, y_mean - y_std, y_mean + y_std,
                      alpha=0.2, color='k')
     y_samples = gp.sample_y(x[:, np.newaxis], 10)
