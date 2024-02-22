@@ -1,5 +1,4 @@
 ### Bibliotecas Correlatas
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -89,14 +88,47 @@ kernel = C()*RQ(length_scale = 52, alpha = 1)
 kernel = C()*Exp(length_scale = 52, periodicity = 1) * RQ(length_scale = 52, alpha = 1,
                                                           length_scale_bounds = (1e-05, 2),
                                                           alpha_bounds = (1e-05, 100000.0))
-"""
+
 kernel = C()*RBF(length_scale = 52,
                  length_scale_bounds = (1e-05, 2)) * RQ(length_scale = 1, alpha = 0.5,
                                                         length_scale_bounds = (1e-05, 2),
                                                         alpha_bounds = (1e-05, 100000.0) + Exp (length_scale = 52, periodicity = 1))
+# Kernel = A function which measures the similarity of two inputs, x and x', written as: k(x, x'|t); (t = thao)
+# where t (thao) is a vector of hyperparameters used to tune it, how the kernel measures similarity.
+# Can't just use any function. There are technical restrictions on what makes for a valid kernel.
+# Most software won't allow you to use an invalid kernel.
+# Bold face, Lower case! x and x' are vectors!
+# 1 dimensional Radial Basis Function (RBF). Similarity with Heatmap. k(x,x'|t) = s²exp(-1/2(x-x'/l)²); (s = output_scale)(l = lenght_scale)
+# Small values of the lenght scales can makes the samles wiggle more rapidly.
+# Output scale determines the scale of the y values. Incrising makes the function spin more of the y-axis.
+# Intuitively, a GP will sample functions with nearby y's for x's deemed similar by the kernel.
+# Modeling by Combining Kernels:
+# (Kernel Addition) >> kc(x,x'|tc) = ka(x,x'|ta) + kb(x,x'|tb)
+# Adding kernels corresponds to adding sampled functions.
+# (Kernel Multiplication) >> kc(x,x'|tc) = ka(x,x'|ta)kb(x,x'|tb)
+# If you multilpy to kernels can you create a sample from that by sampling from each kernel and then multiplying those sampled functions
+# Not technically. cannot be constructed by multiplying samples, but useful approximation to act as though you can.
+# The noise counts as another hyperparameter model. If it's high, the model will ignore the data. Lower, more interpolated.
+# Collect everything into matrices/vectors: X, X*, y, f, f*
+# (X = Matrix where each row is a vector input)
+# (X* = is the same thing, but for the test points)
+# (y = Vector of all our observed outputs)
+# (f = Unobserved true function outputs for all our inputs)
+# (f* = is the same thing, but for the test points)
+# Gaussian Process Assumption: y and f* are distributed as an (N+M)-dimensional multivariate Normal:
+# Then our entire dataset counts only as a partial observation of one sample from this thing.
+# The posterior distribution over f* comes from conditioning: (Bayesian Updating)
+# To produce each, a sample is drawn where y is empty and f are outputs for a large number of evenly spaced points along the x-axis.
+# Hyperparameter Selection
+# Pick t (thao) and s²e (noise variance) by maximizing the log-likelihood of y after integrating out possible f(.)'s [Integral]
+# Don't make confuse with the s (= output scale). Important hyperparameter too.
+# It's just the log density of the y vector according to some multivariate normal.
+# GPyTorch
+# The art of GPS by using neural networks to learn the kernel automatically.
 gp = GaussianProcessRegressor(kernel = kernel, n_restarts_optimizer = 4)
 gp.fit(x, y)
 y_pred_1, sigma_1 = gp.predict(x, return_std = True)
-
-
+"""
+#A previsão no Processo Gaussiano é uma distribuição, não um valor.
+# Opera acima de uma margem de domínios é é eficiente com seleção de Hiperparâmetros.
 
