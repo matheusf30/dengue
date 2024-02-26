@@ -17,6 +17,9 @@ focos_pivot = pd.pivot_table(focos_xy, index = "Semana", columns = "Município",
 registro_municipios = len(focos_xy['Município'].unique())
 ultimo_registro = focos_xy['Semana'].max()
 
+### Salvando Arquivo
+focos_pivot.to_csv(f"{caminho_dados}focos_pivot.csv", index = False)
+
 ### Exibindo Informações
 print("\n \nFOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) + Lat/Lon (IBGE) \n")
 print(focos_xy.info())
