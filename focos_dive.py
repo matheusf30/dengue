@@ -32,6 +32,7 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 ### Renomeação variáveis pelos arquivos
 focos = "focos_pivot.csv"
 cidade = "Florianópolis"
+lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
 
 ### Abrindo Arquivo
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -39,33 +40,40 @@ focos = pd.read_csv(f"{caminho_dados}{focos}")
 ### Pré-Processamento
 cidade = cidade.upper()
 cidades = focos.columns
+focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
+
+### Definindo Função
+def visualiza(cidade, focos):
+	fig = plt.figure(figsize = (15, 8))
+	eixo = fig.add_axes([0, 0, 1, 1])
+	eixo2 = fig.add_axes([0.08, 0.6, 0.55, 0.3])
+
+	eixo.plot(focos["Semana"], focos[cidade], color = "r")
+	eixo.set_xlim(datetime.datetime(2019,1,1), datetime.datetime(2022,12,4))
+	eixo.set_ylim(0, focos[cidade].max() + 50)
+	eixo.set_title(f"FOCOS DE _Aedes_ spp. EM {cidade}.", fontsize = 20, pad = 20)
+	eixo.set_ylabel("Quantidade de Focos Registrados (n)", fontsize = 16)
+	eixo.set_xlabel("Tempo (Semanas Epidemiológicas)", fontsize = 16)
+	#eixo.legend([cidade], loc = "upper left", fontsize = 14)
+	eixo.grid(True)
+
+	azul_esquerda = focos["Semana"] < datetime.datetime(2019,1,1)
+	azul_direita = focos["Semana"] > datetime.datetime(2022,12,4)
+
+	eixo2.plot(focos["Semana"], focos[cidade], color = "r")
+	eixo2.plot(focos[azul_esquerda]["Semana"], focos[azul_esquerda][cidade], color = "b")
+	eixo2.plot(focos[azul_direita]["Semana"], focos[azul_direita][cidade], color = "b")
+	eixo2.set_xlim(datetime.datetime(2012,1,1), datetime.datetime(2022,12,25))
+	eixo2.set_title(f"FOCOS DE _Aedes_ spp. EM {cidade}.", fontsize = 15)
+	eixo2.set_ylabel("Quantidade de Focos Registrados (n)", fontsize = 10)
+	eixo2.set_xlabel("Tempo (Semanas Epidemiológicas)", fontsize = 10)
+	eixo2.legend([cidade], loc = "best", fontsize = 8)
+	eixo2.grid(True)
+	plt.show()
 
 ### Visualização
-fig = plt.figure(figsize = (15, 8))
-eixo = fig.add_axes([0, 0, 1, 1])
-eixo2 = fig.add_axes([0.5, 0.65, 0.45, 0.3])
-
-eixo.plot(focos["Semana"], focos[cidade], color = "r")
-eixo.set_xlim(datetime.datetime(2020,1,1), datetime.datetime(2022,12,4))
-eixo.set_ylim(0, 600)
-eixo.set_title("Série Temporal de Temperatura no Verão de 2014 (Hemisfério Norte)", fontsize = 20, pad = 20)
-eixo.set_ylabel(f"Temperatura (K)", fontsize = 16)
-eixo.set_xlabel("Tempo (meses)", fontsize = 16)
-eixo.legend([cidade], loc = "upper left", fontsize = 14)
-eixo.grid(True)
-
-azul_esquerda = focos["Semana"] < datetime.datetime(2020,1,1)
-azul_direita = focos["Semana"] > datetime.datetime(2022,12,4)
-
-eixo2.plot(focos["Semana"], focos[cidade], color = "r")
-eixo2.plot(focos[azul_esquerda]["Semana"], focos[azul_esquerda][cidade], color = "b")
-eixo2.plot(focos[azul_direita]["Semana"], focos[azul_direita][cidade], color = "b")
-eixo2.set_xlim(datetime.datetime(2012,1,1), datetime.datetime(2022,12,25))
-eixo2.set_title("Série Temporal de Temperatura em 2014", fontsize = 15)
-eixo2.set_ylabel("Temperatura (K)", fontsize = 10)
-eixo2.set_xlabel("Tempo (meses)", fontsize = 10)
-eixo2.legend([cidade], loc = "best", fontsize = 8)
-eixo2.grid(True)
+for i in lista_cidades:
+	visualiza(i, focos)
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
