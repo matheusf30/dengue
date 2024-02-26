@@ -1,7 +1,27 @@
+"""
+AO RECEBER OS DADOS BRUTOS DA DIRETORIA DE VIGILÂNCIA EPIDEMIOLÓGICA DO ESTADO DE SANTA CATARINA, SIGA ESTE FLUXO:
+	une_focos_dive.py >> focos_timespace.py >> focos_pivot.py
+ASSIM, SERÃO GERADOS NOVOS ARQUIVOS:
+	\focos_dive_total.csv
+(Tabela "melt" com todas as informações presentes, incluindo valores faltantes.
+  8 colunas: Regional, Município, Imóvel, Depósito, Tipo de Atividade, Data de Coleta, Nº Foco, Localidade.
+Há mudança de metodologia de coleta dos dados ao longo do tempo)
+	\focos_timespace_xy.csv
+(Tabela "melt" com algumas informações presentes e nenhum dado faltante.
+  5 colunas: Semana*, Município, Focos**, Latitude***, Longitude***.)
+	\focos_pivot.csv
+(Tabela "pivot" com informações sobre focos** presentes e nenhum dado faltante.
+  x colunas: Semana*, xMunicípio.
+As colunas não estão ordenadas alfabeticamente.)
+
+*SEMPRE QUE A SEMANA FOR REFERENCIADA, DEIXAR CLARO SER SEMANA _EPIDEMIOLÓGICA_.
+**SEMPRE QUE O FOCOS [sic] FOR REFERENCIADO, DEIXAR CLARO SER QUANTIDADE DE FOCOS REGISTRADOS.
+***ESSAS COORDENADAS SÃO CENTRÓIDES DOS POLÍGONOS DE CADA MUNICÍPIO.
+""" 
 ### Bibliotecas Correlatas
 import pandas as pd
-import geopandas as gpd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
@@ -9,16 +29,13 @@ caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
-## Dados "Brutos"
-focosdive = "focos_dive_total.csv"
-municipios = "SC_Municipios_2022.shp"
+focos = "focos_pivot.csv"
 
 ### Abrindo Arquivo
-focosdive = pd.read_csv(f"{caminho_dados}{focosdive}")
-municipios = gpd.read_file(f"{caminho_dados}{municipios}")
+focos = pd.read_csv(f"{caminho_dados}{focos}")
 
 ### Limpeza e Tratamento de Dados 
-focosdive = focosdive[["Regional", "Município", "Imóvel", "Depósito", "Data da Coleta"]]
+focos = focosdive[["Regional", "Município", "Imóvel", "Depósito", "Data da Coleta"]]
 # HERVAL D`OESTE, PRESIDENTE CASTELO BRANCO, SÃO CRISTOVÃO DO SUL, GRÃO PARÁ, LAURO MULLER...
 trocanome = {
 "HERVAL D`OESTE": "HERVAL D'OESTE",
