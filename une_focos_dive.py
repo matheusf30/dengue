@@ -1,13 +1,14 @@
 ### Bibliotecas Correlatas
 import pandas as pd
 
-### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
+### Encaminhamento aos Diretórios
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
 ## Dados "Brutos"
+## Fonte: DIVE/SC
 focos202202 = "focos_dive_2022_02.csv"
 focos202201 = "focos_dive_2022_01.csv"
 focos2021 = "focos_dive_2021.csv"
@@ -34,6 +35,16 @@ focos2015 = pd.read_csv(f"{caminho_dados}{focos2015}", skiprows = 3)
 focos2014 = pd.read_csv(f"{caminho_dados}{focos2014}", skiprows = 3)
 focos2013 = pd.read_csv(f"{caminho_dados}{focos2013}", skiprows = 3)
 focos2012 = pd.read_csv(f"{caminho_dados}{focos2012}", skiprows = 3)
+
+### Pré-Processamento
+pospandemia = pd.concat([focos202202, focos202201, focos2021, focos2020], ignore_index = True)
+prepandemia = pd.concat([focos2019, focos2018, focos2017, focos2016], ignore_index = True)
+inicial = pd.concat([focos2015, focos2014, focos2013, focos2012], ignore_index = True)
+prepandemia = pd.concat([prepandemia, inicial], ignore_index= True)
+focostotal = pd.concat([pospandemia, prepandemia], ignore_index = True)
+
+### Salvando Arquivo
+focostotal.to_csv(f"{caminho_dados}focos_dive_total.csv", index = False)
 
 ### Printando Informações
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA NO SEGUNDO (02) SEMESTRE DE 2022 \n")
@@ -132,12 +143,6 @@ print("~"*80)
 print(focos2012)
 print("="*80)
 
-pospandemia = pd.concat([focos202202, focos202201, focos2021, focos2020], ignore_index = True)
-prepandemia = pd.concat([focos2019, focos2018, focos2017, focos2016], ignore_index = True)
-inicial = pd.concat([focos2015, focos2014, focos2013, focos2012], ignore_index = True)
-prepandemia = pd.concat([prepandemia, inicial], ignore_index= True)
-focostotal = pd.concat([pospandemia, prepandemia], ignore_index = True)
-
 print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA DURANTE E APÓS PANDEMIA \n")
 print(pospandemia.info())
 print("~"*80)
@@ -161,4 +166,3 @@ print(focostotal.dtypes)
 print("~"*80)
 print(focostotal)
 print("="*80)
-focostotal.to_csv(f"{caminho_dados}focos_dive_total.csv", index = False)
