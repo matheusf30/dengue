@@ -14,8 +14,9 @@ focos_xy = pd.read_csv(f"{caminho_dados}{focos_xy}")
 
 ### Pré-Processamento
 focos_pivot = pd.pivot_table(focos_xy, index = "Semana", columns = "Município", values = "Focos", fill_value = 0)
-registro_municipios = len(focos_xy['Município'].unique())
-ultimo_registro = focos_xy['Semana'].max()
+focos_pivot.reset_index(inplace = True)
+registro_municipios = len(focos_xy["Município"].unique())
+ultimo_registro = focos_xy["Semana"].max()
 
 ### Salvando Arquivo
 focos_pivot.to_csv(f"{caminho_dados}focos_pivot.csv", index = False)
