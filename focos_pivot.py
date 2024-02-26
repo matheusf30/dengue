@@ -1,7 +1,5 @@
 ### Bibliotecas Correlatas
 import pandas as pd
-import numpy as np
-#import matplotlib.pyplot as plt
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
