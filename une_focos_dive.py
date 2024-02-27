@@ -2,7 +2,7 @@
 import pandas as pd
 
 ### Encaminhamento aos Diretórios
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
