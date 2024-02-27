@@ -634,25 +634,21 @@ merge["data"] = merge["date"]
 merge["date"] = pd.to_datetime(merge["date"], infer_datetime_format = True)
 merge = merge.sort_values(by = ["date"])
 merge = merge.rename(columns = lista)
-merge.drop(columns = ["lat", "lon"], inplace = True)
 
 tmin["data"] = tmin["date"]
 tmin["date"] = pd.to_datetime(tmin["date"], infer_datetime_format = True)
 tmin = tmin.sort_values(by = ["date"])
 tmin = tmin.rename(columns = lista)
-tmin.drop(columns = ["lat", "lon"], inplace = True)
 
 tmed["data"] = tmed["date"]
 tmed["date"] = pd.to_datetime(tmed["date"], infer_datetime_format = True)
 tmed = tmed.sort_values(by = ["date"])
 tmed = tmed.rename(columns = lista)
-tmed.drop(columns = ["lat", "lon"], inplace = True)
 
 tmax["data"] = tmax["date"]
 tmax["date"] = pd.to_datetime(tmax["date"], infer_datetime_format = True)
 tmax = tmax.sort_values(by = ["date"])
 tmax = tmax.rename(columns = lista)
-tmax.drop(columns = ["lat", "lon"], inplace = True)
 
 ### Salvando Variáveis em Novos Arquivos
 #focos.to_csv(f"{caminho_dados}focos.csv", index = False) ||| ARQUIVO focos_pivot.csv está atualizado!
