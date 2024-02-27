@@ -8,7 +8,7 @@ import statsmodels as sm
 """
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
