@@ -2,7 +2,7 @@
 import pandas as pd
 
 ### Encaminhamento ao Diretório "DADOS" e "IMAGENS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
@@ -13,24 +13,16 @@ merge = "merge.csv"
 tmax = "samet_tmax.csv"
 tmed = "samet_tmed.csv"
 tmin = "samet_tmin.csv"
-"""
-dicionario = "dicionario_municipios.csv"
-lista = "lista_municipios.csv"
-variaveis = (casos, focos, tmax, tmed, tmin, merge)
-"""
-### Abrindo Arquivos
-casos = pd.read_csv(f"{caminho_dados}{casos}")
-focos = pd.read_csv(f"{caminho_dados}{focos}")
-merge = pd.read_csv(f"{caminho_dados}{merge}")
-tmax = pd.read_csv(f"{caminho_dados}{tmax}")
-tmed = pd.read_csv(f"{caminho_dados}{tmed}")
-tmin = pd.read_csv(f"{caminho_dados}{tmin}")
-"""
-dicionario = pd.read_csv(f"{caminho_dados}{dicionario}")
-lista = pd.read_csv(f"{caminho_dados}{lista}")
-"""
 
-### Dicionários
+### Abrindo Arquivos
+casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
+focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
+merge = pd.read_csv(f"{caminho_dados}{merge}", low_memory = False)
+tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
+tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
+tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
+
+### Dicionários para Troca de Nomes
 lista = {"date": "Data",
  '4200051': 'Abdon Batista',
  '4200101': 'Abelardo Luz',
@@ -507,8 +499,7 @@ dicionario = {'data_caso': 'Data',
  'Nova_Veneza': 'Nova Veneza',
  'Novo_Horizonte': 'Novo Horizonte',
  'Orleans': 'Orleans',
- 'Otacilio_Costa': 'Otacílio Costa',caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+ 'Otacilio_Costa': 'Otacílio Costa',
  'Ouro': 'Ouro',
  'Ouro_Verde': 'Ouro Verde',
  'Paial': 'Paial',
@@ -627,65 +618,51 @@ caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
  'Xaxim': 'Xaxim',
  'Zortea': 'Zortéa'}
 
+### Pré-Processamento
 ### Transformando em datetime64[ns] e Renomeando colunas
 focos["data"] = focos["data_foco"]
-focos["data_foco"] = pd.to_datetime(focos["data_foco"])
+focos["data_foco"] = pd.to_datetime(focos["data_foco"], infer_datetime_format = True)
 focos = focos.sort_values(by = ["data_foco"])
 focos = focos.rename(columns = dicionario)
 
 casos["data"] = casos["data_caso"]
-casos["data_caso"] = pd.to_datetime(casos["data_caso"])
+casos["data_caso"] = pd.to_datetime(casos["data_caso"], infer_datetime_format = True)
 casos = casos.sort_values(by = ["data_caso"])
 casos = casos.rename(columns = dicionario)
 
 merge["data"] = merge["date"]
-merge["date"] = pd.to_datetime(merge["date"])
+merge["date"] = pd.to_datetime(merge["date"], infer_datetime_format = True)
 merge = merge.sort_values(by = ["date"])
 merge = merge.rename(columns = lista)
+merge.drop(columns = ["lat", "lon"], inplace = True)
 
 tmin["data"] = tmin["date"]
-tmin["date"] = pd.to_datetime(tmin["date"])
+tmin["date"] = pd.to_datetime(tmin["date"], infer_datetime_format = True)
 tmin = tmin.sort_values(by = ["date"])
 tmin = tmin.rename(columns = lista)
+tmin.drop(columns = ["lat", "lon"], inplace = True)
 
 tmed["data"] = tmed["date"]
-tmed["date"] = pd.to_datetime(tmed["date"])
+tmed["date"] = pd.to_datetime(tmed["date"], infer_datetime_format = True)
 tmed = tmed.sort_values(by = ["date"])
 tmed = tmed.rename(columns = lista)
+tmed.drop(columns = ["lat", "lon"], inplace = True)
 
 tmax["data"] = tmax["date"]
-tmax["date"] = pd.to_datetime(tmax["date"])
+tmax["date"] = pd.to_datetime(tmax["date"], infer_datetime_format = True)
 tmax = tmax.sort_values(by = ["date"])
 tmax = tmax.rename(columns = lista)
+tmax.drop(columns = ["lat", "lon"], inplace = True)
 
-### Printando dados e informações
-print(focos.info())
-print(focos.dtypes)
-print(focos)
+### Salvando Variáveis em Novos Arquivos
+#focos.to_csv(f"{caminho_dados}focos.csv", index = False) ||| ARQUIVO focos_pivot.csv está atualizado!
+casos.to_csv(f"{caminho_dados}casos.csv", index = False)
+merge.to_csv(f"{caminho_dados}merge_novo.csv", index = False)
+tmin.to_csv(f"{caminho_dados}tmin.csv", index = False)
+tmed.to_csv(f"{caminho_dados}tmed.csv", index = False)
+tmax.to_csv(f"{caminho_dados}tmax.csv", index = False)
 
-print(casos.info())
-print(casos.dtypes)
-print(casos)
-print(casos)
-
-print(merge.info())
-print(merge.dtypes)
-print(merge)
-
-print(tmin.info())
-print(tmin.dtypes)
-print(tmin)
-
-print(tmed.info())
-print(tmed.dtypes)
-print(tmed)
-
-print(tmax.info())
-print(tmax.dtypes)
-print(tmax)
-
-### Salvando Variáveis
-focos.to_csv(f"{caminho_dados}focos.csv", index = False)
+### Exibindo Dados e Informações
 print("\n \n FOCOS DE _Aedes aegypti_ >> OK \n")
 print(focos.info())
 print("~"*80)
@@ -694,7 +671,6 @@ print("~"*80)
 print(focos.head())
 print("="*80)
 
-casos.to_csv(f"{caminho_dados}casos.csv", index = False)
 print("\n \n CASOS DE DENGUE >> OK \n")
 print(casos.info())
 print("~"*80)
@@ -703,7 +679,6 @@ print("~"*80)
 print(casos.head())
 print("="*80)
 
-merge.to_csv(f"{caminho_dados}merge_novo.csv", index = False)
 print("\n \n PRECIPITAÇÃO >> OK \n")
 print(merge.info())
 print("~"*80)
@@ -712,7 +687,6 @@ print("~"*80)
 print(merge.head())
 print("="*80)
 
-tmin.to_csv(f"{caminho_dados}tmin.csv", index = False)
 print("\n \n TEMPERATURA MÍNIMA >> OK \n")
 print(tmin.info())
 print("~"*80)
@@ -721,7 +695,6 @@ print("~"*80)
 print(tmin.head())
 print("="*80)
 
-tmed.to_csv(f"{caminho_dados}tmed.csv", index = False)
 print("\n \n TEMPERATURA MÉDIA >> OK \n")
 print(tmed.info())
 print("~"*80)
@@ -730,7 +703,6 @@ print("~"*80)
 print(tmed.head())
 print("="*80)
 
-tmax.to_csv(f"{caminho_dados}tmax.csv", index = False)
 print("\n \n TEMPERATURA MÁXIMA >> OK \n")
 print(tmax.info())
 print("~"*80)
