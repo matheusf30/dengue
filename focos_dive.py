@@ -23,6 +23,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
 import seaborn as sns
+import pymannkendall as mk
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
@@ -42,6 +43,9 @@ cidade = cidade.upper()
 cidades = focos.columns
 focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
 
+### Estatística de Tendência
+#mk = mk.original_test(focos[cidade])
+
 ### Definindo Função
 def visualiza(cidade, focos):
 	fig = plt.figure(figsize = (15, 8))
@@ -49,7 +53,7 @@ def visualiza(cidade, focos):
 	eixo2 = fig.add_axes([0.08, 0.6, 0.55, 0.3])
 
 	eixo.plot(focos["Semana"], focos[cidade], color = "r")
-	eixo.set_xlim(datetime.datetime(2019,1,1), datetime.datetime(2022,12,4))
+	eixo.set_xlim(datetime.datetime(2020,1,1), datetime.datetime(2022,12,4))
 	eixo.set_ylim(0, focos[cidade].max() + 50)
 	eixo.set_title(f"FOCOS DE _Aedes_ spp. EM {cidade}.", fontsize = 20, pad = 20)
 	eixo.set_ylabel("Quantidade de Focos Registrados (n)", fontsize = 16)
@@ -57,7 +61,7 @@ def visualiza(cidade, focos):
 	#eixo.legend([cidade], loc = "upper left", fontsize = 14)
 	eixo.grid(True)
 
-	azul_esquerda = focos["Semana"] < datetime.datetime(2019,1,1)
+	azul_esquerda = focos["Semana"] < datetime.datetime(2020,1,1)
 	azul_direita = focos["Semana"] > datetime.datetime(2022,12,4)
 
 	eixo2.plot(focos["Semana"], focos[cidade], color = "r")
@@ -71,9 +75,16 @@ def visualiza(cidade, focos):
 	eixo2.grid(True)
 	plt.show()
 
+def tendencia(cidade, focos):
+	mannkendall = mk.original_test(focos[cidade])
+	print(f"\nMANN KENDALL DE {cidade} = {mannkendall}.\n")
+
 ### Visualização
 for i in lista_cidades:
 	visualiza(i, focos)
+
+for i in lista_cidades:
+	tendencia(i, focos)
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
@@ -84,3 +95,4 @@ print("~"*80)
 print(focos)
 print("="*80)
 print(cidades)
+
