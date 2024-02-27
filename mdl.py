@@ -5,18 +5,16 @@ import datetime
 import seaborn as sns
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
 focos = "focos_pivot.csv"
-prec = "merge.csv"
-tmin = "samet_tmin.csv"
-tmed = "samet_tmed.csv"
-tmax = "samet_tmax.csv"
-cidade = "Florianópolis"
-lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
+prec = "merge_novo.csv"
+tmin = "tmin.csv"
+tmed = "tmed.csv"
+tmax = "tmax.csv"
 
 ### Abrindo Arquivo
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -26,6 +24,8 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
+cidade = "Florianópolis"
+lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
 cidade = cidade.upper()
 cidades = focos.columns
 focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
@@ -39,7 +39,7 @@ print("~"*80)
 print(focos)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n PRECIPITAÇÃO EM SANTA CATARINA - SÉRIE HISTÓRICA (MERGE) \n")
 print(prec.info())
 print("~"*80)
 print(prec.dtypes)
@@ -47,7 +47,7 @@ print("~"*80)
 print(prec)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n TEMPERATURA MÍNIMA EM SANTA CATARINA - SÉRIE HISTÓRICA (SAMeT) \n")
 print(tmin.info())
 print("~"*80)
 print(tmin.dtypes)
@@ -55,7 +55,7 @@ print("~"*80)
 print(tmin)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n TEMPERATURA MÍNIMA EM SANTA CATARINA - SÉRIE HISTÓRICA (SAMeT) \n")
 print(tmed.info())
 print("~"*80)
 print(tmed.dtypes)
@@ -63,7 +63,7 @@ print("~"*80)
 print(tmed)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n TEMPERATURA MÍNIMA EM SANTA CATARINA - SÉRIE HISTÓRICA (SAMeT) \n")
 print(tmax.info())
 print("~"*80)
 print(tmax.dtypes)
