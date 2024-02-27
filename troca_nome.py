@@ -625,10 +625,11 @@ focos["data_foco"] = pd.to_datetime(focos["data_foco"], infer_datetime_format = 
 focos = focos.sort_values(by = ["data_foco"])
 focos = focos.rename(columns = dicionario)
 
-casos["data"] = casos["data_caso"]
+casos["Semana"] = casos["data_caso"] # Porque estes dados já estão agrupados em Semanas Epidemiológicas
 casos["data_caso"] = pd.to_datetime(casos["data_caso"], infer_datetime_format = True)
 casos = casos.sort_values(by = ["data_caso"])
 casos = casos.rename(columns = dicionario)
+casos.drop(columns = "Data", inplace = True)
 
 merge["data"] = merge["date"]
 merge["data"] = pd.to_datetime(merge["date"], infer_datetime_format = True)
