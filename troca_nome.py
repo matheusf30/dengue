@@ -677,7 +677,7 @@ tmax_se.drop([0], inplace = True)
 
 ### Salvando Variáveis em Novos Arquivos
 #focos.to_csv(f"{caminho_dados}focos.csv", index = False) ||| ARQUIVO focos_pivot.csv está atualizado!
-#casos.to_csv(f"{caminho_dados}casos.csv", index = False)
+casos.to_csv(f"{caminho_dados}casos_se.csv", index = False)
 merge.to_csv(f"{caminho_dados}merge_novo.csv", index = False)
 tmin.to_csv(f"{caminho_dados}tmin.csv", index = False)
 tmed.to_csv(f"{caminho_dados}tmed.csv", index = False)
