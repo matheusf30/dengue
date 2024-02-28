@@ -128,7 +128,8 @@ y_previsto_teste = regressor.predict(teste_x)
 sns.lineplot(x = treino_x["TMIN"], y = treino_y, label = "Treino")
 sns.lineplot(x = treino_x["TMIN"], y = y_previsto[:, 0], label = "Ajuste")
 sns.lineplot(x = teste_x["TMIN"], y = teste_y, label = "Teste")
-sns.lineplot(x = teste_x["TMIN"], y = y_previsto_teste[:, 0], label = "Previsão")
+sns.lineplot(x = teste_x["TMIN
+"], y = y_previsto_teste[:, 0], label = "Previsão")
 plt.show()
 
 
