@@ -62,10 +62,13 @@ dataset.columns.name = f"{cidade}"
 SEED = np.random.seed(0)
 x = dataset.drop(columns = "FOCOS")
 y = dataset["FOCOS"]
+x = x.to_numpy()
+y = y.to_numpy()
+x = x.reshape(x.shape[0], -1)
 
 treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         random_state = SEED,
-                                                        test_size = 0.25)#,
+                                                        test_size = 0.2)#,
                                                         #stratify = y)
 
 ### Normalizando/Escalonando Dataset_x
@@ -79,17 +82,22 @@ teste_normal_x = escalonador.transform(teste_x)
 input_flatten = keras.Input(shape = treino_normal_x.shape)
 shape_input = keras.layers.Flatten()(input_flatten)
 #shape_input = keras.layers.Reshape(treino_normal_x.shape)(input_flatten)
-
-modelo = keras.Sequential([
-    #keras.layers.GlobalMaxPooling1D(input_shape = treino_normal_x.shape),
-    #keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
-    keras.layers.Flatten(input_shape = (573, 4)), #entrada. #Camada 0
-    keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
-    keras.layers.Dropout(0.2), # ~Normalização #Camada2
-    keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 3
 """
+modelo = keras.Sequential([
+    #keras.layers.GlobalMaxPooling1D(input_shape = treino_norml_x.shape),
+    #keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
+    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0
+    keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
+    keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
+    keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
+    keras.layers.Dropout(0.2), # ~Normalização (processamento) #Camada 4
+    keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
 
+modelo.compile(optimizer = "adam",
+               loss = "sparse_categorical_crossentropy",
+               metrics = ["accuracy"])
 
+"""
 regressor = keras.Sequential()
 
 regressor.add(keras.layers.Dense(treino_y.shape[0],
@@ -128,33 +136,25 @@ y_previsto_teste = regressor.predict(teste_x)
 sns.lineplot(x = treino_x["TMIN"], y = treino_y, label = "Treino")
 sns.lineplot(x = treino_x["TMIN"], y = y_previsto[:, 0], label = "Ajuste")
 sns.lineplot(x = teste_x["TMIN"], y = teste_y, label = "Teste")
-sns.lineplot(x = teste_x["TMIN
-"], y = y_previsto_teste[:, 0], label = "Previsão")
+sns.lineplot(x = teste_x["TMIN"], y = y_previsto_teste[:, 0], label = "Previsão")
 plt.show()
-
-
-
-
 """
-modelo.compile(optimizer = "adam",
-               loss = "sparse_categorical_crossentropy",
-               metrics = ["accuracy"])
+
 
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 5, validation_split = 0.2)
+valida = modelo.fit(treino_normal_x, treino_y, epochs = 50, validation_split = 0.2)
 
 ### Visualização Gráfica
 plt.plot(valida.history["accuracy"])
 plt.plot(valida.history["val_accuracy"])
-plt.title("Acurácia por Épocas (Ciclos de Treino)")
 plt.plot(valida.history["loss"])
 plt.plot(valida.history["val_loss"])
-plt.title("Perda por Épocas (Ciclos de Treino)")
-plt.xlabel("Ciclos")
+plt.title("VALIDAÇÃO DO MODELO - TREINO (CICLOS x ACURÁCIA/PERDA)")
+plt.xlabel("Ciclos de Treino (epochs)")
 plt.ylabel("Perda e Acurácia")
 plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
 plt.show()
-"""
+
 ### Exibindo Informações
 """
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
