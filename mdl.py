@@ -95,38 +95,42 @@ regressor = keras.Sequential()
 regressor.add(keras.layers.Dense(treino_y.shape[0],
                                  input_dim = 4,
                                  kernel_initializer = "random_uniform",
-                                 activation = "linear",
+                                 activation = tensorflow.nn.relu,
                                  use_bias = False))
 
 regressor.add(keras.layers.Dense(treino_y.shape[0]/2,
                                  input_dim = 4,
                                  kernel_initializer = "random_uniform",
-                                 activation = "linear",
+                                 activation = tensorflow.nn.relu,
                                  use_bias = False))
 
 regressor.add(keras.layers.Dense(treino_y.shape[0]/4,
                                  kernel_initializer = "random_uniform",
-                                 activation = "linear",
+                                 activation = tensorflow.nn.relu,
                                  use_bias = False))
 
 regressor.add(keras.layers.Dense(1,
-                                 kernel_initializer = "Ones",
-                                 activation = "linear",
+                                 kernel_initializer = "random_uniform",
+                                 activation = tensorflow.nn.relu,
                                  use_bias = False))
 
 regressor.compile(optimizer = "adam",
-                  loss = "mean_squared_error")
+                  loss = "mean_squared_error",
+                  metrics = ["accuracy"])
 
 regressor.summary()
 
-regressor.fit(treino_x, treino_y)
+regressor.fit(treino_x, treino_y, epochs = 5, validation_split = 0.2)
 
 y_previsto = regressor.predict(treino_x)
-"""
-sns.lineplot(x = treino_x[:, 0], y = treino_y, label = "Treino")
-sns.lineplot(x = treino_x[:, 0], y = y_previsto[:, 0], label = "Ajuste")
+y_previsto_teste = regressor.predict(teste_x)
+
+sns.lineplot(x = treino_x["TMIN"], y = treino_y, label = "Treino")
+sns.lineplot(x = treino_x["TMIN"], y = y_previsto[:, 0], label = "Ajuste")
+sns.lineplot(x = teste_x["TMIN"], y = teste_y, label = "Teste")
+sns.lineplot(x = teste_x["TMIN"], y = y_previsto_teste[:, 0], label = "Previsão")
 plt.show()
-"""
+
 
 
 
