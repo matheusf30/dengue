@@ -2,8 +2,8 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 #import datetime
-#import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import tensorflow
@@ -68,25 +68,69 @@ treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         test_size = 0.25)#,
                                                         #stratify = y)
 
-### Normalizando Dataset_x
-scaler = StandardScaler()
-scaler.fit(treino_x)
-treino_normal_x = scaler.transform(treino_x)
-teste_normal_x = scaler.transform(teste_x)
+### Normalizando/Escalonando Dataset_x
+escalonador = StandardScaler()
+escalonador.fit(treino_x)
+treino_normal_x = escalonador.transform(treino_x)
+teste_normal_x = escalonador.transform(teste_x)
 
 ### Instanciando e Compilando Modelo
+"""
 input_flatten = keras.Input(shape = treino_normal_x.shape)
 shape_input = keras.layers.Flatten()(input_flatten)
 #shape_input = keras.layers.Reshape(treino_normal_x.shape)(input_flatten)
 
 modelo = keras.Sequential([
     #keras.layers.GlobalMaxPooling1D(input_shape = treino_normal_x.shape),
-    keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
-    #keras.layers.Flatten(input_shape = treino_normal_x.shape), #entrada. #Camada 0
+    #keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
+    keras.layers.Flatten(input_shape = (573, 4)), #entrada. #Camada 0
     keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
     keras.layers.Dropout(0.2), # ~Normalização #Camada2
     keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 3
+"""
 
+
+regressor = keras.Sequential()
+
+regressor.add(keras.layers.Dense(treino_y.shape[0],
+                                 input_dim = 4,
+                                 kernel_initializer = "random_uniform",
+                                 activation = "linear",
+                                 use_bias = False))
+
+regressor.add(keras.layers.Dense(treino_y.shape[0]/2,
+                                 input_dim = 4,
+                                 kernel_initializer = "random_uniform",
+                                 activation = "linear",
+                                 use_bias = False))
+
+regressor.add(keras.layers.Dense(treino_y.shape[0]/4,
+                                 kernel_initializer = "random_uniform",
+                                 activation = "linear",
+                                 use_bias = False))
+
+regressor.add(keras.layers.Dense(1,
+                                 kernel_initializer = "Ones",
+                                 activation = "linear",
+                                 use_bias = False))
+
+regressor.compile(optimizer = "adam",
+                  loss = "mean_squared_error")
+
+regressor.summary()
+
+regressor.fit(treino_x, treino_y)
+
+y_previsto = regressor.predict(treino_x)
+"""
+sns.lineplot(x = treino_x[:, 0], y = treino_y, label = "Treino")
+sns.lineplot(x = treino_x[:, 0], y = y_previsto[:, 0], label = "Ajuste")
+plt.show()
+"""
+
+
+
+"""
 modelo.compile(optimizer = "adam",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
@@ -105,7 +149,7 @@ plt.xlabel("Ciclos")
 plt.ylabel("Perda e Acurácia")
 plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
 plt.show()
-
+"""
 ### Exibindo Informações
 """
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
@@ -171,8 +215,9 @@ print(f"Treinaremos com {len(treino_x)} elementos e testaremos com {len(teste_x)
 print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
-print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
 """
+print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
+
 print(prec_cidade_2012)
 print(prec.iloc[605: , :])
 print(tmin.iloc[626: , :])
