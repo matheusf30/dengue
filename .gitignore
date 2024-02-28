@@ -1,3 +1,12 @@
 teste_focos_dive.py
-*.gs
-*.sh
+produtos_operacionais_gfs.sh
+produtos_pesquisa_samet.sh
+detecta_dengue_gfs.gs		   
+detecta_dengue.gs		   
+detecta_dengue_samet.gs
+roda_geral_serie_temporal_dengue.sh
+script_cdo.gs
+script_merge.gs
+gera_serie_diaria_dengue.gs
+mapa_ptos.gs
+
