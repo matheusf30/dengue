@@ -72,6 +72,7 @@ treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         #stratify = y)
 
 ### Normalizando/Escalonando Dataset_x
+
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
@@ -88,9 +89,9 @@ modelo = keras.Sequential([
     #keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
     keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0
     keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
-    keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
+    #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
     keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
-    keras.layers.Dropout(0.2), # ~Normalização (processamento) #Camada 4
+    keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
     keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
 
 modelo.compile(optimizer = "adam",
@@ -142,8 +143,16 @@ plt.show()
 
 
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 50, validation_split = 0.2)
+valida = modelo.fit(treino_normal_x, treino_y, epochs = 4, validation_split = 0.2)
 
+testes = modelo.predict(teste_x)
+print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")#np.argmax(testes[0])
+print(f"Número de Focos do Teste: {teste_y[0]}")
+"""
+testes_modelo_salvo = modelo.predict(teste_x)
+print(f"Resultado do Teste do Modelo Salvo: {np.argmax(testes_modelo_salvo[0])}")
+print(f"Número do Teste: {teste_y[0]}")
+"""
 ### Visualização Gráfica
 plt.plot(valida.history["accuracy"])
 plt.plot(valida.history["val_accuracy"])
@@ -155,6 +164,13 @@ plt.ylabel("Perda e Acurácia")
 plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
 plt.show()
 
+### Visualização Gráfica
+sns.lineplot(x = treino_x[:, 0], y = testes[:, 0], label = "Ajuste")
+sns.lineplot(x = treino_l_x, y = teste_y, label = "Treino")
+plt.title("MODELO E PREVISÃO")
+plt.xlabel("Tempo (?)")
+plt.ylabel("Quantidade")
+plt.show()
 ### Exibindo Informações
 """
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
@@ -220,6 +236,7 @@ print(f"Treinaremos com {len(treino_x)} elementos e testaremos com {len(teste_x)
 print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
+print(treino_x.shape[1:])
 """
 print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
 
