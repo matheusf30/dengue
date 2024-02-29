@@ -98,54 +98,13 @@ modelo.compile(optimizer = "adam",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
 
-"""
-regressor = keras.Sequential()
-
-regressor.add(keras.layers.Dense(treino_y.shape[0],
-                                 input_dim = 4,
-                                 kernel_initializer = "random_uniform",
-                                 activation = tensorflow.nn.relu,
-                                 use_bias = False))
-
-regressor.add(keras.layers.Dense(treino_y.shape[0]/2,
-                                 input_dim = 4,
-                                 kernel_initializer = "random_uniform",
-                                 activation = tensorflow.nn.relu,
-                                 use_bias = False))
-
-regressor.add(keras.layers.Dense(treino_y.shape[0]/4,
-                                 kernel_initializer = "random_uniform",
-                                 activation = tensorflow.nn.relu,
-                                 use_bias = False))
-
-regressor.add(keras.layers.Dense(1,
-                                 kernel_initializer = "random_uniform",
-                                 activation = tensorflow.nn.relu,
-                                 use_bias = False))
-
-regressor.compile(optimizer = "adam",
-                  loss = "mean_squared_error",
-                  metrics = ["accuracy"])
-
-regressor.summary()
-
-regressor.fit(treino_x, treino_y, epochs = 5, validation_split = 0.2)
-
-y_previsto = regressor.predict(treino_x)
-y_previsto_teste = regressor.predict(teste_x)
-
-sns.lineplot(x = treino_x["TMIN"], y = treino_y, label = "Treino")
-sns.lineplot(x = treino_x["TMIN"], y = y_previsto[:, 0], label = "Ajuste")
-sns.lineplot(x = teste_x["TMIN"], y = teste_y, label = "Teste")
-sns.lineplot(x = teste_x["TMIN"], y = y_previsto_teste[:, 0], label = "Previsão")
-plt.show()
-"""
 
 
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 4, validation_split = 0.2)
+valida = modelo.fit(treino_normal_x, treino_y, epochs = 40, validation_split = 0.2)
 
 testes = modelo.predict(teste_x)
+
 print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")#np.argmax(testes[0])
 print(f"Número de Focos do Teste: {teste_y[0]}")
 """
@@ -163,7 +122,7 @@ plt.xlabel("Ciclos de Treino (epochs)")
 plt.ylabel("Perda e Acurácia")
 plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
 plt.show()
-
+"""
 ### Visualização Gráfica
 sns.lineplot(x = treino_x[:, 0], y = testes[:, 0], label = "Ajuste")
 sns.lineplot(x = treino_l_x, y = teste_y, label = "Treino")
@@ -171,8 +130,9 @@ plt.title("MODELO E PREVISÃO")
 plt.xlabel("Tempo (?)")
 plt.ylabel("Quantidade")
 plt.show()
+
 ### Exibindo Informações
-"""
+
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(casos.info())
 print("~"*80)
@@ -237,6 +197,7 @@ print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {t
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
 print(treino_x.shape[1:])
+print(pd.DataFrame(testes))
 """
 print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
 
