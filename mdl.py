@@ -94,12 +94,18 @@ modelo = keras.Sequential([
     keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
     keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
 
-modelo.compile(optimizer = "adam",
+#adam = keras.optimizers.Adam(learning_rate = 0.002)
+callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
+"""
+             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modelo.dhf5",
+                                             monitor = "val_loss", save_best = True)]
+"""
+modelo.compile(optimizer = "adam", #f"{adam}",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
 
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 4, validation_split = 0.2)
+valida = modelo.fit(treino_normal_x, treino_y, epochs = 40, validation_split = 0.2, callbacks = callbacks)#, batch_size = 10000)
 
 testes = modelo.predict(teste_x)
 
