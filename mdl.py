@@ -98,15 +98,14 @@ modelo.compile(optimizer = "adam",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
 
-
-
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 40, validation_split = 0.2)
+valida = modelo.fit(treino_normal_x, treino_y, epochs = 4, validation_split = 0.2)
 
 testes = modelo.predict(teste_x)
 
 print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")#np.argmax(testes[0])
 print(f"Número de Focos do Teste: {teste_y[0]}")
+print(modelo.summary())
 """
 testes_modelo_salvo = modelo.predict(teste_x)
 print(f"Resultado do Teste do Modelo Salvo: {np.argmax(testes_modelo_salvo[0])}")
