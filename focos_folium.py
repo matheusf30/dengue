@@ -7,6 +7,32 @@ import matplotlib.pyplot as plt
 #from folium.plugins import HeatMapWithTime
 ##from IPython import display
 
+### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
+caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+
+### Renomeação variáveis pelos arquivos
+focos = "focos_timespace_xy.csv"
+municipios = "SC_Municipios_2022.shp"
+
+### Abrindo Arquivo
+focos = pd.read_csv(f"{caminho_dados}{focos}")
+municipios = gpd.read_file(f"{caminho_dados}{municipios}")
+
+### Exibindo Informações
+print("\n \n FOCOS DE _Aedes_spp. EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + Lat/Lon MUNICÍPIOS DE SANTA CATARINA (IBGE) \n")
+print("\n XY - Latitude e Longitude \n")
+print(focos.info())
+print("~"*80)
+print(focos.dtypes)
+print("~"*80)
+print(focos)
+print("="*80)
+
+municipios.plot()
+plt.show()
+
 """
 ### Convertendo e Incluindo Tipagens de Variáveis
 # Datetime64[ns]
