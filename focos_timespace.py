@@ -17,7 +17,7 @@ municipios = "SC_Municipios_2022.shp"
 focosdive = pd.read_csv(f"{caminho_dados}{focosdive}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
-### Limpeza e Tratamento de Dados
+### Pré-Processamento
 ## TEMPO (Padronizando Nomes e Somando Focos Agrupados por Semanas Epidemiológicas/Municípios)
 """
 INICIANDO COM TROCA DE NOMES (CARACTÉRES, ACENTOS, TREMAS, LETRAS...)
