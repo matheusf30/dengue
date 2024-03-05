@@ -1,11 +1,10 @@
 ### Bibliotecas Correlatas
 import pandas as pd
-import plotly
-import plotly.express as px
-"""
 import folium
 from folium.plugins import HeatMapWithTime
-
+"""
+import plotly
+import plotly.express as px
 import multiprocessing
 import geopandas as gpd
 import numpy as np
@@ -49,22 +48,21 @@ dados_heatmap = []
 with multiprocessing.Pool() as pool:
     resultado = pool.starmap(focos["Semana"], heat_map(focos))        
     dados_heatmap.extend(resultado)
-
+"""
 dados_heatmap = []
 for semana in focos["Semana"]:
     for municipio in focos["Município"]:
         coordenadas = []
         for _, linha in focos.iterrows():     # _, indica que estamos ignorando o index durante a iteração
-            coordenadas.extend([[linha['latitude'], linha['longitude']]] * linha['Focos'])
+            coordenadas.extend([[linha["latitude"], linha["longitude"]]] * linha["Focos"])
         dados_heatmap.append((focos["Semana"], coordenadas))
-"""
+
 
 ### Instanciando Mapa e HeatMapWithTime
-"""
 mapa = folium.Map(location = [focos["latitude"].mean(), focos["longitude"].mean()],
-                  tiles="cartodbdark_matter", zoom_start=8)
+                  tiles = "cartodbdark_matter", zoom_start=8)
 HeatMapWithTime(dados_heatmap, auto_play = True, #index = focos["Semana"],
-                speed_step=0.2).add_to(mapa)
+                speed_step = 0.2).add_to(mapa)
 mapa
 #mapa.save(f"{caminho_dados}focos_timespace.html")
 mapa.show_in_browser()
@@ -80,4 +78,4 @@ fig = px.density_mapbox(focos, z = "Focos", radius = 10,
                         mapbox_style = "carto-positron",
                         title = "Focos de _Aedes_ spp. ao longo do tempo.")
 fig.show()
-                  
+"""           
