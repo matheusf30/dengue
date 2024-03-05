@@ -54,7 +54,28 @@ dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").c
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
+dataset["TMIN_m1"] = dataset["TMIN"].shift(-1)
+dataset["TMED_m1"] = dataset["TMED"].shift(-1)
+dataset["TMAX_m1"] = dataset["TMAX"].shift(-1)
+dataset["PREC_m1"] = dataset["PREC"].shift(-1)
+dataset["FOCOS_m1"] = dataset["FOCOS"].shift(-1)
+dataset["TMIN_m2"] = dataset["TMIN"].shift(-2)
+dataset["TMED_m2"] = dataset["TMED"].shift(-2)
+dataset["TMAX_m2"] = dataset["TMAX"].shift(-2)
+dataset["PREC_m2"] = dataset["PREC"].shift(-2)
+dataset["FOCOS_m2"] = dataset["FOCOS"].shift(-2)
+dataset["TMIN_m3"] = dataset["TMIN"].shift(-3)
+dataset["TMED_m3"] = dataset["TMED"].shift(-3)
+dataset["TMAX_m3"] = dataset["TMAX"].shift(-3)
+dataset["PREC_m3"] = dataset["PREC"].shift(-3)
+dataset["FOCOS_m3"] = dataset["FOCOS"].shift(-3)
+dataset["TMIN_m4"] = dataset["TMIN"].shift(-4)
+dataset["TMED_m4"] = dataset["TMED"].shift(-4)
+dataset["TMAX_m4"] = dataset["TMAX"].shift(-4)
+dataset["PREC_m4"] = dataset["PREC"].shift(-4)
+dataset["FOCOS_m4"] = dataset["FOCOS"].shift(-4)
 dataset.dropna(inplace = True)
+#dataset["Semana"] = pd.to_numeric(dataset["Semana"])
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
 
@@ -70,48 +91,51 @@ treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         random_state = SEED,
                                                         test_size = 0.2)#,
                                                         #stratify = y)
-
 ### Normalizando/Escalonando Dataset_x
 
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
-
+"""
+# Assuming treino_x is a 2D array with shape (num_samples, num_features)
+# Reshape treino_x to have a third dimension for the time steps
+timesteps = 1  # Assuming each sample is a single time step
+treino_x_reshaped = np.reshape(treino_x, (treino_x.shape[0], timesteps, treino_x.shape[1]))
+treino_x_reshaped = treino_x.reshape(treino_x.shape[0], 1, 1)
+#timesteps, treino_x_reshaped.shape[1]
+"""
 ### Instanciando e Compilando Modelo
-"""
-input_flatten = keras.Input(shape = treino_normal_x.shape)
-shape_input = keras.layers.Flatten()(input_flatten)
-#shape_input = keras.layers.Reshape(treino_normal_x.shape)(input_flatten)
-"""
 modelo = keras.Sequential([
-    #keras.layers.GlobalMaxPooling1D(input_shape = treino_norml_x.shape),
-    #keras.layers.UpSampling2D(size = treino_normal_x.shape, data_format = None, interpolation = "nearest"),
-    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0
+    #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
+    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
+    #keras.layers.GRU(64, input_shape = ??? ), #CAMADA 1 Unidade Recorrente Fechada
     keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
     #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
     keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
     keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
     keras.layers.Dense(len(y), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
 
-#adam = keras.optimizers.Adam(learning_rate = 0.002)
+lr_adam = keras.optimizers.Adam(learning_rate = 0.0001)
 callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
 """
              keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modelo.dhf5",
                                              monitor = "val_loss", save_best = True)]
 """
-modelo.compile(optimizer = "adam", #f"{adam}",
+modelo.compile(optimizer = lr_adam, #"adam",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
 
 ### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y, epochs = 40, validation_split = 0.2, callbacks = callbacks)#, batch_size = 10000)
-
+valida = modelo.fit(treino_normal_x, treino_y,
+                    epochs = 100, validation_split = 0.2,
+                    callbacks = callbacks)#, batch_size = 10000)
 testes = modelo.predict(teste_x)
 
 print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")#np.argmax(testes[0])
 print(f"Número de Focos do Teste: {teste_y[0]}")
 print(modelo.summary())
+"""
 print("\n PESOS[0] E VIÉSES[1] DA CAMADA 1 (dense):\n", modelo.layers[1].get_weights())
 print("~"*80)
 print("\n PESOS[0] E VIÉSES[1] DA CAMADA 2 (dense_1):\n",modelo.layers[2].get_weights())
@@ -121,11 +145,12 @@ print("~"*80)
 print("\n PESOS[0] E VIÉSES[1] DA CAMADA 4 (dense_2):\n",modelo.layers[4].get_weights())
 print("~"*80)
 print(modelo.get_config())
+
+testes_modelo_salvo = modelo.predict(teste_normal_x)
 """
-testes_modelo_salvo = modelo.predict(teste_x)
-print(f"Resultado do Teste do Modelo Salvo: {np.argmax(testes_modelo_salvo[0])}")
+print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")
 print(f"Número do Teste: {teste_y[0]}")
-"""
+
 ### Visualização Gráfica
 plt.plot(valida.history["accuracy"])
 plt.plot(valida.history["val_accuracy"])
@@ -138,11 +163,15 @@ plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_
 plt.show()
 """
 ### Visualização Gráfica
-sns.lineplot(x = treino_x[:, 0], y = testes[:, 0], label = "Ajuste")
-sns.lineplot(x = treino_l_x, y = teste_y, label = "Treino")
-plt.title("MODELO E PREVISÃO")
+df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
+df_testes = pd.DataFrame({'y': testes[:, 0]})
+df_teste_y = pd.DataFrame({'y': teste_y})
+sns.lineplot(data=df_treino_x['x'], label="Treino")
+sns.lineplot(data=df_teste_y['y'], label="Ajuste")
+sns.lineplot(data=df_testes['y'], label="Teste")
+plt.title("MODELO, AJUSTE E PREVISÃO")
 plt.xlabel("Tempo (?)")
-plt.ylabel("Quantidade")
+plt.ylabel("Quantidade (?)")
 plt.show()
 
 ### Exibindo Informações
