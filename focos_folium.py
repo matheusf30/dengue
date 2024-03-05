@@ -1,5 +1,6 @@
 ### Bibliotecas Correlatas
 import pandas as pd
+import plotly
 import plotly.express as px
 """
 import folium
@@ -37,6 +38,7 @@ print("="*80)
 ### Pré-Processamneto
 # dados_heatmap para HeatMapWithTime
 # Necessário uma tupla com (tempo, [coordenadas])
+"""
 def heat_map(dataframe):
     coordenadas = []
     for _, linha in focos.iterrows():     # _, indica que estamos ignorando o index durante a iteração
@@ -47,7 +49,7 @@ dados_heatmap = []
 with multiprocessing.Pool() as pool:
     resultado = pool.starmap(focos["Semana"], heat_map(focos))        
     dados_heatmap.extend(resultado)
-"""
+
 dados_heatmap = []
 for semana in focos["Semana"]:
     for municipio in focos["Município"]:
@@ -67,6 +69,15 @@ mapa
 #mapa.save(f"{caminho_dados}focos_timespace.html")
 mapa.show_in_browser()
 mapa.view()
-"""
-print(dados_heatmap)
 
+print(dados_heatmap)
+"""
+fig = px.density_mapbox(focos, z = "Focos", radius = 10,
+                        lat = "latitude", lon ="longitude",
+                        animation_frame = "Semana", zoom = 8,
+                        center = dict(lat = focos["latitude"].mean(),
+                                      lon = focos["longitude"].mean()),
+                        mapbox_style = "carto-positron",
+                        title = "Focos de _Aedes_ spp. ao longo do tempo.")
+fig.show()
+                  
