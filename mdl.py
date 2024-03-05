@@ -6,6 +6,8 @@ import seaborn as sns
 #import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, accuracy_score
 import tensorflow
 from tensorflow import keras
 
@@ -92,11 +94,22 @@ treino_x, teste_x, treino_y, teste_y = train_test_split(x, y,
                                                         test_size = 0.2)#,
                                                         #stratify = y)
 ### Normalizando/Escalonando Dataset_x
-
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
+
+### Instanciando e Treinando Modelo Regressor RandomForest
+modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators is the number of trees in the forest.
+modeloRF.fit(treino_normal_x, treino_y)
+
+### Testando e Avaliando
+y_previstoRF = modeloRF.predict(teste_normal_x)
+mseRF = mean_squared_error(teste_y, y_previstoRF)
+#acuraciaRF = accuracy_score(teste_y, y_previstoRF)
+print(f"Erro Quadrático Médio (Random Forest): {mseRF}")
+#print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
+
 """
 # Assuming treino_x is a 2D array with shape (num_samples, num_features)
 # Reshape treino_x to have a third dimension for the time steps
@@ -105,7 +118,7 @@ treino_x_reshaped = np.reshape(treino_x, (treino_x.shape[0], timesteps, treino_x
 treino_x_reshaped = treino_x.reshape(treino_x.shape[0], 1, 1)
 #timesteps, treino_x_reshaped.shape[1]
 """
-### Instanciando e Compilando Modelo
+### Instanciando e Compilando Modelo de Rede Neural
 modelo = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
     keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
