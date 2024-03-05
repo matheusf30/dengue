@@ -64,7 +64,6 @@ mapa = folium.Map(location = [focos["latitude"].mean(), focos["longitude"].mean(
 HeatMapWithTime(dados_heatmap, auto_play = True, speed_step = 0.2, #index = focos["Semana"],
                 gradient={0.1: 'blue', 0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 0.8: 'red', 0.99: 'purple'},
                 min_opacity=0.5, max_opacity=0.8, use_local_extrema=False).add_to(mapa)
-mapa
 mapa.save(f"{caminho_dados}focos_timespace.html")
 mapa.show_in_browser()
 #mapa.view()
