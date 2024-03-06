@@ -144,6 +144,7 @@ valida = modelo.fit(treino_normal_x, treino_y,
                     epochs = 100, validation_split = 0.2,
                     callbacks = callbacks)#, batch_size = 10000)
 testes = modelo.predict(teste_x)
+#previsoes = tensorflow.argmax(testes, axis = 1)
 
 print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")#np.argmax(testes[0])
 print(f"Número de Focos do Teste: {teste_y[0]}")
@@ -176,12 +177,13 @@ plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_
 plt.show()
 """
 ### Visualização Gráfica
-df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
-df_testes = pd.DataFrame({'y': testes[:, 0]})
-df_teste_y = pd.DataFrame({'y': teste_y})
-sns.lineplot(data=df_treino_x['x'], label="Treino")
-sns.lineplot(data=df_teste_y['y'], label="Ajuste")
-sns.lineplot(data=df_testes['y'], label="Teste")
+#df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
+#df_testes = pd.DataFrame({'y': testes[:, 0]})
+#df_teste_y = pd.DataFrame({'y': teste_y})
+sns.lineplot(x = focos["Semana"], y = pd.DataFrame(treino_x), label="Treino")
+#sns.lineplot(x = focos["Semana"], label="Ajuste")
+sns.lineplot(x = focos["Semana"], y = pd.DataFrame(testes), label = "Previsão")
+sns.lineplot(x = focos["Semana"], y = pd.DataFrame(teste_y), label = "Teste")
 plt.title("MODELO, AJUSTE E PREVISÃO")
 plt.xlabel("Tempo (?)")
 plt.ylabel("Quantidade (?)")
@@ -253,7 +255,12 @@ print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {t
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
 print(treino_x.shape[1:])
-print(pd.DataFrame(testes))
+#print(previsoes.eval())
+
+def tensor_to_array(array_value):
+    return array_value.ndarray()
+
+print(tensor_to_array(testes))
 """
 print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
 
