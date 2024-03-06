@@ -164,7 +164,7 @@ testes_modelo_salvo = modelo.predict(teste_normal_x)
 """
 print(f"Resultado do Teste do Modelo: {np.argmax(testes[0])}")
 print(f"Número do Teste: {teste_y[0]}")
-
+"""
 ### Visualização Gráfica
 plt.plot(valida.history["accuracy"])
 plt.plot(valida.history["val_accuracy"])
@@ -175,7 +175,7 @@ plt.xlabel("Ciclos de Treino (epochs)")
 plt.ylabel("Perda e Acurácia")
 plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
 plt.show()
-"""
+
 ### Visualização Gráfica
 #df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
 #df_testes = pd.DataFrame({'y': testes[:, 0]})
@@ -250,18 +250,35 @@ print(f"X: {x}.")
 print("="*80)
 print(f"Y: {y}.")
 print("="*80)
+print(treino_x.shape[1:])
 print(f"Treinaremos com {len(treino_x)} elementos e testaremos com {len(teste_x)} elementos.") # Tamanho é igual para dados normalizados
 print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
-print(treino_x.shape[1:])
-#print(previsoes.eval())
+print(testes.T.shape)
+print(type(testes))
+print(testes.T)
+print
+"""
+previsto = []
+
+for i in testes:
+    previsto.append(np.argmax(testes[i])).np.where(numbers == i)
+
+
+previsao = pd.DataFrame({"Y_teste": teste_y, 
+                         "Previsão" : previsto}) #list(modelo.predict(teste_x)).flatten()
+#print(testes.DType)
+print(previsao)
+
+
+print(previsoes.eval())
 
 def tensor_to_array(array_value):
     return array_value.ndarray()
 
 print(tensor_to_array(testes))
-"""
+
 print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
 
 print(prec_cidade_2012)
