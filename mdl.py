@@ -37,7 +37,7 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
-retroagir = 8 # Semanas Epidemiológicas
+retroagir = 1 # Semanas Epidemiológicas
 cidade = "Florianópolis"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -119,7 +119,7 @@ def lista_previsao(previsao, n, string_modelo):
     print("\n".join(lista_op))
     print("="*80)
 
-def grafico_previsao(previsao, string_modelo):
+def grafico_previsao(previsao, teste, string_modelo):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
         print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
@@ -140,9 +140,9 @@ def grafico_previsao(previsao, string_modelo):
     sns.lineplot(x = range(0, len(final)), y = final["Focos"], label = "Observado")
     sns.lineplot(x = range(0, len(final)), y = final["Previstos"], label = "Previsto")
     plt.xticks(rotation = 70)
-    plt.xlabel("Tempo (Semanas Epidemiológicas, iniciando em 01/01/2012)")
-    plt.ylabel("Quantidade (Número de Focos de _Aedes_ sp.)")
-    plt.title(f"MODELO {nome_modelo.upper()}: OBSERVAÇÃO E PREVISÃO")
+    plt.xlabel("Semanas Epidemiológicas, iniciando em 01/01/2012")
+    plt.ylabel("Número de Focos de _Aedes_ sp.")
+    plt.title(f"MODELO {nome_modelo.upper()}: OBSERVAÇÃO E PREVISÃO\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
     plt.show()
 # Gráfico de Validação do Modelo Rede Neural
     if string_modelo == "NN":  
@@ -158,7 +158,8 @@ def grafico_previsao(previsao, string_modelo):
 
 ######################################################RANDOM_FOREST############################################################
 ### Instanciando e Treinando Modelo Regressor Random Forest
-modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
+explicativas = x.columns.tolist() # feature_names = explicativas
+modeloRF = RandomForestRegressor(n_estimators = 10000, random_state = SEED) #n_estimators = número de árvores
 modeloRF.fit(treino_x, treino_y)
 
 ### Testando e Avaliando
@@ -172,11 +173,12 @@ print(f"Erro Quadrático Médio (Random Forest): {EQM_RF}")
 #validaRF = modeloRF.fit(treino_x, treino_y)
 testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
+previsoesRF = [int(p) for p in previsoesRF]
 
 ### Exibindo Informações e Gráficos
 lista_previsao(previsoesRF, 50, "RF")
-grafico_previsao(previsoesRF, "RF")
-
+grafico_previsao(previsoesRF, testesRF, "RF")
+sys.exit()
 ######################################################NEURAL_NETWORK############################################################
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
@@ -203,14 +205,14 @@ modeloNN.compile(optimizer = lr_adam, #"adam",
 valida = modeloNN.fit(treino_x, treino_y,
                       epochs = 100, validation_split = 0.2,
                       callbacks = callbacks)#, batch_size = 10000)
-testes = modeloNN.predict(teste_x)
+testesNN = modeloNN.predict(teste_x)
 #testes_normal = modeloNN.predict(teste_normal_x)
 previsoesNN = modeloNN.predict(x)
 
 ### Exibindo Informações e Gráficos
 print(modeloNN.summary())
 lista_previsao(previsoesNN, 50, "NN")
-grafico_previsao(previsoesNN, "NN")
+grafico_previsao(previsoesNN, testesNN, "NN")
 
 
 sys.exit()# <<< BREAK >>>
