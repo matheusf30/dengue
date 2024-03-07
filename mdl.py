@@ -9,7 +9,7 @@ import sys
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, accuracy_score
+from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 # Modelos
 from sklearn.ensemble import RandomForestRegressor
 import tensorflow
@@ -37,7 +37,7 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
-retroagir = 1 # Semanas Epidemiológicas
+retroagir = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -93,11 +93,11 @@ teste_normal_x = escalonador.transform(teste_x)
 print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
 print(dataset.info())
 print("~"*80)
-print(dataset.dtypes)
-print("~"*80)
+#print(dataset.dtypes)
+#print("~"*80)
 print(dataset)
-print("="*80)
-print(f"X no formato numpy.ndarray: {x_array}.")
+#print("="*80)
+#print(f"X no formato numpy.ndarray: {x_array}.")
 print("="*80)
 print(f"Treinando com {len(treino_x)} elementos e testando com {len(teste_x)} elementos.") # Tamanho é igual para dados normalizados
 print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
@@ -156,17 +156,42 @@ def grafico_previsao(previsao, teste, string_modelo):
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
         plt.show()
 
+def metricas(string_modelo, modeloNN = None):
+    if string_modelo not in ["RF", "NN"]:
+        print("!!"*80)
+        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
+        print("!!"*80)
+        sys.exit()
+    elif string_modelo == "NN":
+        if modeloNN is None:
+            print("!!"*80)
+            raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
+        else:
+            sumario = []
+            modeloNN.summary(print_fn = lambda x: sumario.append(x))
+            sumario = "\n".join(sumario)
+            print(f"\n MÉTRICAS REDE NEURAL\n \n {sumario}")
+    else:
+        print(f"""
+             \n MÉTRICAS RANDOM FOREST
+             \n Erro Quadrático Médio: {EQM_RF}
+             \n R²: {R_2}
+             \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
+              """)
+
 ######################################################RANDOM_FOREST############################################################
+
 ### Instanciando e Treinando Modelo Regressor Random Forest
 explicativas = x.columns.tolist() # feature_names = explicativas
 modeloRF = RandomForestRegressor(n_estimators = 1000, random_state = SEED) #n_estimators = número de árvores
 modeloRF.fit(treino_x, treino_y)
 
 ### Testando e Avaliando
-y_previstoRF = modeloRF.predict(teste_normal_x)
+y_previstoRF = modeloRF.predict(teste_x)
 EQM_RF = mean_squared_error(teste_y, y_previstoRF)
+RQ_EQM_RF = np.sqrt(EQM_RF)
+R_2 = r2_score(teste_y, y_previstoRF) 
 #acuraciaRF = accuracy_score(teste_y, y_previstoRF)
-print(f"Erro Quadrático Médio (Random Forest): {EQM_RF}")
 #print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
 
 ### Testando e Validando Modelo
@@ -175,11 +200,13 @@ testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
 
-### Exibindo Informações e Gráficos
-lista_previsao(previsoesRF, 50, "RF")
+### Exibindo Informações, Gráficos e Métricas
+lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
-sys.exit()
+metricas("RF")
+
 ######################################################NEURAL_NETWORK############################################################
+
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
@@ -208,17 +235,16 @@ valida = modeloNN.fit(treino_x, treino_y,
 testesNN = modeloNN.predict(teste_x)
 #testes_normal = modeloNN.predict(teste_normal_x)
 previsoesNN = modeloNN.predict(x)
+sumarioNN = modeloNN.summary()
 
-### Exibindo Informações e Gráficos
-print(modeloNN.summary())
-lista_previsao(previsoesNN, 50, "NN")
+### Exibindo Informações, Gráficos e Métricas
+lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
-
-
-sys.exit()# <<< BREAK >>>
-
+metricas("NN", modeloNN)
 
 """
+sys.exit()# <<< BREAK >>>
+
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(casos.info())
 print("~"*80)
