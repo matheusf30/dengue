@@ -1,13 +1,17 @@
 ### Bibliotecas Correlatas
+# Básicas, Gráficas e Suporte
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+import seaborn as sns 
 #import datetime
+import sys
+# Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, accuracy_score
+# Modelos
+from sklearn.ensemble import RandomForestRegressor
 import tensorflow
 from tensorflow import keras
 
@@ -35,9 +39,7 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 ### Pré-Processamento
 retroagir = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis"
-#lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
 cidade = cidade.upper()
-cidades = focos.columns#.drop(columns = "Semana", inplace = True)
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
 prec["Semana"] = pd.to_datetime(prec["Semana"])
@@ -46,6 +48,8 @@ tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
 """
 prec_cidade_2012 = prec[cidade].iloc[605: ]
+cidades = focos.columns#.drop(columns = "Semana", inplace = True)
+lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
 """
 
 ### Montando Dataset
@@ -85,56 +89,6 @@ escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
 
-### Instanciando e Treinando Modelo Regressor RandomForest
-modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators is the number of trees in the forest.
-modeloRF.fit(treino_normal_x, treino_y)
-
-### Testando e Avaliando
-y_previstoRF = modeloRF.predict(teste_normal_x)
-mseRF = mean_squared_error(teste_y, y_previstoRF)
-#acuraciaRF = accuracy_score(teste_y, y_previstoRF)
-print(f"Erro Quadrático Médio (Random Forest): {mseRF}")
-#print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
-
-"""
-# Assuming treino_x is a 2D array with shape (num_samples, num_features)
-# Reshape treino_x to have a third dimension for the time steps
-timesteps = 1  # Assuming each sample is a single time step
-treino_x_reshaped = np.reshape(treino_x, (treino_x.shape[0], timesteps, treino_x.shape[1]))
-treino_x_reshaped = treino_x.reshape(treino_x.shape[0], 1, 1)
-#timesteps, treino_x_reshaped.shape[1]
-"""
-### Instanciando e Compilando Modelo de Rede Neural
-modelo = keras.Sequential([
-    #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
-    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
-    #keras.layers.GRU(64, input_shape = ??? ), #CAMADA 1 Unidade Recorrente Fechada
-    keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
-    #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
-    keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
-    keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
-    keras.layers.Dense(len(y_array), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
-
-lr_adam = keras.optimizers.Adam(learning_rate = 0.0001)
-callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
-"""
-             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modelo.dhf5",
-                                             monitor = "val_loss", save_best = True)]
-"""
-modelo.compile(optimizer = lr_adam, #"adam",
-               loss = "sparse_categorical_crossentropy",
-               metrics = ["accuracy"])
-
-### Testando e Validando Modelo
-valida = modelo.fit(treino_normal_x, treino_y,
-                    epochs = 100, validation_split = 0.2,
-                    callbacks = callbacks)#, batch_size = 10000)
-testes = modelo.predict(teste_x)
-#testes_normal = modelo.predict(teste_normal_x)
-#previsoes = tensorflow.argmax(testes, axis = 1)
-previsoes = modelo.predict(x)
-print(treino_x.shape[1:])
-
 ### Exibindo Informações
 print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
 print(dataset.info())
@@ -145,66 +99,123 @@ print(dataset)
 print("="*80)
 print(f"X no formato numpy.ndarray: {x_array}.")
 print("="*80)
-print(previsoes.T.shape)
-print(type(previsoes))
-print(previsoes.T)
-print("="*80)
 print(f"Treinando com {len(treino_x)} elementos e testando com {len(teste_x)} elementos.") # Tamanho é igual para dados normalizados
 print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
-print(modelo.summary())
-print("="*80)
-for i in range(0,500):
-    #print(f"Resultados do Teste do Modelo: {np.argmax(testes[i])}")#np.argmax(testes[0])
-    #print(f"Números de Focos do Teste: {teste_y[i]}")
-    #print("="*80)
-    print(f"Resultados da Previsão do Modelo: {np.argmax(previsoes[i])}")
-    print(f"Números de Focos do Dataset: {dataset['FOCOS'][i]}")
+
+### Definindo Funções
+def lista_previsao(previsao, n, string_modelo):
+    if string_modelo not in ["RF", "NN"]:
+        print("!!"*80)
+        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
+        print("!!"*80)
+        sys.exit()
+    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
+    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
+    print("="*80)
+    print(f"\n{nome_modelo.upper()}\n")
+    lista_op = [f"Focos: {dataset['FOCOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
+    print("\n".join(lista_op))
     print("="*80)
 
-### Visualização Gráfica
+def grafico_previsao(previsao, string_modelo):
+    if string_modelo not in ["RF", "NN"]:
+        print("!!"*80)
+        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
+        print("!!"*80)
+        sys.exit()
+# Gráfico de Comparação entre Observação e Previsão dos Modelos
+    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
+    final = pd.DataFrame()
+    final["Semana"] = focos["Semana"]
+    final["Focos"] = focos[cidade]
+    final.drop([d for d in range(retroagir)], axis=0, inplace = True)
+    final.drop(final.index[-retroagir:], axis=0, inplace = True)
+    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
+    lista_previsao = [previsoes[v] for v in range(len(previsoes))]
+    final["Previstos"] = lista_previsao
+    print(final)
+    print("="*80)
+    sns.lineplot(x = range(0, len(final)), y = final["Focos"], label = "Observado")
+    sns.lineplot(x = range(0, len(final)), y = final["Previstos"], label = "Previsto")
+    plt.xticks(rotation = 70)
+    plt.xlabel("Tempo (Semanas Epidemiológicas, iniciando em 01/01/2012)")
+    plt.ylabel("Quantidade (Número de Focos de _Aedes_ sp.)")
+    plt.title(f"MODELO {nome_modelo.upper()}: OBSERVAÇÃO E PREVISÃO")
+    plt.show()
+# Gráfico de Validação do Modelo Rede Neural
+    if string_modelo == "NN":  
+        plt.plot(valida.history["accuracy"])
+        plt.plot(valida.history["val_accuracy"])
+        plt.plot(valida.history["loss"])
+        plt.plot(valida.history["val_loss"])
+        plt.title("VALIDAÇÃO DO MODELO - TREINO (CICLOS x ACURÁCIA/PERDA)")
+        plt.xlabel("Ciclos de Treino (epochs)")
+        plt.ylabel("Perda e Acurácia")
+        plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
+        plt.show()
+
+######################################################RANDOM_FOREST############################################################
+### Instanciando e Treinando Modelo Regressor Random Forest
+modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
+modeloRF.fit(treino_x, treino_y)
+
+### Testando e Avaliando
+y_previstoRF = modeloRF.predict(teste_normal_x)
+EQM_RF = mean_squared_error(teste_y, y_previstoRF)
+#acuraciaRF = accuracy_score(teste_y, y_previstoRF)
+print(f"Erro Quadrático Médio (Random Forest): {EQM_RF}")
+#print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
+
+### Testando e Validando Modelo
+#validaRF = modeloRF.fit(treino_x, treino_y)
+testesRF = modeloRF.predict(teste_x)
+previsoesRF = modeloRF.predict(x)
+
+### Exibindo Informações e Gráficos
+lista_previsao(previsoesRF, 50, "RF")
+grafico_previsao(previsoesRF, "RF")
+
+######################################################NEURAL_NETWORK############################################################
+### Instanciando e Compilando Modelo de Rede Neural
+modeloNN = keras.Sequential([
+    #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
+    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
+    #keras.layers.GRU(64, input_shape = ??? ), #CAMADA 1 Unidade Recorrente Fechada
+    keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
+    #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
+    keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
+    keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
+    keras.layers.Dense(len(y_array), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
+
+lr_adam = keras.optimizers.Adam(learning_rate = 0.001)
+callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
 """
-plt.plot(valida.history["accuracy"])
-plt.plot(valida.history["val_accuracy"])
-plt.plot(valida.history["loss"])
-plt.plot(valida.history["val_loss"])
-plt.title("VALIDAÇÃO DO MODELO - TREINO (CICLOS x ACURÁCIA/PERDA)")
-plt.xlabel("Ciclos de Treino (epochs)")
-plt.ylabel("Perda e Acurácia")
-plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
-plt.show()
+             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.dhf5",
+                                             monitor = "val_loss", save_best = True)]
 """
-final = pd.DataFrame()
-final["Semana"] = focos["Semana"]
-final["Focos"] = focos[cidade]
-for d in range(0, int(retroagir/2)):
-    final.drop(d, axis = 0, inplace = True)
-    for p in range(-1, -(int(retroagir/2) +1)):
-        final.drop(p, axis = 0, inplace = True)
-lista_previsoes = []
-for v in range(0, len(previsoes)):
-    lista_previsoes.append(np.argmax(previsoes[v]))
-#final["Previsões"] = lista_previsoes
-print(final)
-print(lista_previsoes)
-print(range(0, len(previsoes)))
-print(range(1, int(retroagir/2) + 1))
-print(range(-1, -(int(retroagir/2) +1)))
-"""
-#df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
-#df_testes = pd.DataFrame({'y': testes[:, 0]})
-#df_teste_y = pd.DataFrame({'y': teste_y})
-sns.lineplot(x = dataset.index, y = pd.DataFrame(treino_x), label="Treino")
-#sns.lineplot(x = dataset.index, label="Ajuste")
-sns.lineplot(x = dataset.index, y = pd.DataFrame(previsoes), label = "Previsão")
-sns.lineplot(x = dataset.index, y = pd.DataFrame(teste_y), label = "Teste")
-sns.lineplot(x = dataset.index, y = dataset["FOCOS"], label = "Observação")
-plt.title("MODELO, OBSERVAÇÃO E PREVISÃO")
-plt.xlabel("Tempo (?)")
-plt.ylabel("Quantidade (?)")
-plt.show()
-"""
+modeloNN.compile(optimizer = lr_adam, #"adam",
+               loss = "sparse_categorical_crossentropy",
+               metrics = ["accuracy"])
+
+### Testando e Validando Modelo
+valida = modeloNN.fit(treino_x, treino_y,
+                      epochs = 100, validation_split = 0.2,
+                      callbacks = callbacks)#, batch_size = 10000)
+testes = modeloNN.predict(teste_x)
+#testes_normal = modeloNN.predict(teste_normal_x)
+previsoesNN = modeloNN.predict(x)
+
+### Exibindo Informações e Gráficos
+print(modeloNN.summary())
+lista_previsao(previsoesNN, 50, "NN")
+grafico_previsao(previsoesNN, "NN")
+
+
+sys.exit()# <<< BREAK >>>
+
+
 """
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(casos.info())
@@ -254,15 +265,15 @@ print("~"*80)
 print(tmax)
 print("="*80)
 
-print("\n PESOS[0] E VIÉSES[1] DA CAMADA 1 (dense):\n", modelo.layers[1].get_weights())
+print("\n PESOS[0] E VIÉSES[1] DA CAMADA 1 (dense):\n", modeloNN.layers[1].get_weights())
 print("~"*80)
-print("\n PESOS[0] E VIÉSES[1] DA CAMADA 2 (dense_1):\n",modelo.layers[2].get_weights())
+print("\n PESOS[0] E VIÉSES[1] DA CAMADA 2 (dense_1):\n",modeloNN.layers[2].get_weights())
 print("~"*80)
-print("\n PESOS[0] E VIÉSES[1] DA CAMADA 3 (dropout):\n",modelo.layers[3].get_weights())
+print("\n PESOS[0] E VIÉSES[1] DA CAMADA 3 (dropout):\n",modeloNN.layers[3].get_weights())
 print("~"*80)
-print("\n PESOS[0] E VIÉSES[1] DA CAMADA 4 (dense_2):\n",modelo.layers[4].get_weights())
+print("\n PESOS[0] E VIÉSES[1] DA CAMADA 4 (dense_2):\n",modeloNN.layers[4].get_weights())
 print("~"*80)
-print(modelo.get_config())
+print(modeloNN.get_config())
 
 ### Visualização Gráfica
 #df_treino_x = pd.DataFrame({'x': treino_x[:, 0]})
@@ -285,7 +296,7 @@ for i in testes:
 
 
 previsao = pd.DataFrame({"Y_teste": teste_y, 
-                         "Previsão" : previsto}) #list(modelo.predict(teste_x)).flatten()
+                         "Previsão" : previsto}) #list(modeloNN.predict(teste_x)).flatten()
 #print(testes.DType)
 print(previsao)
 
@@ -298,7 +309,7 @@ def tensor_to_array(array_value):
 print(tensor_to_array(testes))
 
 print(f"keras.layers.Flatten(input_shape = x); onde x: {shape_input.shape}.")
-
+print(treino_x.shape[1:])
 print(prec_cidade_2012)
 print(prec.iloc[605: , :])
 print(tmin.iloc[626: , :])
