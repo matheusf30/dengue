@@ -159,7 +159,7 @@ def grafico_previsao(previsao, teste, string_modelo):
 ######################################################RANDOM_FOREST############################################################
 ### Instanciando e Treinando Modelo Regressor Random Forest
 explicativas = x.columns.tolist() # feature_names = explicativas
-modeloRF = RandomForestRegressor(n_estimators = 10000, random_state = SEED) #n_estimators = número de árvores
+modeloRF = RandomForestRegressor(n_estimators = 1000, random_state = SEED) #n_estimators = número de árvores
 modeloRF.fit(treino_x, treino_y)
 
 ### Testando e Avaliando
