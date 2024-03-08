@@ -18,13 +18,18 @@ import tensorflow
 from tensorflow import keras
 #from keras.models import load_model
 
-### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+### Encaminhamento aos Diretórios
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_modelos = "/home/sifapsc/scripts/matheus/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+_www = False 
+if _www == True: # _ = Variável Privada
+    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+else:
+    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
 
-### Renomeação variáveis pelos arquivos
+### Renomeação das Variáveis pelos Arquivos
 casos = "casos_se.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
@@ -41,7 +46,7 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
-retroagir = 8 # Semanas Epidemiológicas
+_retroagir = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -65,7 +70,7 @@ dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").c
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
-for r in range(1, retroagir + 1):
+for r in range(1, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -134,8 +139,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Focos"] = focos[cidade]
-    final.drop([d for d in range(retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
     final["Previstos"] = lista_previsao
