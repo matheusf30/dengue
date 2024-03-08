@@ -22,7 +22,7 @@ from tensorflow import keras
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_modelos = "/home/sifapsc/scripts/matheus/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
-_www = True 
+_www = False 
 if _www == True: # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 else:
@@ -47,7 +47,7 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis"
+cidade = "Joinville" #"Itajaí" "Joinville" "Chapecó" "Florianópolis"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
@@ -84,14 +84,18 @@ dataset.columns.name = f"{cidade}"
 SEED = np.random.seed(0)
 x = dataset.drop(columns = "FOCOS")
 y = dataset["FOCOS"]
-x_array = x.to_numpy()
-y_array = y.to_numpy()
+x_array = x.to_numpy().astype(int)
+y_array = y.to_numpy().astype(int)
 x_array = x_array.reshape(x_array.shape[0], -1)
 
 treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
                                                         random_state = SEED,
                                                         test_size = 0.2)#,
-                                                        #stratify = y)
+"""                                                        #stratify = y)
+num_classes = len(np.unique(y_array))
+print("Number of classes:", num_classes)
+print(len(y_array))
+"""
 ### Normalizando/Escalonando Dataset_x
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
