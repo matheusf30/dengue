@@ -22,7 +22,7 @@ from tensorflow import keras
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_modelos = "/home/sifapsc/scripts/matheus/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
-_www = False 
+_www = True 
 if _www == True: # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 else:
