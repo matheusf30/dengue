@@ -1,11 +1,13 @@
 ### Bibliotecas Correlatas
-# Básicas, Gráficas e Suporte
+# Básicas e Gráficas
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns 
 #import datetime
+# Suporte
 import sys
+import joblib
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -14,10 +16,12 @@ from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.ensemble import RandomForestRegressor
 import tensorflow
 from tensorflow import keras
+#from keras.models import load_model
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
 caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
+caminho_modelos = "/home/sifapsc/scripts/matheus/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
 ### Renomeação variáveis pelos arquivos
@@ -204,7 +208,14 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-
+"""
+### Salvando Modelo (e abrindo)
+# HDF5 (Hierarchical Data Format version 5) files
+# Which are used to store and organize large amounts of data.
+joblib.dump(modeloRF, f"{caminho_modelos}RF_{cidade}.h5")
+modelo = joblib.load('random_forest.h5')
+sys.exit()
+"""
 ######################################################NEURAL_NETWORK############################################################
 
 ### Instanciando e Compilando Modelo de Rede Neural
@@ -221,7 +232,7 @@ modeloNN = keras.Sequential([
 lr_adam = keras.optimizers.Adam(learning_rate = 0.001)
 callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
 """
-             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.dhf5",
+             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.h5",
                                              monitor = "val_loss", save_best = True)]
 """
 modeloNN.compile(optimizer = lr_adam, #"adam",
@@ -241,9 +252,16 @@ sumarioNN = modeloNN.summary()
 lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
-
 """
+### Salvando Modelo (e abrindo)
+model.save(modeloRF, f"{caminho_modelos}NN_{cidade}.h5")
+#modelo = joblib.load('keras_neural_network.hdf5')
+modelo = load_model('keras_neural_net.h5')
+
+
 sys.exit()# <<< BREAK >>>
+
+
 
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(casos.info())
