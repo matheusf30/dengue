@@ -47,7 +47,7 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Joinville" #"Itajaí" "Joinville" "Chapecó" "Florianópolis"
+cidade = "Florianópolis" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
