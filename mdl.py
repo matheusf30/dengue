@@ -226,6 +226,7 @@ modelo = joblib.load('random_forest.h5')
 sys.exit()
 """
 ######################################################NEURAL_NETWORK############################################################
+# https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
 
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
