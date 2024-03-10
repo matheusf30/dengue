@@ -70,7 +70,15 @@ dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").c
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
-
+"""
+# FLORIANÓPOLIS retroagindo 8se
+# R² = 0.65 for r in range(1, _retroagir + 1) Bem ajustado ao tempo cronológico
+# R² = 0,67 for r in range(4, _retroagir + 1, 2) Apresenta leve atraso no tempo cronológico
+# R² = 0,52 for r in range(2, _retroagir + 1, 4) Apresenta certo atraso no tempo cronológico
+# JOINVILLE retroagindo 8se
+# R² = 0.69 for r in range(1, _retroagir + 1)
+# R² = 0,67 for r in range(1, _retroagir + 1, 2) Pequeno atraso no tempo cronológico
+# R² = 0,66 for r in range(2, _retroagir + 1, 4) Apresenta certo atraso no tempo cronológico
 for r in range(1, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
@@ -78,13 +86,24 @@ for r in range(1, _retroagir + 1):
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 """
-for r in range(4, _retroagir + 1, 2):
+# FLORIANÓPOLIS retroagindo 8se
+# R² = 0.72 for r in range(4, _retroagir + 1)
+# R² = 0,60 for r in range(4, _retroagir + 1, 2)
+# R² = 0,50 for r in range(2, _retroagir + 1, 2) Apresenta certo atraso no tempo cronológico
+# R² = 0,498 for r in range(2, _retroagir + 1) Embora pareça que acompanha no tempo cronológico
+# JOINVILLE retroagindo 8se
+# R² = 0.77 for r in range(4, _retroagir + 1)
+# R² = 0,63 for r in range(4, _retroagir + 1, 2)
+# R² = 0,79 for r in range(2, _retroagir + 1, 2) Apresenta certo atraso no tempo cronológico
+# R² = 0,64 for r in range(2, _retroagir + 1) Parece que acompanha melhor o tempo cronológico
+for r in range(4, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-"""
+dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
@@ -155,8 +174,12 @@ def grafico_previsao(previsao, teste, string_modelo):
     final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
     final.drop(final.index[-_retroagir:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
+    """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
     final["Previstos"] = lista_previsao
+    """
+    previsoes = previsoes[:len(final)]
+    final["Previstos"] = previsoes
     print(final)
     print("="*80)
     sns.lineplot(x = range(0, len(final)), y = final["Focos"], label = "Observado")
