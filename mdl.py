@@ -70,12 +70,21 @@ dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").c
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
+
 for r in range(1, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+"""
+for r in range(4, _retroagir + 1, 2):
+    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+"""
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
@@ -196,7 +205,7 @@ def metricas(string_modelo, modeloNN = None):
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
 explicativas = x.columns.tolist() # feature_names = explicativas
-modeloRF = RandomForestRegressor(n_estimators = 1000, random_state = SEED) #n_estimators = número de árvores
+modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
 modeloRF.fit(treino_x, treino_y)
 
 ### Testando e Avaliando
@@ -223,8 +232,9 @@ metricas("RF")
 # Which are used to store and organize large amounts of data.
 joblib.dump(modeloRF, f"{caminho_modelos}RF_{cidade}.h5")
 modelo = joblib.load('random_forest.h5')
-sys.exit()
 """
+sys.exit()
+
 ######################################################NEURAL_NETWORK############################################################
 
 ### Instanciando e Compilando Modelo de Rede Neural
@@ -232,13 +242,13 @@ modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
     keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
     #keras.layers.GRU(64, input_shape = ??? ), #CAMADA 1 Unidade Recorrente Fechada
-    keras.layers.Dense(256, activation = tensorflow.nn.relu), #processamento. #Camada 1
+    keras.layers.Dense(10, activation = tensorflow.nn.relu), #processamento. #Camada 1
     #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
-    keras.layers.Dense(64, activation = tensorflow.nn.relu), #processamento. #Camada 3
-    keras.layers.Dropout(0.3), # ~Normalização (processamento) #Camada 4
+    keras.layers.Dense(10, activation = tensorflow.nn.relu), #processamento. #Camada 3
+    keras.layers.Dropout(0.2), # ~Normalização (processamento) #Camada 4
     keras.layers.Dense(len(y_array), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
 
-lr_adam = keras.optimizers.Adam(learning_rate = 0.001)
+lr_adam = keras.optimizers.Adam(learning_rate = 0.01)
 callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
 """
              keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.h5",
