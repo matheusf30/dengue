@@ -220,7 +220,7 @@ def metricas(string_modelo, modeloNN = None):
         print(f"""
              \n MÉTRICAS RANDOM FOREST
              \n Erro Quadrático Médio: {EQM_RF}
-             \n R²: {R_2}
+             \n Coeficiente de Determinação (R²): {R_2}
              \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
               """)
 
