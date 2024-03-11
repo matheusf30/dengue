@@ -9,6 +9,7 @@ import seaborn as sns
 import os
 import sys
 import joblib
+import webbrowser
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -296,9 +297,18 @@ HeatMapWithTime(dados_heatmap, auto_play = True, speed_step = 0.2, #index = foco
                             0.8: "red", 0.99: "purple"},
                 min_opacity = 0.5, max_opacity = 0.8,# use_local_extrema = False,
                 index = previsao_melt["Semana"].astype(str)).add_to(mapa)
-#mapa.save(f"{caminho_dados}focos_previstos.html")
-mapa.show_in_browser()
+mapa.save(f"{caminho_dados}focos_previstos.html")
+#mapa.show_in_browser()
+webbrowser.open(f"file://{caminho_dados}focos_previstos.html")
 """
+import os
+import webbrowser
+filepath = 'C:/whatever/map.html'
+m = folium.Map()
+m.save(filepath)
+webbrowser.open('file://' + filepath)
+
+
 ### Salvando Modelo (e abrindo)
 # HDF5 (Hierarchical Data Format version 5) files
 # Which are used to store and organize large amounts of data.
