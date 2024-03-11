@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 #import datetime
 # Suporte
+import os
 import sys
 import joblib
 # Pré-Processamento e Validações
@@ -180,14 +181,16 @@ def grafico_previsao(previsao, teste, string_modelo):
     """
     previsoes = previsoes[:len(final)]
     final["Previstos"] = previsoes
+    final["Semana"] = pd.to_datetime(final["Semana"])
     print(final)
     print("="*80)
-    sns.lineplot(x = range(0, len(final)), y = final["Focos"], label = "Observado")
-    sns.lineplot(x = range(0, len(final)), y = final["Previstos"], label = "Previsto")
-    plt.xticks(rotation = 70)
-    plt.xlabel("Semanas Epidemiológicas, iniciando em 01/01/2012")
+    sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
+                 color = "black", linewidth = 0.75, label = "Observado")
+    sns.lineplot(x = final["Semana"], y = final["Previstos"],
+                 color = "darkgray", alpha = 0.75, linewidth = 3, label = "Previsto")
+    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+    plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
-    plt.title(f"MODELO {nome_modelo.upper()}: OBSERVAÇÃO E PREVISÃO\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
     plt.show()
 # Gráfico de Validação do Modelo Rede Neural
     if string_modelo == "NN":  
@@ -235,7 +238,7 @@ modeloRF.fit(treino_x, treino_y)
 y_previstoRF = modeloRF.predict(teste_x)
 EQM_RF = mean_squared_error(teste_y, y_previstoRF)
 RQ_EQM_RF = np.sqrt(EQM_RF)
-R_2 = r2_score(teste_y, y_previstoRF) 
+R_2 = r2_score(teste_y, y_previstoRF).round(2) 
 #acuraciaRF = accuracy_score(teste_y, y_previstoRF)
 #print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
 
@@ -249,12 +252,14 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
+print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 """
 ### Salvando Modelo (e abrindo)
 # HDF5 (Hierarchical Data Format version 5) files
 # Which are used to store and organize large amounts of data.
-joblib.dump(modeloRF, f"{caminho_modelos}RF_{cidade}.h5")
-modelo = joblib.load('random_forest.h5')
+os.makedirs(caminho_modelos, exist_ok=True)
+joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}_{R_2}.h5")
+#modelo = joblib.load('random_forest.h5')
 """
 sys.exit()
 
