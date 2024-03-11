@@ -21,7 +21,7 @@ from tensorflow import keras
 
 ### Encaminhamento aos Diretórios
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_modelos = "/home/sifapsc/scripts/matheus/modelos/"
+caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 _www = False 
 if _www == True: # _ = Variável Privada
@@ -48,7 +48,7 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages"
+cidade = "Itá" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
@@ -72,11 +72,11 @@ dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
 """
-# FLORIANÓPOLIS retroagindo 8se
+# FLORIANÓPOLIS retroagindo 4se
 # R² = 0.65 for r in range(1, _retroagir + 1) Bem ajustado ao tempo cronológico
-# R² = 0,67 for r in range(4, _retroagir + 1, 2) Apresenta leve atraso no tempo cronológico
+# R² = 0,67 for r in range(1, _retroagir + 1, 2) Apresenta leve atraso no tempo cronológico
 # R² = 0,52 for r in range(2, _retroagir + 1, 4) Apresenta certo atraso no tempo cronológico
-# JOINVILLE retroagindo 8se
+# JOINVILLE retroagindo 4se
 # R² = 0.69 for r in range(1, _retroagir + 1)
 # R² = 0,67 for r in range(1, _retroagir + 1, 2) Pequeno atraso no tempo cronológico
 # R² = 0,66 for r in range(2, _retroagir + 1, 4) Apresenta certo atraso no tempo cronológico
@@ -97,7 +97,7 @@ for r in range(1, _retroagir + 1):
 # R² = 0,63 for r in range(4, _retroagir + 1, 2)
 # R² = 0,79 for r in range(2, _retroagir + 1, 2) Apresenta certo atraso no tempo cronológico
 # R² = 0,64 for r in range(2, _retroagir + 1) Parece que acompanha melhor o tempo cronológico
-for r in range(4, _retroagir + 1):
+for r in range(5, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -167,7 +167,7 @@ def grafico_previsao(previsao, teste, string_modelo):
         print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
         print("!!"*80)
         sys.exit()
-# Gráfico de Comparação entre Observação e Previsão dos Modelos
+    # Gráfico de Comparação entre Observação e Previsão dos Modelos
     nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
@@ -185,14 +185,14 @@ def grafico_previsao(previsao, teste, string_modelo):
     print(final)
     print("="*80)
     sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
-                 color = "black", linewidth = 0.75, label = "Observado")
+                 color = "darkblue", linewidth = 1, label = "Observado")
     sns.lineplot(x = final["Semana"], y = final["Previstos"],
-                 color = "darkgray", alpha = 0.75, linewidth = 3, label = "Previsto")
+                 color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
     plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
     plt.show()
-# Gráfico de Validação do Modelo Rede Neural
+    # Gráfico de Validação do Modelo Rede Neural
     if string_modelo == "NN":  
         plt.plot(valida.history["accuracy"])
         plt.plot(valida.history["val_accuracy"])
@@ -253,14 +253,14 @@ lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-"""
+
 ### Salvando Modelo (e abrindo)
 # HDF5 (Hierarchical Data Format version 5) files
 # Which are used to store and organize large amounts of data.
 os.makedirs(caminho_modelos, exist_ok=True)
-joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}_{R_2}.h5")
+joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 #modelo = joblib.load('random_forest.h5')
-"""
+
 sys.exit()
 
 ######################################################NEURAL_NETWORK############################################################
@@ -300,6 +300,8 @@ sumarioNN = modeloNN.summary()
 lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
+
+
 """
 ### Salvando Modelo (e abrindo)
 model.save(modeloRF, f"{caminho_modelos}NN_{cidade}.h5")
