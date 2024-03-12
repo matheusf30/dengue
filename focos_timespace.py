@@ -54,6 +54,8 @@ xy["latitude"] = cidades["geometry"].centroid.y
 xy["longitude"] = cidades["geometry"].centroid.x
 focos_timespace_xy = pd.merge(focossemana, xy, on = "Município", how = "left")
 focos_timespace_xy = focos_timespace_xy.drop(columns = ["NM_MUN", "ponto"])
+### Municípios, Lat, Lon
+unicos_xy = focos_timespace_xy.drop_duplicates(subset = ["Município"])
 """
 focos_timespace_poligono = pd.merge(focosdive, cidades, on = "Município", how = "left") # Data de Coleta e Polígonos
 focos_timespace_centroide = pd.merge(focosdive, pontos, on = "Município", how = "left") # Data da Coleta e Centróides
@@ -66,6 +68,7 @@ focos_timespace_se_centroide = focos_timespace_se_centroide.drop(columns = ["NM_
 """
 ### Salvando Arquivos
 focos_timespace_xy.to_csv(f"{caminho_dados}focos_timespace_xy.csv", index = False) # Semanas Epidemiológicas, Latitudes e Longitudes
+unicos_xy.to_csv(f"{caminho_dados}unicos_xy.csv", index = False) # Primeiro Registro do Município
 """
 focos_timespace_poligono.to_csv(f"{caminho_dados}focos_timespace_poligono.csv", index = False) # Série Histórica e Polígonos
 focos_timespace_centroide.to_csv(f"{caminho_dados}focos_timespace_centroide.csv", index = False) # Série Histórica e Centróides
@@ -73,7 +76,7 @@ focos_timespace_se_poligono.to_csv(f"{caminho_dados}focos_timespace_se_poligono.
 focos_timespace_se_centroide.to_csv(f"{caminho_dados}focos_timespace_se_centroide.csv", index = False) # Semanas Epidemiológicas e Centróides
 """
 ### Exibindo Informações
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
+print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(focosdive.info())
 print("~"*80)
 print(focosdive.dtypes)
@@ -89,7 +92,7 @@ print("~"*80)
 print(cidades)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) SEMANAS EPIDEMIOLÓGICAS \n")
+print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) SEMANAS EPIDEMIOLÓGICAS \n")
 print(focossemana.info())
 print("~"*80)
 print(focossemana.dtypes)
@@ -97,8 +100,8 @@ print("~"*80)
 print(focossemana)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (Lat/Lon) \n")
-print("\n XY - Latitude e Longitude \n")
+print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (Lat/Lon) \n")
+print("\n XY - Latitude e Longitude (IBGE)\n")
 print(focos_timespace_xy.info())
 print("~"*80)
 print(focos_timespace_xy.dtypes)
@@ -106,6 +109,15 @@ print("~"*80)
 print(focos_timespace_xy)
 print("="*80)
 
+print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA - PRIMEIRO CONTATO/MUNICÍPIO (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (Lat/Lon) \n")
+print("\n XY - Latitude e Longitude (IBGE)\n")
+print(unicos_xy.info())
+print("~"*80)
+print(unicos_xy.dtypes)
+print("~"*80)
+print(unicos_xy)
+print("="*80)
+print(unicos_xy)
 municipios.plot()
 plt.show()
 """
