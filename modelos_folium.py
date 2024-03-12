@@ -43,7 +43,7 @@ tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
 cidades = ["Itajaí", "Joinville", "Chapecó", "Florianópolis", "Lages", "Itá"]
-municipios = "focos_timespace_xy.csv"
+municipios = "unicos_xy.csv"
 
 
 ### Abrindo Arquivo
@@ -76,7 +76,7 @@ prec_cidade_2012 = prec[cidade].iloc[605: ]
 cidades = focos.columns#.drop(columns = "Semana", inplace = True)
 lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
 """
-xy = municipios.drop(columns = ["Semana", "Focos"])#, inplace = True)
+xy = municipios.drop(columns = ["Semana", "Focos"])
 
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
@@ -272,7 +272,6 @@ for cidade in cidades:
 previsao_melt = pd.melt(previsao_total, id_vars = ["Semana"], #value_vars - If not specified, uses all columns that are not set as id_vars.
                         var_name = "Município", value_name = "Focos") 
 previsao_melt = previsao_melt.sort_values(by = "Semana")
-xy = xy.drop_duplicates(subset = ["Município"])
 previsao_melt = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 #previsao_melt = previsao_melt[["Semana", "Município", "Focos", "latitude", "longitude"]]
 
@@ -298,8 +297,8 @@ HeatMapWithTime(dados_heatmap, auto_play = True, speed_step = 0.2, #index = foco
                 min_opacity = 0.5, max_opacity = 0.8,# use_local_extrema = False,
                 index = previsao_melt["Semana"].astype(str)).add_to(mapa)
 mapa.save(f"{caminho_dados}focos_previstos.html")
-#mapa.show_in_browser()
-webbrowser.open(f"file://{caminho_dados}focos_previstos.html")
+mapa.show_in_browser()
+#webbrowser.open(f"file://{caminho_dados}focos_previstos.html")
 """
 import os
 import webbrowser
