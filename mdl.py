@@ -48,7 +48,7 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 ### Pré-Processamento
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Itá" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
+cidade = "Joinville" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
@@ -227,6 +227,28 @@ def metricas(string_modelo, modeloNN = None):
              \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
               """)
 
+def salva_modelo(string_modelo, modeloNN = None):
+    if string_modelo not in ["RF", "NN"]:
+        print("!!"*80)
+        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
+        print("!!"*80)
+        sys.exit()
+    elif string_modelo == "NN":
+        if modeloNN is None:
+            print("!!"*80)
+            raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
+        else:
+            model.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
+    else:
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+
 ######################################################RANDOM_FOREST############################################################
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
@@ -252,11 +274,17 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
+for velho, novo in troca.items():
+    cidade = cidade.replace(velho, novo)
+
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
+salva_modelo("RF", modeloRF)
+
+sys.exit()
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
-
+"""
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
@@ -270,10 +298,10 @@ modeloNN = keras.Sequential([
 
 lr_adam = keras.optimizers.Adam(learning_rate = 0.01)
 callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
-"""
-             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.h5",
-                                             monitor = "val_loss", save_best = True)]
-"""
+
+#             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.h5",
+#                                             monitor = "val_loss", save_best = True)]
+
 modeloNN.compile(optimizer = lr_adam, #"adam",
                loss = "sparse_categorical_crossentropy",
                metrics = ["accuracy"])
@@ -292,7 +320,7 @@ lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
-
+"""
 ######################################################SALVANDO_MODELOS############################################################
 ### Dicionário de Cidades
 
