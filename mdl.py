@@ -254,15 +254,6 @@ grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
-### Salvando Modelo (e abrindo)
-# HDF5 (Hierarchical Data Format version 5) files
-# Which are used to store and organize large amounts of data.
-os.makedirs(caminho_modelos, exist_ok=True)
-joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-#modelo = joblib.load('random_forest.h5')
-
-sys.exit()
-
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
 
@@ -300,11 +291,22 @@ sumarioNN = modeloNN.summary()
 lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
+print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
 
+######################################################SALVANDO_MODELOS############################################################
+### Dicionário de Cidades
 
+### Salvando Modelo RANDOM FOREST (e abrindo)
+# HDF5 (Hierarchical Data Format version 5) files
+# Which are used to store and organize large amounts of data.
+os.makedirs(caminho_modelos, exist_ok=True)
+joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+#modelo = joblib.load('random_forest.h5')
+
+sys.exit()
 """
 ### Salvando Modelo (e abrindo)
-model.save(modeloRF, f"{caminho_modelos}NN_{cidade}.h5")
+model.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
 #modelo = joblib.load('keras_neural_network.hdf5')
 modelo = load_model('keras_neural_net.h5')
 
