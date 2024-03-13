@@ -37,6 +37,7 @@ prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
+municipios = "unicos_xy.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -45,10 +46,45 @@ prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
+municipios = pd.read_csv(f"{caminho_dados}{municipios}")
+cidades = municipios["Município"].copy()
+_cidades = municipios["Município"].copy()
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+for velho, novo in troca.items():
+    _cidades = _cidades.replace(velho, novo)
+
+### Condições para Variar
+#"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
+#"Camboriú" "Joaçaba" "Blumenau" 
+#"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
+#"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
+_retroagir = 8 # Semanas Epidemiológicas
+cidade = "Abelardo Luz"
+_automatiza = True
+
+# ValueError: cannot reshape array of size 0 into shape (0,newaxis)
+# ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
+# KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
+# raise KeyError(key) from err KeyError: 'CIDADE'
+value_error = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"]
+key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
+for erro in value_error:
+    cidades = cidades[cidades != erro]
+for erro in key_error: 
+    cidades = cidades[cidades != erro] 
+    if erro is not in municipios["Município"]
+    print(f"{erro} não está no conjunto de dados!")
+    else:
+    print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
+    
+    
 
 ### Pré-Processamento
-_retroagir = 8 # Semanas Epidemiológicas
-cidade = "Joinville" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
@@ -125,6 +161,10 @@ num_classes = len(np.unique(y_array))
 print("Number of classes:", num_classes)
 print(len(y_array))
 """
+explicativas = x.columns.tolist() # feature_names = explicativas
+treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
+treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
+
 ### Normalizando/Escalonando Dataset_x
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
@@ -147,6 +187,97 @@ print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {t
 print("="*80)
 
 ### Definindo Funções
+def monta_dataset(cidade):
+    dataset = tmin[["Semana"]].copy()
+    dataset["TMIN"] = tmin[cidade].copy()
+    dataset["TMED"] = tmed[cidade].copy()
+    dataset["TMAX"] = tmax[cidade].copy()
+    dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
+    dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
+    troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
+    dataset = dataset.rename(columns = troca_nome)
+    for r in range(5, _retroagir + 1):
+        dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+        dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+        dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+        dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+        dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+    dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+    dataset.dropna(inplace = True)
+    dataset.set_index("Semana", inplace = True)
+    dataset.columns.name = f"{cidade}"
+    return dataset
+
+def treino_teste(dataset, cidade):
+    SEED = np.random.seed(0)
+    x = dataset.drop(columns = "FOCOS")
+    y = dataset["FOCOS"]
+    if x.empty or x.isnull().all().all():
+        print(f"'X' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+        print(f"{cidade} possui um conjunto com erro:\n {x}")
+        return None, None, None, None, None
+    x = x.dropna()
+    if x.empty:
+        print(f"'X' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+        print(f"{cidade} possui um conjunto com erro:\n {x}")
+        return None, None, None, None, None
+    if y.empty or y.isnull().all().all():
+        print(f"'Y' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+        print(f"{cidade} possui um conjunto com erro:\n {y}")
+        return None, None, None, None, None
+    y = y.dropna()
+    if y.empty:
+        print(f"'Y' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+        print(f"{cidade} possui um conjunto com erro:\n {y}")
+        return None, None, None, None, None
+    x_array = x.to_numpy()
+    x_array = x_array.reshape(x_array.shape[0], -1)
+    x_array = x.to_numpy().astype(int)
+    y_array = y.to_numpy().astype(int)
+    x_array = x_array.reshape(x_array.shape[0], -1)
+
+    treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
+                                                        random_state = SEED,
+                                                        test_size = 0.2)
+    explicativas = x.columns.tolist()
+    treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
+    treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
+    return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
+
+def escalona(treino_x, teste_x):
+    escalonador = StandardScaler()
+    escalonador.fit(treino_x)
+    treino_normal_x = escalonador.transform(treino_x)
+    teste_normal_x = escalonador.transform(teste_x)
+    return treino_normal_x, teste_normal_x
+
+def RF_modela_treina_preve(treino_x, treino_y, teste_x, SEED):
+    modelo = RandomForestRegressor(n_estimators = 100, random_state = SEED)
+    modelo.fit(treino_x_explicado, treino_y)
+    y_previsto = modelo.predict(teste_x)
+    previsoes = modeloRF.predict(x)
+    previsoes = [int(p) for p in previsoes]
+    return modelo, y_previsto, previsoes
+
+def RF_previsao_metricas(dataset, previsoes, n, teste_y, y_previsto):
+    nome_modelo = "Random Forest"
+    print("="*80)
+    print(f"\n{nome_modelo.upper()} - {cidade}\n")
+    lista_op = [f"Focos: {dataset['FOCOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
+    print("\n".join(lista_op))
+    print("~"*80)
+    EQM = mean_squared_error(teste_y, y_previsto)
+    RQ_EQM = np.sqrt(EQM)
+    R_2 = r2_score(teste_y, y_previsto).round(2)
+    print(f"""
+         \n MÉTRICAS {nome_modelo.upper()} - {cidade}
+         \n Erro Quadrático Médio: {EQM}
+         \n Coeficiente de Determinação (R²): {R_2}
+         \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
+         """)
+    print("="*80)
+    return EQM, RQ_EQM, R_2
+
 def lista_previsao(previsao, n, string_modelo):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -156,7 +287,7 @@ def lista_previsao(previsao, n, string_modelo):
     nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     print("="*80)
-    print(f"\n{nome_modelo.upper()}\n")
+    print(f"\n{nome_modelo.upper()} - {cidade}\n")
     lista_op = [f"Focos: {dataset['FOCOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
     print("\n".join(lista_op))
     print("="*80)
@@ -221,7 +352,7 @@ def metricas(string_modelo, modeloNN = None):
             print(f"\n MÉTRICAS REDE NEURAL\n \n {sumario}")
     else:
         print(f"""
-             \n MÉTRICAS RANDOM FOREST
+             \n MÉTRICAS RANDOM FOREST - {cidade}
              \n Erro Quadrático Médio: {EQM_RF}
              \n Coeficiente de Determinação (R²): {R_2}
              \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
@@ -242,19 +373,11 @@ def salva_modelo(string_modelo, modeloNN = None):
     else:
         joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
-troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-
 ######################################################RANDOM_FOREST############################################################
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
-explicativas = x.columns.tolist() # feature_names = explicativas
 modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
-modeloRF.fit(treino_x, treino_y)
+modeloRF.fit(treino_x_explicado, treino_y)
 
 ### Testando e Avaliando
 y_previstoRF = modeloRF.predict(teste_x)
@@ -281,7 +404,6 @@ print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h
 
 salva_modelo("RF", modeloRF)
 
-sys.exit()
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
 """
@@ -321,7 +443,17 @@ grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
 """
-######################################################SALVANDO_MODELOS############################################################
+#########################################################AUTOMATIZANDO###############################################################
+if _automatiza == True:
+    for cidade in cidades:
+        dataset = monta_dataset(cidade)
+        treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
+        modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
+        EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
+
+
+sys.exit()
+
 ### Dicionário de Cidades
 
 ### Salvando Modelo RANDOM FOREST (e abrindo)
