@@ -48,15 +48,6 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 municipios = pd.read_csv(f"{caminho_dados}{municipios}")
 cidades = municipios["Município"].copy()
-_cidades = municipios["Município"].copy()
-troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-for velho, novo in troca.items():
-    _cidades = _cidades.replace(velho, novo)
 
 ### Condições para Variar
 #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages" "Itá"
@@ -64,7 +55,7 @@ for velho, novo in troca.items():
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Abelardo Luz"
+cidade = "Lauro Müller"
 _automatiza = True
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -87,9 +78,7 @@ for erro in key_error:
         print(f"{erro} não está no conjunto de dados!")
     else:
         print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
-print("!"*80)
-sys.exit() 
-    
+print("!"*80)    
 
 ### Pré-Processamento
 cidade = cidade.upper()
@@ -285,6 +274,19 @@ def RF_previsao_metricas(dataset, previsoes, n, teste_y, y_previsto):
     print("="*80)
     return EQM, RQ_EQM, R_2
 
+def salva_modeloRF(modelo, cidade):
+    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+    for velho, novo in troca.items():
+        cidade = cidade.replace(velho, novo)
+    joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    print("\n" + "="*80 + "\n")
+
 def lista_previsao(previsao, n, string_modelo):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -399,18 +401,23 @@ R_2 = r2_score(teste_y, y_previstoRF).round(2)
 testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
-
+"""
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-for velho, novo in troca.items():
-    cidade = cidade.replace(velho, novo)
 
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+for velho, novo in troca.items():
+    cidade = cidade.replace(velho, novo)
 salva_modelo("RF", modeloRF)
-
+"""
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
 """
@@ -457,7 +464,7 @@ if _automatiza == True:
         treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
         modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
         EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
-
+        salva_modeloRF(modelo, cidade)
 
 sys.exit()
 
