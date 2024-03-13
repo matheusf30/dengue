@@ -71,17 +71,24 @@ _automatiza = True
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
 # raise KeyError(key) from err KeyError: 'CIDADE'
+print("!"*80)
+print("\nERROS GERADOS\n")
 value_error = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"]
 key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
 for erro in value_error:
     cidades = cidades[cidades != erro]
+    if erro not in municipios["Município"]:
+        print(f"{erro} não está no conjunto de dados!")
+    else:
+        print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
 for erro in key_error: 
     cidades = cidades[cidades != erro] 
-    if erro is not in municipios["Município"]
-    print(f"{erro} não está no conjunto de dados!")
+    if erro not in municipios["Município"]:
+        print(f"{erro} não está no conjunto de dados!")
     else:
-    print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
-    
+        print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
+print("!"*80)
+sys.exit() 
     
 
 ### Pré-Processamento
