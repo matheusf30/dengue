@@ -14,8 +14,8 @@ focosdive = "focos_dive_total.csv"
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivo
-focosdive = pd.read_csv(f"{caminho_dados}{focosdive}")
-municipios = gpd.read_file(f"{caminho_dados}{municipios}")
+focosdive = pd.read_csv(f"{caminho_dados}{focosdive}", low_memory = False)
+municipios = gpd.read_file(f"{caminho_dados}{municipios}", low_memory = False)
 
 ### Pré-Processamento
 ## TEMPO (Padronizando Nomes e Somando Focos Agrupados por Semanas Epidemiológicas/Municípios)
@@ -118,6 +118,7 @@ print("~"*80)
 print(unicos_xy)
 print("="*80)
 print(unicos_xy)
+print(unicos_xy["Município"])
 municipios.plot()
 plt.show()
 """
