@@ -42,9 +42,8 @@ prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
-cidades = ["Itajaí", "Joinville", "Chapecó", "Florianópolis", "Lages", "Itá", "Grão-Pará"]
 municipios = "unicos_xy.csv"
-
+ 
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -54,8 +53,19 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 municipios = pd.read_csv(f"{caminho_dados}{municipios}")
+
+#cidades = ["Itajaí", "Joinville", "Chapecó", "Florianópolis", "Lages", "Itá", "Grão-Pará"]
+_cidades = municipios["Município"].copy()
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+for velho, novo in troca.items():
+    _cidades = _cidades.replace(velho, novo)
 """
-for cidade in cidades:
+for cidade in _cidades:
     cidade = cidade.upper()
     modelo_{cidade} = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
@@ -257,8 +267,8 @@ previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
 previsao_total.drop([d for d in range(_retroagir)], axis=0, inplace = True)
 previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = True)
 
-for cidade in cidades:
-	cidade = cidade.upper()
+for cidade in _cidades:
+	#cidade = cidade.upper()
 	modeloRF = modelo(cidade)
 	y_previstoRF = modeloRF.predict(x)
 	EQM_RF = mean_squared_error(y, y_previstoRF)
