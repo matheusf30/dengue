@@ -17,7 +17,8 @@ from sklearn.metrics import mean_squared_error, accuracy_score, r2_score#, RocCu
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
 from sklearn.tree import export_graphviz, export_text, plot_tree
-from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
+#from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
+
 ### Encaminhamento aos Diretórios
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
@@ -50,7 +51,7 @@ cidades = unicos["Município"].copy()
 
 ### Condições para Variar
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Lauro Müller"
+cidade = "Florianópolis"
 _automatiza = True
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -359,70 +360,19 @@ y_previstoRF = modeloRF.predict(teste_x)
 EQM_RF = mean_squared_error(teste_y, y_previstoRF)
 RQ_EQM_RF = np.sqrt(EQM_RF)
 R_2 = r2_score(teste_y, y_previstoRF).round(2) 
-#acuraciaRF = accuracy_score(teste_y, y_previstoRF)
-#print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
 
 ### Testando e Validando Modelo
-#validaRF = modeloRF.fit(treino_x, treino_y)
 testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
-"""
+
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
 
-print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-for velho, novo in troca.items():
-    cidade = cidade.replace(velho, novo)
-salva_modelo("RF", modeloRF)
-"""
-######################################################NEURAL_NETWORK############################################################
-# https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
-"""
-### Instanciando e Compilando Modelo de Rede Neural
-modeloNN = keras.Sequential([
-    #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
-    keras.layers.Flatten(input_shape = treino_x.shape[1:]), #entrada. #Camada 0 <<< input_shape = treino_x.shape[1:]
-    #keras.layers.GRU(64, input_shape = ??? ), #CAMADA 1 Unidade Recorrente Fechada
-    keras.layers.Dense(10, activation = tensorflow.nn.relu), #processamento. #Camada 1
-    #keras.layers.Dense(128, activation = tensorflow.nn.relu), #processamento. #Camada 2
-    keras.layers.Dense(10, activation = tensorflow.nn.relu), #processamento. #Camada 3
-    keras.layers.Dropout(0.2), # ~Normalização (processamento) #Camada 4
-    keras.layers.Dense(len(y_array), activation = tensorflow.nn.softmax)]) #saida. #Camada 5
+sys.exit()
 
-lr_adam = keras.optimizers.Adam(learning_rate = 0.01)
-callbacks = [keras.callbacks.EarlyStopping(monitor = "val_loss")]#,
-
-#             keras.callbacks.ModelCheckpoint(filepath = f"{caminho_dados}melhor_modeloNN.h5",
-#                                             monitor = "val_loss", save_best = True)]
-
-modeloNN.compile(optimizer = lr_adam, #"adam",
-               loss = "sparse_categorical_crossentropy",
-               metrics = ["accuracy"])
-
-### Testando e Validando Modelo
-valida = modeloNN.fit(treino_x, treino_y,
-                      epochs = 100, validation_split = 0.2,
-                      callbacks = callbacks)#, batch_size = 10000)
-testesNN = modeloNN.predict(teste_x)
-#testes_normal = modeloNN.predict(teste_normal_x)
-previsoesNN = modeloNN.predict(x)
-sumarioNN = modeloNN.summary()
-
-### Exibindo Informações, Gráficos e Métricas
-lista_previsao(previsoesNN, 5, "NN")
-grafico_previsao(previsoesNN, testesNN, "NN")
-metricas("NN", modeloNN)
-print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
-"""
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
     for cidade in cidades:
@@ -431,19 +381,4 @@ if _automatiza == True:
         modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
         EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
         salva_modeloRF(modelo, cidade)
-
-sys.exit()
-
-### Dicionário de Cidades
-
-### Salvando Modelo RANDOM FOREST (e abrindo)
-# HDF5 (Hierarchical Data Format version 5) files
-# Which are used to store and organize large amounts of data.
-os.makedirs(caminho_modelos, exist_ok=True)
-joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-#modelo = joblib.load('random_forest.h5')
-
-sys.exit()
-
-
-
+######################################################################################################################################

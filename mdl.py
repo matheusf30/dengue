@@ -55,8 +55,8 @@ cidades = municipios["Município"].copy()
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Lauro Müller"
-_automatiza = True
+cidade = "Florianópolis"
+_automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
