@@ -397,10 +397,11 @@ previsao_melt = previsao_melt.sort_values(by = "Semana")
 """
 xy = unicos.drop(columns = ["Semana", "Focos"])
 """
-municipios.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
-municipios = municipios.rename(columns = {"NM_MUN" : "Município"})
-municipios["Município"] = municipios["Município"].str.upper()
 xy = municipios.copy()
+xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
+xy = xy.rename(columns = {"NM_MUN" : "Município"})
+xy["Município"] = xy["Município"].str.upper()
+
 previsao_melt = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 #previsao_melt = previsao_melt[["Semana", "Município", "Focos", "latitude", "longitude"]]
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
@@ -409,15 +410,26 @@ print(previsao_melt)
 print(xy)
 print(dataset)
 print(municipios)
+print(municipios.crs)
+"""
+from shapely.geometry import Point
+# Assuming previsao_melt has 'latitude' and 'longitude' columns
+geometry = [Point(xy) for xy in zip(previsao_melt['longitude'], previsao_melt['latitude'])]
+previsao_melt_geo = gpd.GeoDataFrame(previsao_melt, geometry=geometry)
+"""
+municipios.plot()
+
 ### Cartografia
+previsao_melt = gpd.GeoDataFrame(previsao_melt, geometry=municipios.geometry)
 plt.figure(figsize=(20,12))
 base = municipios.plot(color = 'white', edgecolor = 'black')
-previsao_melt["Semana" == "2022-11-27"].plot(ax = base, column = "focos", cmap = "OrRd")
+previsao_melt[previsao_melt["Semana"] == "2022-11-27"].plot(ax = base, column = "Focos", cmap = "OrRd")
+ax.set_aspect("equal")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title("Focos de _Aedes_sp. Previstos no Estado Catarinense")
 plt.grid(True)
-
+plt.show()
 
 """
 ax = gplt.polyplot(municipios)
