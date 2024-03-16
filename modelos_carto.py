@@ -44,13 +44,19 @@ tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
 municipios = "SC_Municipios_2022.shp"
 
-#### Condições para Variar
-_automatiza = False
+#### Condições para Variar ####################################
+_automatiza = True
 _retroagir = 8
 SEED = np.random.seed(0)
+"""
+if _automatiza == False:
+    cidade = "FLORIANÓPOLIS"
+else:
+"""
 value_error = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"]
 key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
-cidade = "FLORIANÓPOLIS"
+
+###############################################################
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -362,18 +368,20 @@ previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
 previsao_total.drop([d for d in range(_retroagir)], axis=0, inplace = True)
 previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = True)
 
-if cidade in value_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
-elif cidade in key_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
-elif _automatiza == True:
+
+if _automatiza == True:
     for cidade in cidades:
-        modelo = abre_modelo(cidade)
-        dataset, x, y = monta_dataset(cidade)
-        treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
-        previsoes, y_previsto = preve(modelo, x, treino_x_explicado)
-        EQM, RQ_EQM, R_2 = metricas(dataset, previsoes, 5, y)
-        previsao_total[cidade] = previsoes
+        if cidade in value_error:
+            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+        elif cidade in key_error:
+            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+        else:
+            modelo = abre_modelo(cidade)
+            dataset, x, y = monta_dataset(cidade)
+            treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
+            previsoes, y_previsto = preve(modelo, x, treino_x_explicado)
+            EQM, RQ_EQM, R_2 = metricas(dataset, previsoes, 5, y)
+            previsao_total[cidade] = previsoes
 else:
     modelo = abre_modelo(cidade)
     dataset, x, y = monta_dataset(cidade)
@@ -400,11 +408,17 @@ print(previsao_total)
 print(previsao_melt)
 print(xy)
 print(dataset)
-
-### Cartografia
-
-
 print(municipios)
+### Cartografia
+plt.figure(figsize=(20,12))
+base = municipios.plot(color = 'white', edgecolor = 'black')
+previsao_melt["Semana" == "2022-11-27"].plot(ax = base, column = "focos", cmap = "OrRd")
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.title("Focos de _Aedes_sp. Previstos no Estado Catarinense")
+plt.grid(True)
+
+
 """
 ax = gplt.polyplot(municipios)
 gplt.pointplot(previsao_melt[Focos[previsao_focos["Semana"["Semana" == 2022-11-27]]]], ax=ax)
