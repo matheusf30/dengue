@@ -10,6 +10,9 @@ import os
 import sys
 import joblib
 import webbrowser
+import warnings
+from shapely.errors import ShapelyDeprecationWarning
+warnings.filterwarnings("ignore", category = ShapelyDeprecationWarning)
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -18,6 +21,7 @@ from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.ensemble import RandomForestRegressor
 # Mapas
 import geopandas as gpd
+from shapely.geometry import Point
 #import tensorflow
 #from tensorflow import keras
 #from keras.models import load_model
@@ -394,43 +398,41 @@ else:
 previsao_melt = pd.melt(previsao_total, id_vars = ["Semana"], #value_vars - If not specified, uses all columns that are not set as id_vars.
                             var_name = "Município", value_name = "Focos")
 previsao_melt = previsao_melt.sort_values(by = "Semana")
-"""
+
 xy = unicos.drop(columns = ["Semana", "Focos"])
 """
 xy = municipios.copy()
 xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper()
-
+"""
 previsao_melt = pd.merge(previsao_melt, xy, on = "Município", how = "left")
-#previsao_melt = previsao_melt[["Semana", "Município", "Focos", "latitude", "longitude"]]
+geometry = [Point(xy) for xy in zip(previsao_melt['longitude'], previsao_melt['latitude'])]
+previsao_melt_geo = gpd.GeoDataFrame(previsao_melt, geometry = geometry, crs = "EPSG:4674")
+
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-print(previsao_total)
-print(previsao_melt)
 print(xy)
 print(dataset)
 print(municipios)
 print(municipios.crs)
-"""
-from shapely.geometry import Point
-# Assuming previsao_melt has 'latitude' and 'longitude' columns
-geometry = [Point(xy) for xy in zip(previsao_melt['longitude'], previsao_melt['latitude'])]
-previsao_melt_geo = gpd.GeoDataFrame(previsao_melt, geometry=geometry)
-"""
-municipios.plot()
+print(previsao_total)
+print(previsao_melt)
+print(previsao_melt_geo)
 
 ### Cartografia
-previsao_melt = gpd.GeoDataFrame(previsao_melt, geometry=municipios.geometry)
+semana_epidemio = "2022-04-17"
+previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
 plt.figure(figsize=(20,12))
-base = municipios.plot(color = 'white', edgecolor = 'black')
-previsao_melt[previsao_melt["Semana"] == "2022-11-27"].plot(ax = base, column = "Focos", cmap = "OrRd")
-ax.set_aspect("equal")
+base = municipios.plot(color = "lightgray", edgecolor = "black")
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = base, column = "Focos",
+                                                                    cmap = "YlOrRd", legend = True)
+#ax.set_aspect("auto")
+#base.set.aspect("equal")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title("Focos de _Aedes_sp. Previstos no Estado Catarinense")
+plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
-
 """
 ax = gplt.polyplot(municipios)
 gplt.pointplot(previsao_melt[Focos[previsao_focos["Semana"["Semana" == 2022-11-27]]]], ax=ax)
