@@ -422,15 +422,28 @@ print(previsao_melt_geo)
 ### Cartografia
 semana_epidemio = "2022-04-17"
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
+
 plt.figure(figsize=(20,12))
-base = municipios.plot(color = "lightgray", edgecolor = "black")
+base = municipios.plot(color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = base, column = "Focos",
                                                                     cmap = "YlOrRd", legend = True)
-#ax.set_aspect("auto")
-#base.set.aspect("equal")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(20,12))
+sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
+            x = "longitude", y = "latitude", legend = True,
+            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 1) #previsao_melt_geo["Focos"].max()
+municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
+cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
+cbar.set_array(previsao_melt_geo["Focos"])
+plt.colorbar(cbar, ax = plt.gca(), label="Focos")
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.title(f"Mapa de Calor dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
 """
