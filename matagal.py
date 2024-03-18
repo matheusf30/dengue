@@ -31,7 +31,7 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "casos.csv"
+casos = "casos_se.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
@@ -49,12 +49,9 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 cidades = unicos["Município"].copy()
 
-print(casos)
-sys.exit()
-
 ### Condições para Variar
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis"
+cidade = "Joinville"
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
