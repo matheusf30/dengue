@@ -21,7 +21,7 @@ from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.ensemble import RandomForestRegressor
 # Mapas
 import geopandas as gpd
-from shapely.geometry import Point
+from shapely.geometry import Point, Polygon
 #import tensorflow
 #from tensorflow import keras
 #from keras.models import load_model
@@ -429,18 +429,26 @@ coastline = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 # Filter coastline for oceans
 ocean = coastline[coastline["continent"] == "Antarctica"]
 # Filter world for land
-
+fig, ax = plt.subplots(figsize = (20, 12))
+coord_atlantico = [(-54, -30),(- 48, -30),
+                   (-48, -25),(-54, -25),
+                   (-54, -30)]
+atlantico_poly = Polygon(coord_atlantico)
+atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
+atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
+ax.set_aspect("auto")
 land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seven seas (open ocean)')]
-base = land.plot(color = "lightgreen", edgecolor = "black")
-terrain = land.boundary.plot(ax = base, color = "gray")
-base.set_xlim(-54, -48)
-base.set_ylim(-30, -25)
-ocean.plot(ax = base, color = "lightblue")
+land.set_xlim(-54, -48)
+land.set_ylim(-30, -25)
+land.plot(ax = ax, color = "tan", edgecolor = "black")
+terrain = land.boundary.plot(ax = ax, color = "gray")
 
 
-municipios.plot(ax = base, color = "lightgreen", edgecolor = "black")
-previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = base, column = "Focos",
-                                                                    cmap = "YlOrRd", legend = True)
+
+
+municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",
+                                                                        cmap = "YlOrRd", legend = True)
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
