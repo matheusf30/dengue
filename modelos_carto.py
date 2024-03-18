@@ -422,13 +422,7 @@ print(previsao_melt_geo)
 ### Cartografia
 semana_epidemio = "2022-04-17"
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
-
-# Load the Natural Earth datasets
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-coastline = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-# Filter coastline for oceans
-ocean = coastline[coastline["continent"] == "Antarctica"]
-# Filter world for land
 fig, ax = plt.subplots(figsize = (20, 12))
 coord_atlantico = [(-54, -30),(- 48, -30),
                    (-48, -25),(-54, -25),
@@ -444,8 +438,16 @@ previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax,
                                                                         cmap = "YlOrRd", legend = True)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
+"""
+x_min, x_max = plt.xlim()
+y_min, y_max = plt.ylim()
+arrow_x = (x_max - x_min) * 0.5 + x_min
+arrow_y = (y_max - y_min) * 0.1 + y_min
+arrow_dx = 0
+arrow_dy = (y_max - y_min) * 0.3
 plt.arrow(0.5, 0.1, 0, 0.3, head_width = 0.05, head_length = 0.1, fc = "k", ec = "k")
 plt.text(0.495, 0.42, "N", fontsize = 12, ha = "center", va = "bottom")
+"""
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
