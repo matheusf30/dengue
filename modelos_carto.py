@@ -427,13 +427,15 @@ previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.
 world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 coastline = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 # Filter coastline for oceans
-ocean = coastline[coastline['continent'] == 'Antarctica']
+ocean = coastline[coastline["continent"] == "Antarctica"]
 # Filter world for land
-plt.figure(figsize=(20,12))
-land = world[(world['continent'] != 'Antarctica') & (world['continent'] != 'Seven seas (open ocean)')]
-base = land.plot(color="lightgreen", edgecolor="black")
-terrain = land.boundary.plot(ax=base, color='gray')
-ocean.plot(ax=base, color='lightblue')
+
+land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seven seas (open ocean)')]
+base = land.plot(color = "lightgreen", edgecolor = "black")
+terrain = land.boundary.plot(ax = base, color = "gray")
+base.set_xlim(-54, -48)
+base.set_ylim(-30, -25)
+ocean.plot(ax = base, color = "lightblue")
 
 
 municipios.plot(ax = base, color = "lightgreen", edgecolor = "black")
