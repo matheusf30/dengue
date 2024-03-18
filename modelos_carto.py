@@ -439,15 +439,13 @@ atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
 ax.set_aspect("auto")
 land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seven seas (open ocean)')]
 land.plot(ax = ax, color = "tan", edgecolor = "black")
-terrain = land.boundary.plot(ax = ax, color = "gray")
-
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",
                                                                         cmap = "YlOrRd", legend = True)
 plt.xlim(-54, -48)
-plt.ylim(-30, -25)
-ax.arrow(0.5, 0.1, 0, 0.3, head_width = 0.05, head_length = 0.1, fc = "k", ec = "k")
-ax.text(0.495, 0.42, "N", fontsize = 12, ha = "center", va = "bottom")
+plt.ylim(-29.5, -25.75)
+plt.arrow(0.5, 0.1, 0, 0.3, head_width = 0.05, head_length = 0.1, fc = "k", ec = "k")
+plt.text(0.495, 0.42, "N", fontsize = 12, ha = "center", va = "bottom")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
@@ -466,10 +464,12 @@ land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seve
 land.plot(ax = ax, color = "tan", edgecolor = "black")
 sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(),
-            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 1) #previsao_melt_geo["Focos"].max()
+            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5) #previsao_melt_geo["Focos"].max()
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
 cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
 cbar.set_array(previsao_melt_geo["Focos"])
+plt.xlim(-54, -48)
+plt.ylim(-29.5, -25.75)
 plt.colorbar(cbar, ax = plt.gca(), label="Focos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
