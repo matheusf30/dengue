@@ -31,7 +31,6 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "casos_se.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
@@ -40,7 +39,6 @@ tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
 
 ### Abrindo Arquivo
-casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
@@ -79,13 +77,11 @@ print("!"*80)
 ### Pré-Processamento
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
-casos["Semana"] = pd.to_datetime(casos["Semana"])
 prec["Semana"] = pd.to_datetime(prec["Semana"])
 tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
 
-#########################################################Y=FOCOS###############################################################
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
 dataset["TMIN"] = tmin[cidade].copy()
@@ -150,44 +146,6 @@ print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {t
 print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
 print("="*80)
 
-
-########################################################Y=CASOS###############################################################
-"""
-### Montando Dataset
-dataset = tmin[["Semana"]].copy()
-dataset["TMIN"] = tmin[cidade].copy()
-dataset["TMED"] = tmed[cidade].copy()
-dataset["TMAX"] = tmax[cidade].copy()
-dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
-dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
-dataset.dropna(0, inplace = True)
-dataset = dataset.iloc[104:, :]
-dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").copy()
-troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
-dataset = dataset.rename(columns = troca_nome)
-dataset.fillna(0, inplace = True)
-print(dataset)
-"""
-"""
-for r in range(1, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-"""
-"""
-for r in range(5, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
-dataset.dropna(inplace = True)
-dataset.set_index("Semana", inplace = True)
-dataset.columns.name = f"{cidade}"
-"""
 ### Dividindo Dataset em Treino e Teste
 SEED = np.random.seed(0)
 x = dataset.drop(columns = "FOCOS")
@@ -344,20 +302,6 @@ def lista_previsao(previsao, n, string_modelo):
     print("\n".join(lista_op))
     print("="*80)
 
-def lista_previsao_casos(previsao, n, string_modelo):
-    if string_modelo not in ["RF", "NN"]:
-        print("!!"*80)
-        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
-        print("!!"*80)
-        sys.exit()
-    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
-    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
-    print("="*80)
-    print(f"\n{nome_modelo.upper()} - {cidade}\n")
-    lista_op = [f"CASOS: {dataset['CASOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
-    print("\n".join(lista_op))
-    print("="*80)
-
 def grafico_previsao(previsao, teste, string_modelo):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -389,39 +333,6 @@ def grafico_previsao(previsao, teste, string_modelo):
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
     plt.show()
-
-def grafico_previsao_casos(previsao, teste, string_modelo):
-    if string_modelo not in ["RF", "NN"]:
-        print("!!"*80)
-        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
-        print("!!"*80)
-        sys.exit()
-    # Gráfico de Comparação entre Observação e Previsão dos Modelos
-    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
-    final = pd.DataFrame()
-    final["Semana"] = casos["Semana"]
-    final["Casos"] = casos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
-    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
-    """
-    lista_previsao = [previsoes[v] for v in range(len(previsoes))]
-    final["Previstos"] = lista_previsao
-    """
-    previsoes = previsoes[:len(final)]
-    final["Previstos"] = previsoes
-    final["Semana"] = pd.to_datetime(final["Semana"])
-    print(final)
-    print("="*80)
-    sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
-                 color = "darkblue", linewidth = 1, label = "Observado")
-    sns.lineplot(x = final["Semana"], y = final["Previstos"],
-                 color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-    plt.xlabel("Semanas Epidemiológicas na Série de Anos")
-    plt.ylabel("Número de Casos de Dengue")
-    plt.show()
-
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -482,12 +393,7 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-"""
-### Exibindo Informações, Gráficos e Métricas
-lista_previsao_casos(previsoesRF, 5, "RF")
-grafico_previsao_casos(previsoesRF, testesRF, "RF")
-metricas("RF")
-"""
+
 sys.exit()
 
 #########################################################AUTOMATIZANDO###############################################################
