@@ -2,9 +2,15 @@
 import pandas as pd
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
+caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+_www = False 
+if _www == True: # _ = Variável Privada
+    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+else:
+    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
 
 ### Renomeação variáveis pelos arquivos
 focos_xy = "focos_timespace_xy.csv"
