@@ -51,7 +51,7 @@ cidades = unicos["Município"].copy()
 
 ### Condições para Variar
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Joinville"
+cidade = "Chapecó"
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
