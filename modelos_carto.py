@@ -31,7 +31,7 @@ caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 _www = False
 if _www == True: # _ = Variável Privada
-    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/blob/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
 else:
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
@@ -39,14 +39,13 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_modelos}")
 
 ### Renomeação das Variáveis pelos Arquivos # TENTAR GFS
-casos = "casos_se.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
-municipios = "SC_Municipios_2022.shp"
+municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 
 #### Condições para Variar ####################################
 _automatiza = True
@@ -63,7 +62,6 @@ key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
 ###############################################################
 
 ### Abrindo Arquivo
-casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
