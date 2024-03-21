@@ -85,74 +85,6 @@ tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
 
-#########################################################Y=FOCOS###############################################################
-### Montando Dataset
-dataset = tmin[["Semana"]].copy()
-dataset["TMIN"] = tmin[cidade].copy()
-dataset["TMED"] = tmed[cidade].copy()
-dataset["TMAX"] = tmax[cidade].copy()
-dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
-dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
-troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
-dataset = dataset.rename(columns = troca_nome)
-"""
-for r in range(1, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-"""
-for r in range(5, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
-dataset.dropna(inplace = True)
-dataset.set_index("Semana", inplace = True)
-dataset.columns.name = f"{cidade}"
-
-### Dividindo Dataset em Treino e Teste
-SEED = np.random.seed(0)
-x = dataset.drop(columns = "FOCOS")
-y = dataset["FOCOS"]
-x_array = x.to_numpy().astype(int)
-y_array = y.to_numpy().astype(int)
-x_array = x_array.reshape(x_array.shape[0], -1)
-
-treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
-                                                        random_state = SEED,
-                                                        test_size = 0.2)
-explicativas = x.columns.tolist() # feature_names = explicativas
-treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
-treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-
-### Normalizando/Escalonando Dataset_x (Se Necessário)
-escalonador = StandardScaler()
-escalonador.fit(treino_x)
-treino_normal_x = escalonador.transform(treino_x)
-teste_normal_x = escalonador.transform(teste_x)
-
-### Exibindo Informações
-print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
-print(dataset.info())
-print("~"*80)
-#print(dataset.dtypes)
-#print("~"*80)
-print(dataset)
-#print("="*80)
-#print(f"X no formato numpy.ndarray: {x_array}.")
-print("="*80)
-print(f"Treinando com {len(treino_x)} elementos e testando com {len(teste_x)} elementos.") # Tamanho é igual para dados normalizados
-print(f"Formato dos dados (X) nas divisões treino: {treino_x.shape} e teste: {teste_x.shape}.")
-print(f"Formato dos dados (Y) nas divisões treino: {treino_y.shape} e teste: {teste_y.shape}.")
-print("="*80)
-
-
-########################################################Y=CASOS###############################################################
-"""
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
 dataset["TMIN"] = tmin[cidade].copy()
@@ -167,7 +99,7 @@ troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CA
 dataset = dataset.rename(columns = troca_nome)
 dataset.fillna(0, inplace = True)
 print(dataset)
-"""
+
 """
 for r in range(1, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
@@ -176,7 +108,7 @@ for r in range(1, _retroagir + 1):
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 """
-"""
+
 for r in range(5, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
@@ -187,11 +119,11 @@ dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
-"""
+
 ### Dividindo Dataset em Treino e Teste
 SEED = np.random.seed(0)
-x = dataset.drop(columns = "FOCOS")
-y = dataset["FOCOS"]
+x = dataset.drop(columns = "CASOS")
+y = dataset["CASOS"]
 x_array = x.to_numpy().astype(int)
 y_array = y.to_numpy().astype(int)
 x_array = x_array.reshape(x_array.shape[0], -1)
@@ -340,57 +272,11 @@ def lista_previsao(previsao, n, string_modelo):
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     print("="*80)
     print(f"\n{nome_modelo.upper()} - {cidade}\n")
-    lista_op = [f"Focos: {dataset['FOCOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
-    print("\n".join(lista_op))
-    print("="*80)
-
-def lista_previsao_casos(previsao, n, string_modelo):
-    if string_modelo not in ["RF", "NN"]:
-        print("!!"*80)
-        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
-        print("!!"*80)
-        sys.exit()
-    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
-    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
-    print("="*80)
-    print(f"\n{nome_modelo.upper()} - {cidade}\n")
     lista_op = [f"CASOS: {dataset['CASOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
     print("\n".join(lista_op))
     print("="*80)
 
 def grafico_previsao(previsao, teste, string_modelo):
-    if string_modelo not in ["RF", "NN"]:
-        print("!!"*80)
-        print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
-        print("!!"*80)
-        sys.exit()
-    # Gráfico de Comparação entre Observação e Previsão dos Modelos
-    nome_modelo = "Random Forest" if string_modelo == "RF" else "Rede Neural"
-    final = pd.DataFrame()
-    final["Semana"] = focos["Semana"]
-    final["Focos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
-    previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
-    """
-    lista_previsao = [previsoes[v] for v in range(len(previsoes))]
-    final["Previstos"] = lista_previsao
-    """
-    previsoes = previsoes[:len(final)]
-    final["Previstos"] = previsoes
-    final["Semana"] = pd.to_datetime(final["Semana"])
-    print(final)
-    print("="*80)
-    sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
-                 color = "darkblue", linewidth = 1, label = "Observado")
-    sns.lineplot(x = final["Semana"], y = final["Previstos"],
-                 color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-    plt.xlabel("Semanas Epidemiológicas na Série de Anos")
-    plt.ylabel("Número de Focos de _Aedes_ sp.")
-    plt.show()
-
-def grafico_previsao_casos(previsao, teste, string_modelo):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
         print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
@@ -421,7 +307,6 @@ def grafico_previsao_casos(previsao, teste, string_modelo):
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Casos de Dengue")
     plt.show()
-
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -482,12 +367,7 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-"""
-### Exibindo Informações, Gráficos e Métricas
-lista_previsao_casos(previsoesRF, 5, "RF")
-grafico_previsao_casos(previsoesRF, testesRF, "RF")
-metricas("RF")
-"""
+
 sys.exit()
 
 #########################################################AUTOMATIZANDO###############################################################
