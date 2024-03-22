@@ -252,7 +252,8 @@ lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
   'LUIZ ALVES': 'LUIZ ALVES',
   'LUZERNA': 'LUZERNA',
   'MACIEIRA': 'MACIEIRA',
-  'MAFRA': 'MAFRA',
+  'MAFRA': 'MAFRA',cripts_julia/satelite_GOES$ python modelos_c
+
   'MAJOR GERCINO': 'MAJOR GERCINO',
   'MAJOR VIEIRA': 'MAJOR VIEIRA',
   'MARACAJA': 'MARACAJÁ',
@@ -287,7 +288,8 @@ lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
   'PAPANDUVA': 'PAPANDUVA',
   'PARAOSO': 'PARAÍSO',
   'PASSO DE TORRES': 'PASSO DE TORRES',
-  'PASSOS MAIA': 'PASSOS MAIA',
+  'PASSOS MAIA': 'PASSOS MAIA',cripts_julia/satelite_GOES$ python modelos_c
+
   'PAULO LOPES': 'PAULO LOPES',
   'PEDRAS GRANDES': 'PEDRAS GRANDES',
   'PENHA': 'PENHA',
@@ -427,7 +429,7 @@ print(casos14.columns.drop("Semana"))
 
 casos15.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 """
-casos15.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
+casos15.rename(columns = {"Semana 1" : "2014-04-06", # YYYY-MM-DD
                           "Semana 15" : "2014-04-13",
                           "Semana 18" : "2014-05-04",
                           "Semana 20" : "2014-05-18",
