@@ -29,6 +29,7 @@ from shapely.geometry import Point, Polygon
 ### Encaminhamento aos Diretórios
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+caminho_shape = "/home/sifapsc/scripts/scripts_julia/satelite_GOES/shapefile/"
 _www = False
 if _www == True: # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/blob/main/"
@@ -46,6 +47,7 @@ tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
 municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
+br = "BR_UF_2019.shp"
 
 #### Condições para Variar ####################################
 _automatiza = True
@@ -69,6 +71,7 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
+br = gpd.read_file(f"{caminho_shape}{br}")
 cidades = unicos["Município"].copy()
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
@@ -420,17 +423,15 @@ print(previsao_melt_geo)
 ### Cartografia
 semana_epidemio = "2022-04-17"
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 fig, ax = plt.subplots(figsize = (20, 12))
-coord_atlantico = [(-54, -30),(- 48, -30),
+coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
 atlantico_poly = Polygon(coord_atlantico)
 atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
 atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
 ax.set_aspect("auto")
-land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seven seas (open ocean)')]
-land.plot(ax = ax, color = "tan", edgecolor = "black")
+br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",
                                                                         cmap = "YlOrRd", legend = True)
@@ -460,8 +461,8 @@ atlantico_poly = Polygon(coord_atlantico)
 atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
 atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
 ax.set_aspect("auto")
-land = world[(world["continent"] != "Antarctica") & (world["continent"] != 'Seven seas (open ocean)')]
-land.plot(ax = ax, color = "tan", edgecolor = "black")
+
+br.plot(ax = ax, color = "tan", edgecolor = "black")
 sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(),
             fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5) #previsao_melt_geo["Focos"].max()
@@ -476,7 +477,7 @@ plt.ylabel("Latitude")
 plt.title(f"Mapa de Calor dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
-"""
+"""2022010500
 ax = gplt.polyplot(municipios)
 gplt.pointplot(previsao_melt[Focos[previsao_focos["Semana"["Semana" == 2022-11-27]]]], ax=ax)
 
