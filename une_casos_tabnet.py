@@ -458,11 +458,12 @@ casos15.rename(columns = {"Semana 01" : "2015-01-04", # YYYY-MM-DD
                           "Semana 33" : "2015-08-16",
                           "Semana 38" : "2015-09-20",
                           "Semana 40" : "2015-10-04",
-                          "Semana 48" : "2015-11-29",
-                          "Semana 49" : "2015-12-06",
-                          "Semana 50" : "2015-12-13",
-                          "Semana 51" : "2015-12-20",
-                          "Semana 52" : "2015-12-27", inplace = True) #""" "Semana 53"},
+                          "Semana 48" : "2015-11-22",
+                          "Semana 49" : "2015-11-29",
+                          "Semana 50" : "2015-12-06",
+                          "Semana 51" : "2015-12-13",
+                          "Semana 52" : "2015-12-20",
+                          "Semana 53" : "2015-12-27"}, inplace = True) #""" "Semana 53"},
 casos15["Município"] = casos15["Município"].str.replace("\d+ ", "", regex = True)
 casos15.drop(columns = "Total", inplace = True)
 casos15.drop(casos15.index[-2:], axis = 0, inplace = True)
