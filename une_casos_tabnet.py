@@ -252,8 +252,7 @@ lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
   'LUIZ ALVES': 'LUIZ ALVES',
   'LUZERNA': 'LUZERNA',
   'MACIEIRA': 'MACIEIRA',
-  'MAFRA': 'MAFRA',cripts_julia/satelite_GOES$ python modelos_c
-
+  'MAFRA': 'MAFRA',
   'MAJOR GERCINO': 'MAJOR GERCINO',
   'MAJOR VIEIRA': 'MAJOR VIEIRA',
   'MARACAJA': 'MARACAJÁ',
@@ -288,8 +287,7 @@ lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
   'PAPANDUVA': 'PAPANDUVA',
   'PARAOSO': 'PARAÍSO',
   'PASSO DE TORRES': 'PASSO DE TORRES',
-  'PASSOS MAIA': 'PASSOS MAIA',cripts_julia/satelite_GOES$ python modelos_c
-
+  'PASSOS MAIA': 'PASSOS MAIA',
   'PAULO LOPES': 'PAULO LOPES',
   'PEDRAS GRANDES': 'PEDRAS GRANDES',
   'PENHA': 'PENHA',
