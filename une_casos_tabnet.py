@@ -59,6 +59,7 @@ Legenda:
 ### Bibliotecas Correlatas
 import pandas as pd
 import numpy as np
+from datetime import datetime, timedelta
 import sys
 
 ### Encaminhamento aos Diretórios
@@ -396,18 +397,24 @@ lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
   'ZORTEA': 'ZORTÉA',
   'BALNEARIO RINCAO': 'BALNEÁRIO RINCÃO'}
 
+# 2014
+ano = 2014
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 5)
+fim = datetime(ano, 12, 28)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos14.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-casos14.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)
+casos14.rename(columns = dict_semanas, inplace = True)
 casos14["Município"] = casos14["Município"].str.replace("\d+ ", "", regex = True)
 casos14.drop(columns = "Total", inplace = True)
 casos14.drop(casos14.index[-2:], axis = 0, inplace = True)
@@ -421,49 +428,29 @@ casos14[colunas] = casos14[colunas].replace("-", np.nan)
 casos14[colunas] = casos14[colunas].astype(float)
 casos14.fillna(0, inplace = True)
 casos14[colunas] = casos14[colunas].astype(int)
-print("\n2014\n", casos14)
+print("="*80, f"\n{ano}\n\n", casos14)
 print(casos14.info())
 print(casos14.columns.drop("Semana"))
+print("="*80)
 
+# 2015
+ano = 2015
+total_semana = 53
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 4)
+fim = datetime(ano, 12, 27)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos15.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-casos15.rename(columns = {"Semana 01" : "2015-01-04", # YYYY-MM-DD
-                          "Semana 02" : "2015-01-11",
-                          "Semana 03" : "2015-01-18",
-                          "Semana 04" : "2015-01-25",
-                          "Semana 05" : "2015-02-01",
-                          "Semana 06" : "2015-02-08",
-                          "Semana 07" : "2015-02-15",
-                          "Semana 08" : "2015-02-22",
-                          "Semana 09" : "2015-03-01",
-                          "Semana 10" : "2015-03-08",
-                          "Semana 11" : "2015-03-15",
-                          "Semana 12" : "2015-03-22",
-                          "Semana 13" : "2015-03-29",
-                          "Semana 14" : "2015-04-05",
-                          "Semana 15" : "2015-04-12",
-                          "Semana 16" : "2015-04-19",
-                          "Semana 17" : "2015-04-26",
-                          "Semana 18" : "2015-05-03",
-                          "Semana 19" : "2015-05-10",
-                          "Semana 20" : "2015-05-17",
-                          "Semana 21" : "2015-05-24",
-                          "Semana 22" : "2015-05-31",
-                          "Semana 23" : "2015-06-07",
-                          "Semana 24" : "2015-06-14",
-                          "Semana 25" : "2015-06-21",
-                          "Semana 26" : "2015-06-28",
-                          "Semana 28" : "2015-07-12",
-                          "Semana 29" : "2015-07-19",
-                          "Semana 32" : "2015-08-09",
-                          "Semana 33" : "2015-08-16",
-                          "Semana 38" : "2015-09-20",
-                          "Semana 40" : "2015-10-04",
-                          "Semana 48" : "2015-11-22",
-                          "Semana 49" : "2015-11-29",
-                          "Semana 50" : "2015-12-06",
-                          "Semana 51" : "2015-12-13",
-                          "Semana 52" : "2015-12-20",
-                          "Semana 53" : "2015-12-27"}, inplace = True) #""" "Semana 53"},
+casos15.rename(columns = dict_semanas, inplace = True)
 casos15["Município"] = casos15["Município"].str.replace("\d+ ", "", regex = True)
 casos15.drop(columns = "Total", inplace = True)
 casos15.drop(casos15.index[-2:], axis = 0, inplace = True)
@@ -477,23 +464,29 @@ casos15[colunas] = casos15[colunas].replace("-", np.nan)
 casos15[colunas] = casos15[colunas].astype(float)
 casos15.fillna(0, inplace = True)
 casos15[colunas] = casos15[colunas].astype(int)
-print("\n2015\n", casos15)
+print("="*80, f"\n{ano}\n\n", casos15)
 print(casos15.info())
 print(casos15.columns.drop("Semana"))
+print("="*80)
 
+# 2016
+ano = 2016
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 3)
+fim = datetime(ano, 12, 25)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos16.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos16.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos16.rename(columns = dict_semanas, inplace = True)
 casos16["Município"] = casos16["Município"].str.replace("\d+ ", "", regex = True)
 casos16.drop(columns = "Total", inplace = True)
 casos16.drop(casos16.index[-2:], axis = 0, inplace = True)
@@ -507,23 +500,29 @@ casos16[colunas] = casos16[colunas].replace("-", np.nan)
 casos16[colunas] = casos16[colunas].astype(float)
 casos16.fillna(0, inplace = True)
 casos16[colunas] = casos16[colunas].astype(int)
-print("\n2016\n", casos16)
+print("="*80, f"\n{ano}\n\n", casos16)
 print(casos16.info())
 print(casos16.columns.drop("Semana"))
+print("="*80)
 
+# 2017
+ano = 2017
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 1)
+fim = datetime(ano, 12, 24)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos17.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos17.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos17.rename(columns = dict_semanas, inplace = True)
 casos17["Município"] = casos17["Município"].str.replace("\d+ ", "", regex = True)
 casos17.drop(columns = "Total", inplace = True)
 casos17.drop(casos17.index[-2:], axis = 0, inplace = True)
@@ -537,23 +536,29 @@ casos17[colunas] = casos17[colunas].replace("-", np.nan)
 casos17[colunas] = casos17[colunas].astype(float)
 casos17.fillna(0, inplace = True)
 casos17[colunas] = casos17[colunas].astype(int)
-print("\n2017\n", casos17)
+print("="*80, f"\n{ano}\n\n", casos17)
 print(casos17.info())
 print(casos17.columns.drop("Semana"))
+print("="*80)
 
+# 2018
+ano = 2018
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 1)
+fim = datetime(ano, 12, 23)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos18.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos18.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos18.rename(columns = dict_semanas, inplace = True)
 casos18["Município"] = casos18["Município"].str.replace("\d+ ", "", regex = True)
 casos18.drop(columns = "Total", inplace = True)
 casos18.drop(casos18.index[-2:], axis = 0, inplace = True)
@@ -567,24 +572,29 @@ casos18[colunas] = casos18[colunas].replace("-", np.nan)
 casos18[colunas] = casos18[colunas].astype(float)
 casos18.fillna(0, inplace = True)
 casos18[colunas] = casos18[colunas].astype(int)
-print("\n2018\n", casos18)
+print("="*80, f"\n{ano}\n\n", casos18)
 print(casos18.info())
 print(casos18.columns.drop("Semana"))
+print("="*80)
 
-
+# 2019
+ano = 2019
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 6)
+fim = datetime(ano, 12, 29)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos19.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos19.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos19.rename(columns = dict_semanas, inplace = True)
 casos19["Município"] = casos19["Município"].str.replace("\d+ ", "", regex = True)
 casos19.drop(columns = "Total", inplace = True)
 casos19.drop(casos19.index[-2:], axis = 0, inplace = True)
@@ -598,23 +608,29 @@ casos19[colunas] = casos19[colunas].replace("-", np.nan)
 casos19[colunas] = casos19[colunas].astype(float)
 casos19.fillna(0, inplace = True)
 casos19[colunas] = casos19[colunas].astype(int)
-print("\n2019\n", casos19)
+print("="*80, f"\n{ano}\n\n", casos19)
 print(casos19.info())
 print(casos19.columns.drop("Semana"))
+print("="*80)
 
+# 2020
+ano = 2020
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 5)
+fim = datetime(ano, 12, 27)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos20.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos20.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos20.rename(columns = dict_semanas, inplace = True)
 casos20["Município"] = casos20["Município"].str.replace("\d+ ", "", regex = True)
 casos20.drop(columns = "Total", inplace = True)
 casos20.drop(casos20.index[-2:], axis = 0, inplace = True)
@@ -628,23 +644,29 @@ casos20[colunas] = casos20[colunas].replace("-", np.nan)
 casos20[colunas] = casos20[colunas].astype(float)
 casos20.fillna(0, inplace = True)
 casos20[colunas] = casos20[colunas].astype(int)
-print("\n2020\n", casos20)
+print("="*80, f"\n{ano}\n\n", casos20)
 print(casos20.info())
 print(casos20.columns.drop("Semana"))
+print("="*80)
 
+# 2023
+ano = 2023
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 1)
+fim = datetime(ano, 12, 24)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
 casos23.rename(columns = {"Município infecção" : "Município"}, inplace = True)
-"""
-casos23.rename(columns = {"Semana 14" : "2014-04-06", # YYYY-MM-DD
-                          "Semana 15" : "2014-04-13",
-                          "Semana 18" : "2014-05-04",
-                          "Semana 20" : "2014-05-18",
-                          "Semana 21" : "2014-05-25",
-                          "Semana 22" : "2014-06-01",
-                          "Semana 27" : "2014-07-06",
-                          "Semana 31" : "2014-08-03",
-                          "Semana 42" : "2014-10-19",
-                          "Semana 51" : "2014-12-21",
-                          "Semana 52" : "2014-12-28"}, inplace = True)"""
+casos23.rename(columns = dict_semanas, inplace = True)
 casos23["Município"] = casos23["Município"].str.replace("\d+ ", "", regex = True)
 casos23.drop(columns = "Total", inplace = True)
 casos23.drop(casos23.index[-2:], axis = 0, inplace = True)
@@ -658,10 +680,10 @@ casos23[colunas] = casos23[colunas].replace("-", np.nan)
 casos23[colunas] = casos23[colunas].astype(float)
 casos23.fillna(0, inplace = True)
 casos23[colunas] = casos23[colunas].astype(int)
-print("\n2023\n", casos23)
+print("="*80, f"\n{ano}\n\n", casos23)
 print(casos23.info())
 print(casos23.columns.drop("Semana"))
-
+print("="*80)
 sys.exit()
 """
 casos.drop(columns = "Data", inplace = True)
