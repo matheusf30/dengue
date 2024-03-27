@@ -706,8 +706,8 @@ casos_pivot.reset_index(inplace = True)
 casos_pivot_pospandemia = pd.pivot_table(pospandemia, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
 casos_pivot_pospandemia.reset_index(inplace = True)
 
-
 ### Salvando Arquivo
+casostotal.to_csv(f"{caminho_dados}casos_sinan_total.csv", index = False)
 casos_pivot.to_csv(f"{caminho_dados}casos_pivot_total.csv", index = False)
 pospandemia.to_csv(f"{caminho_dados}casos_sinan_pospandemia.csv", index = False)
 casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_pivot_pospandemia.csv", index = False)
