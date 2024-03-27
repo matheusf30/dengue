@@ -701,10 +701,16 @@ print("="*80)
 prepandemia = pd.concat([casos14, casos15, casos16, casos17, casos18, casos19], ignore_index = True)
 pospandemia = pd.concat([casos20, casos23], ignore_index = True)
 casostotal = pd.concat([prepandemia, pospandemia], ignore_index = True)
+casos_pivot = pd.pivot_table(casostotal, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
+casos_pivot.reset_index(inplace = True)
+casos_pivot_pospandemia = pd.pivot_table(pospandemia, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
+casos_pivot_pospandemia.reset_index(inplace = True)
+
 
 ### Salvando Arquivo
-casostotal.to_csv(f"{caminho_dados}casos_sinan_total.csv", index = False)
+casos_pivot.to_csv(f"{caminho_dados}casos_pivot_total.csv", index = False)
 pospandemia.to_csv(f"{caminho_dados}casos_sinan_pospandemia.csv", index = False)
+casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_pivot_pospandemia.csv", index = False)
 
 ### Printando Informações
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA ANTES DA PANDEMIA \n")
@@ -729,4 +735,12 @@ print("~"*80)
 print(casostotal.dtypes)
 print("~"*80)
 print(casostotal)
+print("="*80)
+
+print("\n \n CASOS DE DENGUE EM SANTA CATARINA - SÉRIE HISTÓRICA (PIVOT) \n")
+print(casos_pivot_pospandemia.info())
+print("~"*80)
+print(casos_pivot_pospandemia.dtypes)
+print("~"*80)
+print(casos_pivot_pospandemia)
 print("="*80)
