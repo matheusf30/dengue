@@ -431,10 +431,16 @@ atlantico_poly = Polygon(coord_atlantico)
 atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
 atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
 ax.set_aspect("auto")
+coord_arg = [(-55, -30),(-52, -30),
+             (-52, -25),(-55, -25),
+             (-55, -30)]
+arg_poly = Polygon(coord_arg)
+argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",
-                                                                        cmap = "YlOrRd", legend = True)
+                                                                        cmap = "YlOrRd", legend = True, markersize = 50)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 """
@@ -461,10 +467,15 @@ atlantico_poly = Polygon(coord_atlantico)
 atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
 atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
 ax.set_aspect("auto")
-
+coord_arg = [(-55, -30),(-52, -30),
+             (-52, -25),(-55, -25),
+             (-55, -30)]
+arg_poly = Polygon(coord_arg)
+argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
-            x = "longitude", y = "latitude", legend = True, ax = plt.gca(),
+            x = "longitude", y = "latitude", legend = True, ax = plt.gca(), weights = "Focos",
             fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5) #previsao_melt_geo["Focos"].max()
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
 cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
