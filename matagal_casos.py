@@ -31,7 +31,8 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "casos_se.csv"
+casos = "casos_pivot_total.csv"
+#casos = "casos_pivot_pospandemia.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
@@ -40,20 +41,21 @@ tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
 
 ### Abrindo Arquivo
-casos = pd.read_csv(f"{caminho_dados}{casos}")
-focos = pd.read_csv(f"{caminho_dados}{focos}")
-prec = pd.read_csv(f"{caminho_dados}{prec}")
+casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
+focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
+prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 cidades = unicos["Município"].copy()
 
-### Condições para Variar
+### Condições para Variar #######################################################
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis"
+cidade = "Itajaí"
 _automatiza = False
-
+##################################################################################
+"""
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
@@ -75,7 +77,7 @@ for erro in key_error:
     else:
         print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
 print("!"*80)    
-
+"""
 ### Pré-Processamento
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -93,12 +95,11 @@ dataset["TMAX"] = tmax[cidade].copy()
 dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 dataset.dropna(0, inplace = True)
-dataset = dataset.iloc[104:, :]
+dataset = dataset.iloc[104:, :].copy()
 dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
 dataset = dataset.rename(columns = troca_nome)
 dataset.fillna(0, inplace = True)
-print(dataset)
 
 """
 for r in range(1, _retroagir + 1):
@@ -115,10 +116,13 @@ for r in range(5, _retroagir + 1):
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+    dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+
 dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
+print(dataset)
 
 ### Dividindo Dataset em Treino e Teste
 SEED = np.random.seed(0)
@@ -134,13 +138,13 @@ treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
 explicativas = x.columns.tolist() # feature_names = explicativas
 treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-
+"""
 ### Normalizando/Escalonando Dataset_x (Se Necessário)
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
-
+"""
 ### Exibindo Informações
 print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
 print(dataset.info())
@@ -362,10 +366,9 @@ R_2 = r2_score(teste_y, y_previstoRF).round(2)
 testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
-
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
-grafico_previsao(previsoesRF, testesRF, "RF")
+grafico_previsao(previsoesRF, y_previstoRF, "RF")
 metricas("RF")
 
 sys.exit()
