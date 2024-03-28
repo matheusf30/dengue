@@ -65,14 +65,17 @@ import sys
 ### Encaminhamento aos Diretórios
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
-_www = False
-if _www == True: # _ = Variável Privada
+_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-    caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-else:
+elif _local == "CASA":
+    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-    caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_modelos}")
+else:
+    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação variáveis pelos arquivos
 ## Dados "Brutos"
