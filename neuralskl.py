@@ -3,10 +3,20 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
-caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
+### Encaminhamento aos Diretórios
+_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _local == "GH": # _ = Variável Privada
+    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+    caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
+elif _local == "CASA":
+    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+    caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
+elif _local == "IFSC":
+    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+    caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+else:
+    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação variáveis pelos arquivos
 #dado = "dado_rede22.csv"

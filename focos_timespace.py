@@ -4,16 +4,18 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 
-### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
-_www = False 
-if _www == True: # _ = Variável Privada
+### Encaminhamento aos Diretórios
+_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-else:
+elif _local == "CASA":
+    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NO SEGUINTE CAMINHO:\n\n{caminho_dados}\n\n")
+else:
+    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação variáveis pelos arquivos
 focosdive = "focos_dive_total.csv"
