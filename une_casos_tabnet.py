@@ -63,8 +63,6 @@ from datetime import datetime, timedelta
 import sys
 
 ### Encaminhamento aos Diretórios
-caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
-caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 _local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
