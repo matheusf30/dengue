@@ -9,3 +9,7 @@ Cientista estadunidense, em uma época marcada por uma academia científica euro
 ---
 
 *"If I have seen further, it is by standing on the shoulders of giants." (Sir Isaac Newton)*
+
+---
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
