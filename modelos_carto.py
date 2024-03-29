@@ -409,9 +409,9 @@ xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper()
 """
-previsao_melt = pd.merge(previsao_melt, xy, on = "Município", how = "left")
-geometry = [Point(xy) for xy in zip(previsao_melt['longitude'], previsao_melt['latitude'])]
-previsao_melt_geo = gpd.GeoDataFrame(previsao_melt, geometry = geometry, crs = "EPSG:4674")
+previsao_melt_xy = pd.merge(previsao_melt, xy, on = "Município", how = "left")
+geometry = [Point(xy) for xy in zip(previsao_melt_xy['longitude'], previsao_melt_xy['latitude'])]
+previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
 
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 print(xy)
@@ -423,7 +423,10 @@ print(previsao_melt)
 print(previsao_melt_geo)
 
 ### Cartografia
+# Semana Epidemiológica
 semana_epidemio = "2022-04-17"
+
+# SC_Pontos
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
 fig, ax = plt.subplots(figsize = (20, 12))
 coord_atlantico = [(-54, -30),(-48, -30),
@@ -441,8 +444,8 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
-previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",
-                                                                        cmap = "YlOrRd", legend = True, markersize = 50)
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",  legend = True,
+                                                                        label = "Focos", cmap = "YlOrRd", markersize = 50)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 """
@@ -461,6 +464,7 @@ plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiol�
 plt.grid(True)
 plt.show()
 
+# SC_MapaCalor
 fig, ax = plt.subplots(figsize = (20, 12))
 coord_atlantico = [(-54, -30),(- 48, -30),
                    (-48, -25),(-54, -25),
@@ -478,7 +482,7 @@ argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(), weights = "Focos",
-            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5) #previsao_melt_geo["Focos"].max()
+            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5)
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
 cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
 cbar.set_array(previsao_melt_geo["Focos"])
@@ -490,6 +494,39 @@ plt.ylabel("Latitude")
 plt.title(f"Mapa de Calor dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
+
+# SC_Coroplético
+xy = municipios.copy()
+xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
+xy = xy.rename(columns = {"NM_MUN" : "Município"})
+xy["Município"] = xy["Município"].str.upper()
+previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
+previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
+fig, ax = plt.subplots(figsize = (20, 12))
+coord_atlantico = [(-54, -30),(-48, -30),
+                   (-48, -25),(-54, -25),
+                   (-54, -30)]
+atlantico_poly = Polygon(coord_atlantico)
+atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
+atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
+ax.set_aspect("auto")
+coord_arg = [(-55, -30),(-52, -30),
+             (-52, -25),(-55, -25),
+             (-55, -30)]
+arg_poly = Polygon(coord_arg)
+argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+argentina.plot(ax = ax, color = "tan")
+br.plot(ax = ax, color = "tan", edgecolor = "black")
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos",  legend = True,
+                                                                        label = "Focos", cmap = "YlOrRd")
+plt.xlim(-54, -48)
+plt.ylim(-29.5, -25.75)
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.grid(True)
+plt.show()
+
 """2022010500
 ax = gplt.polyplot(municipios)
 gplt.pointplot(previsao_melt[Focos[previsao_focos["Semana"["Semana" == 2022-11-27]]]], ax=ax)
