@@ -27,7 +27,7 @@ from shapely.geometry import Point, Polygon
 #from keras.models import load_model
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
