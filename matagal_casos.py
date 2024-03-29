@@ -350,7 +350,7 @@ def salva_modelo(string_modelo, modeloNN = None):
             print("!!"*80)
             raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
         else:
-            model.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
+            modeloNN.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
     else:
         joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 

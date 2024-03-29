@@ -73,7 +73,7 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
-br = gpd.read_file(f"{caminho_shape}{br}")
+br = gpd.read_file(f"{caminho_dados}{br}")
 cidades = unicos["Município"].copy()
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
@@ -249,7 +249,7 @@ def modela_treina_preve(treino_x, treino_y, teste_x, SEED):
     modelo = RandomForestRegressor(n_estimators = 100, random_state = SEED)
     modelo.fit(treino_x_explicado, treino_y)
     y_previsto = modelo.predict(teste_x)
-    previsoes = modeloRF.predict(x)
+    previsoes = modelo.predict(x)
     previsoes = [int(p) for p in previsoes]
     return modelo, y_previsto, previsoes
 
