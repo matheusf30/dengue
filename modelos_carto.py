@@ -398,17 +398,11 @@ else:
     previsao_total[cidade] = previsoes
     grafico(previsoes, R_2)
 
-previsao_melt = pd.melt(previsao_total, id_vars = ["Semana"], #value_vars - If not specified, uses all columns that are not set as id_vars.
-                            var_name = "Município", value_name = "Focos")
+previsao_melt = pd.melt(previsao_total, id_vars = ["Semana"], 
+                        var_name = "Município", value_name = "Focos")
+#value_vars - If not specified, uses all columns that are not set as id_vars.
 previsao_melt = previsao_melt.sort_values(by = "Semana")
-
 xy = unicos.drop(columns = ["Semana", "Focos"])
-"""
-xy = municipios.copy()
-xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
-xy = xy.rename(columns = {"NM_MUN" : "Município"})
-xy["Município"] = xy["Município"].str.upper()
-"""
 previsao_melt_xy = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 geometry = [Point(xy) for xy in zip(previsao_melt_xy['longitude'], previsao_melt_xy['latitude'])]
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
@@ -527,22 +521,6 @@ plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiol�
 plt.grid(True)
 plt.show()
 
-"""2022010500
-ax = gplt.polyplot(municipios)
-gplt.pointplot(previsao_melt[Focos[previsao_focos["Semana"["Semana" == 2022-11-27]]]], ax=ax)
-
-for cidade in _cidades:
-	#cidade = cidade.upper()
-	modeloRF = modelo(cidade)
-	y_previstoRF = modeloRF.predict(x)
-	EQM_RF = mean_squared_error(y, y_previstoRF)
-	RQ_EQM_RF = np.sqrt(EQM_RF)
-	R_2 = r2_score(y, y_previstoRF).round(2) 
-	previsoesRF = [int(p) for p in y_previstoRF]
-	#previsao_total.append({f"{cidade}" : previsoesRF})
-	#previsao_total = pd.DataFrame(previsao_total)
-	previsao_total[cidade] = previsoesRF
-"""
 sys.exit()
 
 
