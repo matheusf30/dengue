@@ -1,5 +1,5 @@
 # openai.py
-import some_other_module
+import matplotlib
 
 class OpenAI:
     pass
