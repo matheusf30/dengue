@@ -1,5 +1,13 @@
-import openai
+# openai.py
+import some_other_module
+
+class OpenAI:
+    pass
+
+# some_other_module.py
 from openai import OpenAI
+
+# Your code here
 client = OpenAI()
 
 response = client.images.generate(
