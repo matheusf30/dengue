@@ -48,7 +48,10 @@ Notas:
     Dados de 2022 atualizados em 18/07/2023.
     Dados de 2023 atualizados em 04/03/2024 à 01 hora, sujeitos à revisão.
     Dados de 2024 atualizados em 11/03/2024 às 08 horas, sujeitos à revisão.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 72ec65a... Iniciando com dados brutos TabNet/DiveSC.
     * Dados disponibilizados no TABNET em março de 2024. 
 
 Legenda:
