@@ -2,7 +2,7 @@
 import pandas as pd
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 elif _local == "CASA":

@@ -20,7 +20,7 @@ from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
@@ -56,7 +56,7 @@ cidades = unicos["Município"].copy()
 
 ### Condições para Variar #######################################################
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Itajaí"
+cidade = "Chapecó"
 _automatiza = False
 ##################################################################################
 """

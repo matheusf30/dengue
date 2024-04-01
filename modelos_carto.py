@@ -22,6 +22,7 @@ from sklearn.ensemble import RandomForestRegressor
 # Mapas
 import geopandas as gpd
 from shapely.geometry import Point, Polygon
+import matplotlib.patches as mpatches
 #import tensorflow
 #from tensorflow import keras
 #from keras.models import load_model
@@ -442,16 +443,19 @@ previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax,
                                                                         label = "Focos", cmap = "YlOrRd", markersize = 50)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
-"""
-x_min, x_max = plt.xlim()
-y_min, y_max = plt.ylim()
-arrow_x = (x_max - x_min) * 0.5 + x_min
-arrow_y = (y_max - y_min) * 0.1 + y_min
-arrow_dx = 0
-arrow_dy = (y_max - y_min) * 0.3
-plt.arrow(0.5, 0.1, 0, 0.3, head_width = 0.05, head_length = 0.1, fc = "k", ec = "k")
-plt.text(0.495, 0.42, "N", fontsize = 12, ha = "center", va = "bottom")
-"""
+x_tail = -48.5
+y_tail = -29.25
+x_head = -48.5
+y_head = -28.75
+arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+                                 mutation_scale = 50, color = "darkblue")
+ax.add_patch(arrow)
+mid_x = (x_tail + x_head) / 2
+mid_y = (y_tail + y_head) / 2
+ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+        fontsize = "large", fontweight = "bold")
+ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
@@ -482,6 +486,19 @@ cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
 cbar.set_array(previsao_melt_geo["Focos"])
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
+x_tail = -48.5
+y_tail = -29.25
+x_head = -48.5
+y_head = -28.75
+arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+                                 mutation_scale = 50, color = "darkblue")
+ax.add_patch(arrow)
+mid_x = (x_tail + x_head) / 2
+mid_y = (y_tail + y_head) / 2
+ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+        fontsize = "large", fontweight = "bold")
+ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
 plt.colorbar(cbar, ax = plt.gca(), label="Focos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
@@ -511,10 +528,26 @@ arg_poly = Polygon(coord_arg)
 argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
+municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos",  legend = True,
                                                                         label = "Focos", cmap = "YlOrRd")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
+x_tail = -48.5
+y_tail = -29.25
+x_head = -48.5
+y_head = -28.75
+arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+                                 mutation_scale = 50, color = "darkblue")
+ax.add_patch(arrow)
+mid_x = (x_tail + x_head) / 2
+mid_y = (y_tail + y_head) / 2
+ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+        fontsize = "large", fontweight = "bold")
+ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
+ax.text(-52.5, -28.5, "Não há registros de Focos de _Aedes_ sp.\nou modelagem inexistente\npara municípios em cinza claro.",
+        color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
