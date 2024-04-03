@@ -81,7 +81,7 @@ for erro in value_error:
         print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
 
 # Key_error gerado ao montar o dataset automatizado
-key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]#, "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
+key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 for erro in key_error: 
     cidades = cidades[cidades != erro] 
     if erro not in unicos["Município"]:
