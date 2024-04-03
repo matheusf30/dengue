@@ -1,5 +1,6 @@
 """
-REGISTRO SINAN/SC
+#################################################################################################
+REGISTRO SINAN/SC >>>(DATASUS)
 Atentar aos dados provenientes do TabNet... https://tabnet.datasus.gov.br/
 
 --Seleções:
@@ -19,7 +20,31 @@ Atentar aos dados provenientes do TabNet... https://tabnet.datasus.gov.br/
 >>> Critério de Confirmação: Laboratorial e Clínico-Epidemiológico.
 (Nesse filtro foram desconsiderados: Ignorado, Branco e Em Investigação);
 
->>>(Também não foram filtrados por sorotipo, pois não há confirmação laboratorial de todos.) 
+>>>(Também não foram filtrados por sorotipo, pois não há confirmação laboratorial de todos.)
+
+#################################################################################################
+REGISTRO SINAN/SC >>>(DIVESC)
+Atentar aos dados provenientes do TabNet... http://200.19.223.105/cgi-bin/dh?sinan/def/dengon.def
+
+--Seleções:
+>>> LINHAS: Município de Infecção SC;
+>>> COLUNAS: Semana Epidemilógica dos 1ºs sinais.
+
+--Períodos:
+>>> Haverá um arquivo por ano.
+
+--Seleções Disponíveis(Filtros):
+>>> UF F.infecção: 42 Santa Catarina (Desconsiderados todas as outras UFs, Ignorado e Exterior);
+
+>>> Classificação Nova: Dengue Clássico, Dengue com Complicações, Febre Hemorrágica do Dengue,
+                         Síndrome do Choque do Dengue, Dengue e Dengue com Sinais de alarme.
+(Nesse filtro foram desconsiderados: Ignorado, Branco, Descartado e Inconclusivo);
+
+>>> Conf.Desc pos2010: Laboratorial e Clínico-Epidemiológico.
+(Nesse filtro foram desconsiderados: Ignorado, Branco e Em Investigação);
+
+>>>(Também não foram filtrados por sorotipo, pois não há confirmação laboratorial de todos.)
+#################################################################################################
 """
 print("""
 Casos Prováveis por Semana epidem. 1º Sintomas(s) segundo Município infecção
@@ -66,7 +91,7 @@ from datetime import datetime, timedelta
 import sys
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 elif _local == "CASA":
@@ -80,25 +105,67 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 
 ### Renomeação variáveis pelos arquivos
 ## Dados "Brutos"
-## Fonte: TABNET/DATASUS - SINAN/SC
-casos14 = "sinannet_denguebsc_2014.csv"
-casos15 = "sinannet_denguebsc_2015.csv"
-casos16 = "sinannet_denguebsc_2016.csv"
-casos17 = "sinannet_denguebsc_2017.csv"
-casos18 = "sinannet_denguebsc_2018.csv"
-casos19 = "sinannet_denguebsc_2019.csv"
-casos20 = "sinannet_denguebsc_2020.csv"
-casos23 = "sinannet_denguebsc_2023.csv"
+_fonte = "DIVESC" #DIVESC" "DATASUS"
+# Fonte: TABNET/DATASUS - SINAN/SC
+if _fonte == "DATASUS":
+	casos14 = "sinannet_denguebsc_2014.csv"
+	casos15 = "sinannet_denguebsc_2015.csv"
+	casos16 = "sinannet_denguebsc_2016.csv"
+	casos17 = "sinannet_denguebsc_2017.csv"
+	casos18 = "sinannet_denguebsc_2018.csv"
+	casos19 = "sinannet_denguebsc_2019.csv"
+	casos20 = "sinannet_denguebsc_2020.csv"
+	casos23 = "sinannet_denguebsc_2023.csv"
+# Fonte: TABNET/DATASUS - SINAN/SC
+elif _fonte == "DIVESC":
+	casos14 = "dive_dengue_2014.csv"
+	casos15 = "dive_dengue_2015.csv"
+	casos16 = "dive_dengue_2016.csv"
+	casos17 = "dive_dengue_2017.csv"
+	casos18 = "dive_dengue_2018.csv"
+	casos19 = "dive_dengue_2019.csv"
+	casos20 = "dive_dengue_2020.csv"
+	casos20 = "dive_dengue_2021.csv"
+	casos20 = "dive_dengue_2022.csv"
+	casos23 = "dive_dengue_2023.csv"
+else:
+	print("Favor, revalidar a fonte dos dados brutos!")
 
 ### Abrindo Arquivos
-casos14 = pd.read_csv(f"{caminho_dados}{casos14}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos15 = pd.read_csv(f"{caminho_dados}{casos15}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos16 = pd.read_csv(f"{caminho_dados}{casos16}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos17 = pd.read_csv(f"{caminho_dados}{casos17}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos18 = pd.read_csv(f"{caminho_dados}{casos18}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos19 = pd.read_csv(f"{caminho_dados}{casos19}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos20 = pd.read_csv(f"{caminho_dados}{casos20}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
-casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 6, skipfooter = 26, sep = ";", encoding = "latin1", engine = "python")
+if _fonte == "DATASUS":
+	casos14 = pd.read_csv(f"{caminho_dados}{casos14}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos15 = pd.read_csv(f"{caminho_dados}{casos15}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos16 = pd.read_csv(f"{caminho_dados}{casos16}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos17 = pd.read_csv(f"{caminho_dados}{casos17}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos18 = pd.read_csv(f"{caminho_dados}{casos18}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos19 = pd.read_csv(f"{caminho_dados}{casos19}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos20 = pd.read_csv(f"{caminho_dados}{casos20}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 6, skipfooter = 26,
+                          sep = ";", encoding = "latin1", engine = "python")
+elif _fonte == "DIVESC":
+	casos14 = pd.read_csv(f"{caminho_dados}{casos14}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos15 = pd.read_csv(f"{caminho_dados}{casos15}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos16 = pd.read_csv(f"{caminho_dados}{casos16}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos17 = pd.read_csv(f"{caminho_dados}{casos17}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos18 = pd.read_csv(f"{caminho_dados}{casos18}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos19 = pd.read_csv(f"{caminho_dados}{casos19}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos20 = pd.read_csv(f"{caminho_dados}{casos20}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 6,
+                          sep = ";", encoding = "latin1", engine = "python")
 
 ### Pré-Processamento
 lista_municipio = {'ABDON BATISTA': 'ABDON BATISTA',
