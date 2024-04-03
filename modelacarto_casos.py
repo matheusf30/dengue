@@ -63,13 +63,12 @@ if _automatiza == False:
 else:
 """
 value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
-key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]#,
-             #"BLUMENAU", "SAO_BENTO_DO_SUL"]
+key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 
 ###############################################################
 
 ### Abrindo Arquivo
-casos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
+casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
 focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
 prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
@@ -78,6 +77,8 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 br = gpd.read_file(f"{caminho_dados}{br}")
+casos = casos.iloc[:467]      # Desconsiderando 2023
+unicos = unicos.iloc[:151]    # Desconsiderando 2023
 cidades = unicos["Município"].copy()
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
@@ -379,11 +380,10 @@ def salva_modelo(modelo, cidade):
 ### Exibindo Informações, Gráficos e Métricas
 #previsao_total = []
 previsao_total = pd.DataFrame()
-previsao_total["Semana"] = focos["Semana"].copy()  #pd.date_range(start = "2012-01-01", end = "2022-12-25", freq = "W")
+previsao_total["Semana"] = casos["Semana"].copy()  #pd.date_range(start = "2014-01-05", end = "2022-12-25", freq = "W")
 previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
 previsao_total.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = True)
-
+previsao_total.drop(previsao_total.index[-_retroagir + 3:], axis=0, inplace = True)
 
 if _automatiza == True:
     for cidade in cidades:
