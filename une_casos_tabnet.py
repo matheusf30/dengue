@@ -906,6 +906,7 @@ casos_pivot = pd.pivot_table(casostotal, index = "Semana", columns = "Município
 casos_pivot.reset_index(inplace = True)
 casos_pivot_pospandemia = pd.pivot_table(pospandemia, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
 casos_pivot_pospandemia.reset_index(inplace = True)
+unicos = casostotal.drop_duplicates(subset = ["Município"])
 
 ### Salvando Arquivo
 if _fonte == "DATASUS":
@@ -913,11 +914,13 @@ if _fonte == "DATASUS":
 	casos_pivot.to_csv(f"{caminho_dados}casos_pivot_total.csv", index = False)
 	pospandemia.to_csv(f"{caminho_dados}casos_sinan_pospandemia.csv", index = False)
 	casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_pivot_pospandemia.csv", index = False)
+	unicos.to_csv(f"{caminho_dados}casos_unicos.csv", index = False)
 elif _fonte == "DIVESC":
 	casostotal.to_csv(f"{caminho_dados}casos_dive_total.csv", index = False)
 	casos_pivot.to_csv(f"{caminho_dados}casos_dive_pivot_total.csv", index = False)
 	pospandemia.to_csv(f"{caminho_dados}casos_dive_pospandemia.csv", index = False)
 	casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_dive_pivot_pospandemia.csv", index = False)
+	unicos.to_csv(f"{caminho_dados}casos_unicos.csv", index = False)
 
 ### Printando Informações
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA ANTES DA PANDEMIA \n")
@@ -950,4 +953,12 @@ print("~"*80)
 print(casos_pivot_pospandemia.dtypes)
 print("~"*80)
 print(casos_pivot_pospandemia)
+print("="*80)
+
+print("\n \n CASOS DE DENGUE EM SANTA CATARINA - 1º REGISTRO NA SÉRIE HISTÓRICA \n")
+print(unicos.info())
+print("~"*80)
+print(unicos.dtypes)
+print("~"*80)
+print(unicos)
 print("="*80)
