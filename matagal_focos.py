@@ -54,7 +54,7 @@ cidades = unicos["Município"].copy()
 ### Condições para Variar
 _retroagir = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis"
-_automatiza = False
+_automatiza = True
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
@@ -288,8 +288,10 @@ def salva_modeloRF(modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    if not os.path.exists(caminho_modelos):
+        os.makedirs(caminho_modelos)
+    joblib.dump(modelo, f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
     print("\n" + "="*80 + "\n")
 
 def lista_previsao(previsao, n, string_modelo):
@@ -372,9 +374,9 @@ def salva_modelo(string_modelo, modeloNN = None):
             print("!!"*80)
             raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
         else:
-            modeloNN.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
+            modeloNN.save(modeloNN, f"{caminho_modelos}NN_focos_r{_retroagir}_{cidade}.h5")
     else:
-        joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
 
 ######################################################RANDOM_FOREST############################################################
 
@@ -397,8 +399,6 @@ previsoesRF = [int(p) for p in previsoesRF]
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-
-sys.exit()
 
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
