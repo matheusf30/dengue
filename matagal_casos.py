@@ -35,14 +35,16 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "casos_pivot_total.csv"
-#casos = "casos_pivot_pospandemia.csv"
+#casos = "casos_pivot_total.csv"
+casos = "casos_dive_pivot_total.csv"  # TabNet/DiveSC
+#casos = "casos_pivot_pospandemia.csv" # TabNet/DataSUS
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
-unicos = "unicos_xy.csv"
+unicos = "casos_unicos.csv"
+
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -52,36 +54,42 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
+unicos = unicos.iloc[:151] # Desconsiderando 2023
 cidades = unicos["Município"].copy()
 
 ### Condições para Variar #######################################################
-_retroagir = 8 # Semanas Epidemiológicas
+_retroagir = 3 # Semanas Epidemiológicas
 cidade = "Chapecó"
-_automatiza = False
+_automatiza = True
 ##################################################################################
-"""
+
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
 # raise KeyError(key) from err KeyError: 'CIDADE'
+
+# Value_error gerado ao executar modelo.fit()
 print("!"*80)
 print("\nERROS GERADOS\n")
-value_error = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"]
-key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
+value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
+
 for erro in value_error:
     cidades = cidades[cidades != erro]
     if erro not in unicos["Município"]:
-        print(f"{erro} não está no conjunto de dados!")
+        print(f"{erro} não está no conjunto de dados!\nValueError gerado ao executar modelo.fit()!")
     else:
         print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
+
+# Key_error gerado ao montar o dataset automatizado
+key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]#, "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
 for erro in key_error: 
     cidades = cidades[cidades != erro] 
     if erro not in unicos["Município"]:
-        print(f"{erro} não está no conjunto de dados!")
+        print(f"{erro} não está no conjunto de dados!\nKeyError gerado ao montar o dataset!")
     else:
         print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
 print("!"*80)    
-"""
+
 ### Pré-Processamento
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -90,6 +98,7 @@ prec["Semana"] = pd.to_datetime(prec["Semana"])
 tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
+casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
 
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
@@ -114,7 +123,7 @@ for r in range(1, _retroagir + 1):
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 """
 
-for r in range(5, _retroagir + 1):
+for r in range(3, _retroagir + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -173,15 +182,20 @@ def monta_dataset(cidade):
     dataset["TMAX"] = tmax[cidade].copy()
     dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
     dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
-    troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
+    dataset.dropna(axis = 0, inplace = True)
+    dataset = dataset.iloc[104:, :].copy()
+    dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").copy()
+    troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
     dataset = dataset.rename(columns = troca_nome)
-    for r in range(5, _retroagir + 1):
+    dataset.fillna(0, inplace = True)
+    for r in range(3, _retroagir + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
         dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
         dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-    dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+        dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+    dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
     dataset.dropna(inplace = True)
     dataset.set_index("Semana", inplace = True)
     dataset.columns.name = f"{cidade}"
@@ -189,8 +203,8 @@ def monta_dataset(cidade):
 
 def treino_teste(dataset, cidade):
     SEED = np.random.seed(0)
-    x = dataset.drop(columns = "FOCOS")
-    y = dataset["FOCOS"]
+    x = dataset.drop(columns = "CASOS").copy()
+    y = dataset["CASOS"]
     if x.empty or x.isnull().all().all():
         print(f"'X' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
         print(f"{cidade} possui um conjunto com erro:\n {x}")
@@ -242,7 +256,7 @@ def RF_previsao_metricas(dataset, previsoes, n, teste_y, y_previsto):
     nome_modelo = "Random Forest"
     print("="*80)
     print(f"\n{nome_modelo.upper()} - {cidade}\n")
-    lista_op = [f"Focos: {dataset['FOCOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
+    lista_op = [f"Casos: {dataset['CASOS'][i]}\nPrevisão {nome_modelo}: {previsoes[i]}\n" for i in range(n)]
     print("\n".join(lista_op))
     print("~"*80)
     EQM = mean_squared_error(teste_y, y_previsto)
@@ -266,8 +280,10 @@ def salva_modeloRF(modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    if not os.path.exists(caminho_modelos):
+        os.makedirs(caminho_modelos)
+    joblib.dump(modelo, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
     print("\n" + "="*80 + "\n")
 
 def lista_previsao(previsao, n, string_modelo):
@@ -350,9 +366,9 @@ def salva_modelo(string_modelo, modeloNN = None):
             print("!!"*80)
             raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
         else:
-            modeloNN.save(modeloNN, f"{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
+            modeloNN.save(modeloNN, f"{caminho_modelos}NN_casos_r{_retroagir}_{cidade}.h5")
     else:
-        joblib.dump(modeloRF, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
 
 ######################################################RANDOM_FOREST############################################################
 
@@ -375,14 +391,14 @@ lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, y_previstoRF, "RF")
 metricas("RF")
 
-sys.exit()
-
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
     for cidade in cidades:
         dataset = monta_dataset(cidade)
+        print(dataset)
         treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
         modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
         EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
         salva_modeloRF(modelo, cidade)
+
 ######################################################################################################################################
