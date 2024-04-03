@@ -175,8 +175,8 @@ def abre_modelo(cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    modelo = joblib.load(f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
     print("\n" + "="*80 + "\n")
     return modelo
 
