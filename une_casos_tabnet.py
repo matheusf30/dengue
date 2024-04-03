@@ -125,8 +125,8 @@ elif _fonte == "DIVESC":
 	casos18 = "dive_dengue_2018.csv"
 	casos19 = "dive_dengue_2019.csv"
 	casos20 = "dive_dengue_2020.csv"
-	casos20 = "dive_dengue_2021.csv"
-	casos20 = "dive_dengue_2022.csv"
+	casos21 = "dive_dengue_2021.csv"
+	casos22 = "dive_dengue_2022.csv"
 	casos23 = "dive_dengue_2023.csv"
 else:
 	print("Favor, revalidar a fonte dos dados brutos!")
@@ -150,21 +150,25 @@ if _fonte == "DATASUS":
 	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 6, skipfooter = 26,
                           sep = ";", encoding = "latin1", engine = "python")
 elif _fonte == "DIVESC":
-	casos14 = pd.read_csv(f"{caminho_dados}{casos14}", skiprows = 6,
+	casos14 = pd.read_csv(f"{caminho_dados}{casos14}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos15 = pd.read_csv(f"{caminho_dados}{casos15}", skiprows = 6,
+	casos15 = pd.read_csv(f"{caminho_dados}{casos15}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos16 = pd.read_csv(f"{caminho_dados}{casos16}", skiprows = 6,
+	casos16 = pd.read_csv(f"{caminho_dados}{casos16}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos17 = pd.read_csv(f"{caminho_dados}{casos17}", skiprows = 6,
+	casos17 = pd.read_csv(f"{caminho_dados}{casos17}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos18 = pd.read_csv(f"{caminho_dados}{casos18}", skiprows = 6,
+	casos18 = pd.read_csv(f"{caminho_dados}{casos18}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos19 = pd.read_csv(f"{caminho_dados}{casos19}", skiprows = 6,
+	casos19 = pd.read_csv(f"{caminho_dados}{casos19}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos20 = pd.read_csv(f"{caminho_dados}{casos20}", skiprows = 6,
+	casos20 = pd.read_csv(f"{caminho_dados}{casos20}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
-	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 6,
+	casos21 = pd.read_csv(f"{caminho_dados}{casos21}", skiprows = 5,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos22 = pd.read_csv(f"{caminho_dados}{casos22}", skiprows = 5,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
 
 ### Pré-Processamento
@@ -480,9 +484,13 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
-casos14.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+if _fonte == "DATASUS":
+	casos14.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos14.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos14.rename(columns = dict_semanas, inplace = True)
 casos14["Município"] = casos14["Município"].str.replace("\d+ ", "", regex = True)
+casos14["Município"] = casos14["Município"].str.upper()
 casos14.drop(columns = "Total", inplace = True)
 casos14.drop(casos14.index[-2:], axis = 0, inplace = True)
 casos14.set_index("Município", inplace = True)
@@ -495,7 +503,8 @@ casos14[colunas] = casos14[colunas].replace("-", np.nan)
 casos14[colunas] = casos14[colunas].astype(float)
 casos14.fillna(0, inplace = True)
 casos14[colunas] = casos14[colunas].astype(int)
-casos14 = pd.melt(casos14, id_vars = "Semana", var_name = "Município", value_name = "Casos", ignore_index = True) #  value_vars = None, usa o restante de colunas para sair do pivot.
+casos14 = pd.melt(casos14, id_vars = "Semana", var_name = "Município", value_name = "Casos", ignore_index = True)
+#  value_vars = None, usa o restante de colunas para sair do pivot.
 casos14.sort_values(by = "Semana",  ignore_index = True, inplace = True)
 print("="*80, f"\n{ano}\n\n", casos14)
 print(casos14.info())
@@ -518,9 +527,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos15.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos15.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos15.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos15.rename(columns = dict_semanas, inplace = True)
 casos15["Município"] = casos15["Município"].str.replace("\d+ ", "", regex = True)
+casos15["Município"] = casos15["Município"].str.upper()
 casos15.drop(columns = "Total", inplace = True)
 casos15.drop(casos15.index[-2:], axis = 0, inplace = True)
 casos15.set_index("Município", inplace = True)
@@ -557,9 +571,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos16.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos16.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos16.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos16.rename(columns = dict_semanas, inplace = True)
 casos16["Município"] = casos16["Município"].str.replace("\d+ ", "", regex = True)
+casos16["Município"] = casos16["Município"].str.upper()
 casos16.drop(columns = "Total", inplace = True)
 casos16.drop(casos16.index[-2:], axis = 0, inplace = True)
 casos16.set_index("Município", inplace = True)
@@ -595,9 +614,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos17.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos17.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos17.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos17.rename(columns = dict_semanas, inplace = True)
 casos17["Município"] = casos17["Município"].str.replace("\d+ ", "", regex = True)
+casos17["Município"] = casos17["Município"].str.upper()
 casos17.drop(columns = "Total", inplace = True)
 casos17.drop(casos17.index[-2:], axis = 0, inplace = True)
 casos17.set_index("Município", inplace = True)
@@ -633,9 +657,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos18.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos18.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos18.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos18.rename(columns = dict_semanas, inplace = True)
 casos18["Município"] = casos18["Município"].str.replace("\d+ ", "", regex = True)
+casos18["Município"] = casos18["Município"].str.upper()
 casos18.drop(columns = "Total", inplace = True)
 casos18.drop(casos18.index[-2:], axis = 0, inplace = True)
 casos18.set_index("Município", inplace = True)
@@ -671,9 +700,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos19.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos19.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos19.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos19.rename(columns = dict_semanas, inplace = True)
 casos19["Município"] = casos19["Município"].str.replace("\d+ ", "", regex = True)
+casos19["Município"] = casos19["Município"].str.upper()
 casos19.drop(columns = "Total", inplace = True)
 casos19.drop(casos19.index[-2:], axis = 0, inplace = True)
 casos19.set_index("Município", inplace = True)
@@ -709,9 +743,14 @@ while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos20.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos20.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos20.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos20.rename(columns = dict_semanas, inplace = True)
 casos20["Município"] = casos20["Município"].str.replace("\d+ ", "", regex = True)
+casos20["Município"] = casos20["Município"].str.upper()
 casos20.drop(columns = "Total", inplace = True)
 casos20.drop(casos20.index[-2:], axis = 0, inplace = True)
 casos20.set_index("Município", inplace = True)
@@ -731,6 +770,92 @@ print(casos20.info())
 print(casos20.columns.drop("Semana"))
 print("="*80)
 
+# 2021
+ano = 2021
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 3)
+fim = datetime(ano, 12, 26)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos21.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos21.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
+casos21.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+casos21.rename(columns = dict_semanas, inplace = True)
+casos21["Município"] = casos21["Município"].str.replace("\d+ ", "", regex = True)
+casos21["Município"] = casos21["Município"].str.upper()
+casos21.drop(columns = "Total", inplace = True)
+casos21.drop(casos21.index[-2:], axis = 0, inplace = True)
+casos21.set_index("Município", inplace = True)
+casos21 = casos21.T
+casos21.reset_index(inplace=True)
+casos21 = casos21.rename(columns = {"index" : "Semana"})
+casos21.rename(columns = lista_municipio, inplace = True)
+colunas = casos21.columns.drop("Semana")
+casos21[colunas] = casos21[colunas].replace("-", np.nan)
+casos21[colunas] = casos21[colunas].astype(float)
+casos21.fillna(0, inplace = True)
+casos21[colunas] = casos21[colunas].astype(int)
+casos21 = pd.melt(casos21, id_vars = "Semana", var_name = "Município", value_name = "Casos", ignore_index = True)
+casos21.sort_values(by = "Semana",  ignore_index = True, inplace = True)
+print("="*80, f"\n{ano}\n\n", casos21)
+print(casos21.info())
+print(casos21.columns.drop("Semana"))
+print("="*80)
+
+# 2022
+ano = 2022
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano, 1, 2)
+fim = datetime(ano, 12, 25)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos22.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos22.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
+casos22.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+casos22.rename(columns = dict_semanas, inplace = True)
+casos22["Município"] = casos22["Município"].str.replace("\d+ ", "", regex = True)
+casos22["Município"] = casos22["Município"].str.upper()
+casos22.drop(columns = "Total", inplace = True)
+casos22.drop(casos22.index[-2:], axis = 0, inplace = True)
+casos22.set_index("Município", inplace = True)
+casos22 = casos22.T
+casos22.reset_index(inplace=True)
+casos22 = casos22.rename(columns = {"index" : "Semana"})
+casos22.rename(columns = lista_municipio, inplace = True)
+colunas = casos22.columns.drop("Semana")
+casos22[colunas] = casos22[colunas].replace("-", np.nan)
+casos22[colunas] = casos22[colunas].astype(float)
+casos22.fillna(0, inplace = True)
+casos22[colunas] = casos22[colunas].astype(int)
+casos22 = pd.melt(casos22, id_vars = "Semana", var_name = "Município", value_name = "Casos", ignore_index = True)
+casos22.sort_values(by = "Semana",  ignore_index = True, inplace = True)
+print("="*80, f"\n{ano}\n\n", casos22)
+print(casos22.info())
+print(casos22.columns.drop("Semana"))
+print("="*80)
+
 # 2023
 ano = 2023
 total_semana = 52
@@ -740,16 +865,21 @@ for i in range(1, total_semana + 1):
     chave_semana = f"Semana {n_semana}"
     lista_str_semanas.append(chave_semana)
 inicio = datetime(ano, 1, 1)
-fim = datetime(ano, 12, 24)
+fim = datetime(ano, 12, 31)
 lista_semanas = []
 semana_corrente = inicio
 while semana_corrente <= fim:
     lista_semanas.append(semana_corrente)
     semana_corrente += timedelta(weeks = 1)
 dict_semanas = dict(zip(lista_str_semanas, [date.strftime('%Y-%m-%d') for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos23.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos23.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
 casos23.rename(columns = {"Município infecção" : "Município"}, inplace = True)
 casos23.rename(columns = dict_semanas, inplace = True)
 casos23["Município"] = casos23["Município"].str.replace("\d+ ", "", regex = True)
+casos23["Município"] = casos23["Município"].str.upper()
 casos23.drop(columns = "Total", inplace = True)
 casos23.drop(casos23.index[-2:], axis = 0, inplace = True)
 casos23.set_index("Município", inplace = True)
@@ -770,7 +900,7 @@ print(casos23.columns.drop("Semana"))
 print("="*80)
 
 prepandemia = pd.concat([casos14, casos15, casos16, casos17, casos18, casos19], ignore_index = True)
-pospandemia = pd.concat([casos20, casos23], ignore_index = True)
+pospandemia = pd.concat([casos20, casos21, casos22, casos23], ignore_index = True)
 casostotal = pd.concat([prepandemia, pospandemia], ignore_index = True)
 casos_pivot = pd.pivot_table(casostotal, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
 casos_pivot.reset_index(inplace = True)
@@ -778,10 +908,16 @@ casos_pivot_pospandemia = pd.pivot_table(pospandemia, index = "Semana", columns 
 casos_pivot_pospandemia.reset_index(inplace = True)
 
 ### Salvando Arquivo
-casostotal.to_csv(f"{caminho_dados}casos_sinan_total.csv", index = False)
-casos_pivot.to_csv(f"{caminho_dados}casos_pivot_total.csv", index = False)
-pospandemia.to_csv(f"{caminho_dados}casos_sinan_pospandemia.csv", index = False)
-casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_pivot_pospandemia.csv", index = False)
+if _fonte == "DATASUS":
+	casostotal.to_csv(f"{caminho_dados}casos_sinan_total.csv", index = False)
+	casos_pivot.to_csv(f"{caminho_dados}casos_pivot_total.csv", index = False)
+	pospandemia.to_csv(f"{caminho_dados}casos_sinan_pospandemia.csv", index = False)
+	casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_pivot_pospandemia.csv", index = False)
+elif _fonte == "DIVESC":
+	casostotal.to_csv(f"{caminho_dados}casos_dive_total.csv", index = False)
+	casos_pivot.to_csv(f"{caminho_dados}casos_dive_pivot_total.csv", index = False)
+	pospandemia.to_csv(f"{caminho_dados}casos_dive_pospandemia.csv", index = False)
+	casos_pivot_pospandemia.to_csv(f"{caminho_dados}casos_dive_pivot_pospandemia.csv", index = False)
 
 ### Printando Informações
 print("\n \n CASOS DE DENGUE EM SANTA CATARINA ANTES DA PANDEMIA \n")
