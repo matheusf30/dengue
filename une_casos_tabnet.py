@@ -991,7 +991,7 @@ casos_pivot = pd.pivot_table(casostotal, index = "Semana", columns = "Município
 casos_pivot.reset_index(inplace = True)
 casos_pivot_pospandemia = pd.pivot_table(pospandemia, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
 casos_pivot_pospandemia.reset_index(inplace = True)
-unicos = casostotal.drop_duplicates(subset = ["Município"])
+unicos = casostotal[casostotal["Casos"] > 0].drop_duplicates(subset = ["Município"])
 municipios["Município"] = municipios["NM_MUN"].str.upper()
 cidades = municipios[["Município", "geometry"]]
 cidades = cidades.to_crs(municipios.crs) # SIRGAS 2000/22S ("EPSG:31982") | IBGE.shp ("EPSG:4674")
