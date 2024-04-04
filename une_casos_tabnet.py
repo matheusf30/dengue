@@ -1005,7 +1005,7 @@ warnings.filters = original_filter
 
 ### Salvando Arquivo
 cidades.to_csv(f"{caminho_dados}municipios_coordenadas.csv", index = False)
-unicos_xy.to_csv(f"{caminho_dados}casos_unicos.csv", index = False)
+unicos_xy.to_csv(f"{caminho_dados}casos_primeiros.csv", index = False)
 if _fonte == "DATASUS":
 	casostotal.to_csv(f"{caminho_dados}casos_sinan_total.csv", index = False)
 	casos_pivot.to_csv(f"{caminho_dados}casos_sinan_pivot_total.csv", index = False)
