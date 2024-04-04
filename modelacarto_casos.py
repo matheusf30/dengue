@@ -56,12 +56,12 @@ br = "BR_UF_2022.shp"
 #### Condições para Variar ####################################
 _automatiza = True
 _retroagir = 3
-SEED = np.random.seed(0)
-"""
 if _automatiza == False:
-    cidade = "FLORIANÓPOLIS"
-else:
-"""
+    cidade = "Florianópolis"
+    cidade = cidade.upper()
+
+SEED = np.random.seed(0)
+
 value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
 key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 
@@ -290,10 +290,11 @@ def metricas(dataset, previsoes, n, y):
 
 def grafico(previsoes, R_2):
     final = pd.DataFrame()
-    final["Semana"] = focos["Semana"]
-    final["Casos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir + 4:], axis=0, inplace = True)
+    final["Semana"] = casos["Semana"]
+    final["Casos"] = casos[cidade]
+    #final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+    #final.drop(final.index[-_retroagir + 4:], axis=0, inplace = True)
+    final.drop(1, axis=0, inplace = True)
     """
     previsoes = previsao
     previsoes = previsoes[:len(final)]
@@ -380,10 +381,11 @@ def salva_modelo(modelo, cidade):
 ### Exibindo Informações, Gráficos e Métricas
 #previsao_total = []
 previsao_total = pd.DataFrame()
-previsao_total["Semana"] = casos["Semana"].copy()  #pd.date_range(start = "2014-01-05", end = "2022-12-25", freq = "W")
+previsao_total["Semana"] = casos["Semana"].copy() #pd.date_range(start = "2014-01-05", end = "2022-12-25", freq = "W")
 previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
-previsao_total.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-previsao_total.drop(previsao_total.index[-_retroagir + 3:], axis=0, inplace = True)
+previsao_total.drop(1, axis = 0, inplace = True)
+#previsao_total.drop([d for d in range(_retroagir)], axis = 0, inplace = True)
+#previsao_total.drop(previsao_total.index[-_retroagir:], axis = 0, inplace = True)
 
 if _automatiza == True:
     for cidade in cidades:
@@ -398,6 +400,7 @@ if _automatiza == True:
             previsoes, y_previsto = preve(modelo, x, treino_x_explicado)
             EQM, RQ_EQM, R_2 = metricas(dataset, previsoes, 5, y)
             previsao_total[cidade] = previsoes
+            
 else:
     modelo = abre_modelo(cidade)
     dataset, x, y = monta_dataset(cidade)
@@ -413,24 +416,24 @@ previsao_melt = pd.melt(previsao_total, id_vars = ["Semana"],
 previsao_melt = previsao_melt.sort_values(by = "Semana")
 xy = unicos.drop(columns = ["Semana", "Casos"])
 previsao_melt_xy = pd.merge(previsao_melt, xy, on = "Município", how = "left")
-geometry = [Point(xy) for xy in zip(previsao_melt_xy['longitude'], previsao_melt_xy['latitude'])]
+geometry = [Point(xy) for xy in zip(previsao_melt_xy["longitude"], previsao_melt_xy["latitude"])]
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
-
+previsao_melt_geo = previsao_melt_geo[["Semana", "Município", "Casos", "geometry"]]
+previsao_melt_geo["Semana"] = pd.to_datetime(previsao_melt_geo["Semana"])
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-print(xy)
-print(dataset)
-print(municipios)
-print(municipios.crs)
-print(previsao_total)
-print(previsao_melt)
+
+print(previsao_melt_geo.columns)
 print(previsao_melt_geo)
+print(previsao_melt_geo.info())
+print(unicos)
+sys.exit()
 
 ### Cartografia
 # Semana Epidemiológica
 semana_epidemio = "2022-04-17"
 
 # SC_Pontos
-previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
+#previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
 fig, ax = plt.subplots(figsize = (20, 12))
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
@@ -447,8 +450,8 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
-previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Casos",  legend = True,
-                                                                        label = "Focos", cmap = "YlOrRd", markersize = 50)
+previsao_melt_xy[previsao_melt_xy["Semana"] == semana_epidemio ].plot(ax = ax, column = "Casos",  legend = True,
+                                                                        label = "Casos", cmap = "YlOrRd", markersize = 50)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -466,7 +469,7 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
 
@@ -488,7 +491,7 @@ argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(), weights = "Casos",
-            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Focos"].max(), alpha = 0.5)
+            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Casos"].max(), alpha = 0.5)
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
 cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
 cbar.set_array(previsao_melt_geo["Focos"])
@@ -510,7 +513,7 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
 plt.colorbar(cbar, ax = plt.gca(), label="Focos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Mapa de Calor dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Mapa de Calor dos Casos de Dengue Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
 
@@ -538,7 +541,7 @@ argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos",  legend = True,
-                                                                        label = "Focos", cmap = "YlOrRd")
+                                                                        label = "Casos", cmap = "YlOrRd")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -554,11 +557,11 @@ ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
 ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
-ax.text(-52.5, -28.5, "Não há registros de Focos de _Aedes_ sp.\nou modelagem inexistente\npara municípios em cinza claro.",
+ax.text(-52.5, -28.5, "Não há registros de Casos de Dengue\nou modelagem inexistente\npara municípios em cinza claro.",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
 
