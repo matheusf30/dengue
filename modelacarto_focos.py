@@ -48,7 +48,7 @@ prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
-unicos = "unicos_xy.csv"
+unicos = "focos_primeiros.csv"
 municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 br = "BR_UF_2022.shp"
 
