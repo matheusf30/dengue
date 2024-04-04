@@ -52,7 +52,11 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 import geopandas as gpd
-import sys, os
+import sys, os, warnings
+
+original_filter = warnings.filters[:]
+warnings.simplefilter("ignore", category = UserWarning)
+
 
 ### Encaminhamento aos Diretórios
 _local = "IFSC" # OPÇÕES>>> "GH" | "CASA" | "IFSC"
@@ -990,12 +994,14 @@ casos_pivot_pospandemia.reset_index(inplace = True)
 unicos = casostotal.drop_duplicates(subset = ["Município"])
 municipios["Município"] = municipios["NM_MUN"].str.upper()
 cidades = municipios[["Município", "geometry"]]
-#cidades = cidades.to_crs("EPSG:31982") # SIRGAS 2000/22S
+cidades = cidades.to_crs(municipios.crs) # SIRGAS 2000/22S ("EPSG:31982") | IBGE.shp ("EPSG:4674")
 cidades["centroide"] = cidades["geometry"].centroid
 cidades["latitude"] = cidades["geometry"].centroid.y
 cidades["longitude"] = cidades["geometry"].centroid.x
 xy = cidades[["Município", "latitude", "longitude"]]
 unicos_xy = pd.merge(unicos, xy, on = "Município", how = "left")
+
+warnings.filters = original_filter
 
 ### Salvando Arquivo
 cidades.to_csv(f"{caminho_dados}municipios_coordenadas.csv", index = False)
@@ -1059,4 +1065,6 @@ print("~"*80)
 print(cidades.dtypes)
 print("~"*80)
 print(cidades)
+print("="*80)
+print(f"Coordinate Reference System (CRS)\nIBGE.shp: {municipios.crs}\n(Instituto Brasileiro de Geografia e Estatística)")
 print("="*80)
