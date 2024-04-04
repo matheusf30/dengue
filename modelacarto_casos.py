@@ -493,12 +493,12 @@ arg_poly = Polygon(coord_arg)
 argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
-sns.kdeplot(data = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio],
+sns.kdeplot(data = previsao_melt_xy[previsao_melt_xy["Semana"] == semana_epidemio],
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(), weights = "Casos",
-            fill = True, cmap = "YlOrRd", levels = previsao_melt_geo["Casos"].max(), alpha = 0.5)
+            fill = True, cmap = "YlOrRd", levels = previsao_melt_xy["Casos"].max(), alpha = 0.5)
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
 cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
-cbar.set_array(previsao_melt_geo["Focos"])
+cbar.set_array(previsao_melt_xy["Casos"])
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -514,7 +514,7 @@ ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
 ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
-plt.colorbar(cbar, ax = plt.gca(), label="Focos")
+plt.colorbar(cbar, ax = plt.gca(), label="Casos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Mapa de Calor dos Casos de Dengue Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
