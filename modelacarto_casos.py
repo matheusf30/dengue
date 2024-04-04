@@ -390,9 +390,9 @@ previsao_total.drop(1, axis = 0, inplace = True)
 if _automatiza == True:
     for cidade in cidades:
         if cidade in value_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+            print(f"\nModelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!\n")
         elif cidade in key_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+            print(f"\nModelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!\n")
         else:
             modelo = abre_modelo(cidade)
             dataset, x, y = monta_dataset(cidade)
