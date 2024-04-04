@@ -422,15 +422,19 @@ previsao_melt_geo = previsao_melt_geo[["Semana", "Município", "Casos", "geometr
 previsao_melt_geo["Semana"] = pd.to_datetime(previsao_melt_geo["Semana"])
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
-print(previsao_melt_geo.columns)
-print(previsao_melt_geo)
-print(previsao_melt_geo.info())
-print(unicos)
-sys.exit()
+
 
 ### Cartografia
 # Semana Epidemiológica
 semana_epidemio = "2022-04-17"
+
+print(previsao_melt_geo.columns)
+print(previsao_melt_geo)
+print(previsao_melt_geo.info())
+print("~"*80)
+print(previsao_melt_xy.columns)
+print(previsao_melt_xy)
+print(previsao_melt_xy.info())
 
 # SC_Pontos
 #previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
@@ -450,7 +454,7 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
-previsao_melt_xy[previsao_melt_xy["Semana"] == semana_epidemio ].plot(ax = ax, column = "Casos",  legend = True,
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Casos",  legend = True,
                                                                         label = "Casos", cmap = "YlOrRd", markersize = 50)
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
