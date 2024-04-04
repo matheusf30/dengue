@@ -497,7 +497,7 @@ sns.kdeplot(data = previsao_melt_xy[previsao_melt_xy["Semana"] == semana_epidemi
             x = "longitude", y = "latitude", legend = True, ax = plt.gca(), weights = "Casos",
             fill = True, cmap = "YlOrRd", levels = previsao_melt_xy["Casos"].max(), alpha = 0.5)
 municipios.plot(ax = plt.gca(), color = "lightgreen", edgecolor = "black", alpha = 0.3)
-cbar = plt.cm.ScalarMappable(cmap="YlOrRd")
+cbar = plt.cm.ScalarMappable(cmap="YlOrRd") #.gca() get current axis
 cbar.set_array(previsao_melt_xy["Casos"])
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
@@ -517,7 +517,8 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
 plt.colorbar(cbar, ax = plt.gca(), label="Casos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Mapa de Calor dos Casos de Dengue Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"""Mapa de Densidade de Kernel dos Casos de Dengue Previstos.
+Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""")
 plt.grid(True)
 plt.show()
 
@@ -527,7 +528,7 @@ xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper()
 previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
-previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
+previsao_melt_poligeo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
 fig, ax = plt.subplots(figsize = (20, 12))
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
@@ -544,8 +545,8 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
-previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos",  legend = True,
-                                                                        label = "Casos", cmap = "YlOrRd")
+previsao_melt_poligeo[previsao_melt_poligeo["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos",  legend = True,
+                                                                               label = "Casos", cmap = "YlOrRd")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -561,13 +562,22 @@ ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
 ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
-ax.text(-52.5, -28.5, "Não há registros de Casos de Dengue\nou modelagem inexistente\npara municípios em cinza claro.",
+ax.text(-52.5, -28.25, """LEGENDA
+
+❏ Sem registro*
+
+*Não há registro oficial ou
+modelagem inexistente.""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
+
+print(previsao_melt_poligeo.columns)
+print(previsao_melt_poligeo)
+print(previsao_melt_poligeo.info())
 
 sys.exit()
 
