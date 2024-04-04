@@ -63,7 +63,7 @@ xy["longitude"] = cidades["geometry"].centroid.x
 focos_timespace_xy = pd.merge(focossemana, xy, on = "Município", how = "left")
 focos_timespace_xy = focos_timespace_xy.drop(columns = ["NM_MUN", "ponto"])
 ### Municípios, Lat, Lon
-unicos_xy = focos_timespace_xy.drop_duplicates(subset = ["Município"])
+unicos_xy = focos_timespace_xy[focos_timespace_xy["Focos"] > 0].drop_duplicates(subset = ["Município"])
 """
 focos_timespace_poligono = pd.merge(focosdive, cidades, on = "Município", how = "left") # Data de Coleta e Polígonos
 focos_timespace_centroide = pd.merge(focosdive, pontos, on = "Município", how = "left") # Data da Coleta e Centróides
@@ -76,7 +76,7 @@ focos_timespace_se_centroide = focos_timespace_se_centroide.drop(columns = ["NM_
 """
 ### Salvando Arquivos
 focos_timespace_xy.to_csv(f"{caminho_dados}focos_timespace_xy.csv", index = False) # Semanas Epidemiológicas, Latitudes e Longitudes
-unicos_xy.to_csv(f"{caminho_dados}unicos_xy.csv", index = False) # Primeiro Registro do Município
+unicos_xy.to_csv(f"{caminho_dados}focos_primeiros.csv", index = False) # Primeiro Registro do Município
 """
 focos_timespace_poligono.to_csv(f"{caminho_dados}focos_timespace_poligono.csv", index = False) # Série Histórica e Polígonos
 focos_timespace_centroide.to_csv(f"{caminho_dados}focos_timespace_centroide.csv", index = False) # Série Histórica e Centróides
@@ -127,54 +127,3 @@ print(unicos_xy)
 print("="*80)
 print(unicos_xy)
 print(unicos_xy["Município"])
-municipios.plot()
-plt.show()
-"""
-print("\n \n MUNICÍPIOS DE SANTA CATARINA (IBGE) \n")
-print(municipios.info())
-print("~"*80)
-print(municipios.dtypes)
-print("~"*80)
-print(municipios)
-print("="*80)
-
-print("\n \n MUNICÍPIOS DE SANTA CATARINA (IBGE- centróide) \n")
-print(pontos.info())
-print("~"*80)
-print(pontos.dtypes)
-print("~"*80)
-print(pontos)
-print("="*80)
-
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE - POLÍGONOS E MULTIPOLÍGONOS) \n")
-print(focos_timespace_poligono.info())
-print("~"*80)
-print(focos_timespace_poligono.dtypes)
-print("~"*80)
-print(focos_timespace_poligono)
-print("="*80)
-
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE - CENTRÓIDES) \n")
-print(focos_timespace_centroide.info())
-print("~"*80)
-print(focos_timespace_centroide.dtypes)
-print("~"*80)
-print(focos_timespace_centroide)
-print("="*80)
-
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE - POLÍGONOS E MULTIPOLÍGONOS) \n")
-print(focos_timespace_se_poligono.info())
-print("~"*80)
-print(focos_timespace_se_poligono.dtypes)
-print("~"*80)
-print(focos_timespace_se_poligono)
-print("="*80)
-
-print("\n \n FOCOS DE _Aedes aegypti_ EM SANTA CATARINA - SÉRIE HISTÓRICA - SEMANAS EPIDEMIOLÓGICAS (DIVE/SC) \n + MUNICÍPIOS DE SANTA CATARINA (IBGE - CENTRÓIDES) \n")
-print(focos_timespace_se_centroide.info())
-print("~"*80)
-print(focos_timespace_se_centroide.dtypes)
-print("~"*80)
-print(focos_timespace_se_centroide)
-print("="*80)
-"""
