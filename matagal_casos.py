@@ -76,18 +76,18 @@ value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
 for erro in value_error:
     cidades = cidades[cidades != erro]
     if erro not in unicos["Município"]:
-        print(f"{erro} não está no conjunto de dados!\nValueError gerado ao executar modelo.fit()!")
+        print(f"\n{erro} não está no conjunto de dados!\nValueError gerado ao executar modelo.fit()!\n")
     else:
-        print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
+        print(f"\nNo sé qué se pasa! {erro} está no conjunto de dados!\n")
 
 # Key_error gerado ao montar o dataset automatizado
 key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 for erro in key_error: 
     cidades = cidades[cidades != erro] 
     if erro not in unicos["Município"]:
-        print(f"{erro} não está no conjunto de dados!\nKeyError gerado ao montar o dataset!")
+        print(f"\n{erro} não está no conjunto de dados!\nKeyError gerado ao montar o dataset!\n")
     else:
-        print(f"No sé qué se pasa! {erro} está no conjunto de dados!")
+        print(f"\nNo sé qué se pasa! {erro} está no conjunto de dados!\n")
 print("!"*80)    
 
 ### Pré-Processamento
