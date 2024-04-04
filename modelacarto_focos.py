@@ -502,7 +502,7 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
 plt.colorbar(cbar, ax = plt.gca(), label="Focos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Mapa de Calor dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Mapa de Densidade de Kernel dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
 plt.show()
 
@@ -546,7 +546,12 @@ ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
 ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
-ax.text(-52.5, -28.5, "Não há registros de Focos de _Aedes_ sp.\nou modelagem inexistente\npara municípios em cinza claro.",
+ax.text(-52.5, -28.25, """LEGENDA
+
+❏ Sem registro*
+
+*Não há registro oficial ou
+modelagem inexistente.""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
