@@ -43,7 +43,7 @@ trocanome = {
 "LAURO MULLER" : "LAURO MÜLLER"
 }
 focosdive["Município"] = focosdive["Município"].replace(trocanome)
-focosdive["Focos"] = np.ones(251014).astype(int)
+focosdive["Focos"] = np.ones(len(focosdive)).astype(int)
 focosdive["Data"] = focosdive["Data da Coleta"].copy()
 focosdive["Data"] = pd.to_datetime(focosdive["Data"])
 focossemana = focosdive.copy()
