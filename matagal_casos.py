@@ -15,12 +15,23 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, accuracy_score, r2_score#, RocCurveDisplay
 # Modelos e Visualizações
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
-from sklearn.tree import export_graphviz, export_text, plot_tree
+#from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
+#from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
 
-### Encaminhamento aos Diretórios
+### Condições para Variar #######################################################
+
 _local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+
+_retroagir = 3 # Semanas Epidemiológicas
+
+cidade = "Chapecó"
+
+_automatiza = True
+
+##################################################################################
+
+### Encaminhamento aos Diretórios
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
@@ -45,7 +56,6 @@ tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
 unicos = "casos_unicos.csv"
 
-
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
 focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
@@ -54,15 +64,8 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
-unicos = unicos.iloc[:151] # Desconsiderando 2023
-cidades = unicos["Município"].copy()
 
-### Condições para Variar #######################################################
-_retroagir = 3 # Semanas Epidemiológicas
-cidade = "Chapecó"
-_automatiza = True
-##################################################################################
-
+### Sanando Erros
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
@@ -91,6 +94,7 @@ for erro in key_error:
 print("!"*80)    
 
 ### Pré-Processamento
+cidades = unicos["Município"].copy()
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
@@ -98,7 +102,9 @@ prec["Semana"] = pd.to_datetime(prec["Semana"])
 tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
+### Recortes Temporais
 casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
+unicos = unicos.iloc[:151] # Desconsiderando 2023
 
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
