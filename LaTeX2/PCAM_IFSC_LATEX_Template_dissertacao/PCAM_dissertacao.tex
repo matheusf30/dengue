@@ -1,0 +1,347 @@
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{abntex2}}
+\ProcessOptions
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	oneside,			% para impressão em verso e anverso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	french,				% idioma adicional para hifenização
+	spanish,			% idioma adicional para hifenização
+	brazil				% o último idioma é o principal do documento
+	]{abntex2}
+
+\usepackage{setspace}
+\usepackage{conf-ifsc}	
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{trivfloat}
+\trivfloat{quadro}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{float}
+\floatstyle{plaintop}
+\restylefloat{quadro}
+\usepackage{chngcntr}
+\usepackage{lipsum}
+\usepackage{tocloft}
+\usepackage{tocvsec2}
+\usepackage{boxhandler}
+\usepackage[font={bf,small},labelfont=small]{caption}
+
+
+\newcommand{\source}[1]{\caption*{\normalfont Fonte: {#1}}}
+
+
+\counterwithout{equation}{chapter}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+
+\newcommand\ChangeRT[1]{\noalign{\hrule height #1}}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+%---------------------------------------------------------------------%
+%---------------------------------------------------------------------%
+% Informações de dados para CAPA e FOLHA DE ROSTO
+%---------------------------------------------------------------------%
+%---------------------------------------------------------------------%
+
+\titulo{TÍTULO DO TRABALHO: e subtítulo se houver}
+
+\autor{NOME DO AUTOR}
+
+\local{FLORIANÓPOLIS}
+
+\data{20XX.}
+
+\orientador[Orientador:\\]{Nome do professor, titulação}
+
+
+%\coorientador[Coorientador:\\]{Nome do coorientador}
+
+\tipotrabalho{Dissertação (Mestrado)}
+
+% O preambulo deve conter o tipo do trabalho, o objetivo, o nome da instituição e a área de concentração 
+\preambulo{Dissertação submetido ao Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina como parte dos requisitos para obtenção do título de Mestre Profissional em Clima e Ambiente.}
+
+% \textoaprovacao{Este Trabalho foi julgado adequado para obtenção do Título de Engenheira Eletrônica em abril de 2021 e aprovado na sua forma final pela banca examinadora do Curso de Engenharia Eletrônica do instituto Federal de Educação Ciência, e Tecnologia de Santa Catarina.}
+
+
+
+%---------------------------------------------------------------------%
+% Início do documento
+%---------------------------------------------------------------------%
+
+\begin{document}
+
+
+
+\selectlanguage{brazil}
+\frenchspacing 
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+\imprimircapa
+
+\imprimirfolhaderosto* %(o * indica que haverá a ficha bibliográfica)
+
+%---------------------------------------------------------------------%
+% ATENÇÃO - Pergunte para a Biblioteca do IFSC
+% Inserir a ficha bibliografica - 
+%
+% Para gerar a ficha catalográfica acesse:
+% http://ficha.florianopolis.ifsc.edu.br/
+% Precisa ser feito pelo navegador Mozilla Firefox
+%---------------------------------------------------------------------%
+
+\imprimirficha{pdf/fichacatalografica.pdf}
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% Inserir folha de aprovação
+%---------------------------------------------------------------------%
+
+
+%\imprimiraprovacao
+\includepdf[pages=-]{pdf/tcc-aprovado.pdf}
+
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% Dedicatória
+%---------------------------------------------------------------------%
+\begin{dedicatoria}
+    \vspace*{\fill}
+	\begin{flushright}
+    		(Dedicatória é um elemento opcional.\\ 
+            Texto alinhado no canto inferior direito.\\
+            Não deve ultrapassar uma página.)
+	\end{flushright}
+\end{dedicatoria}
+
+
+
+
+%---------------------------------------------------------------------%
+% Agradecimentos
+%---------------------------------------------------------------------%
+\begin{agradecimentos}
+    Elemento opcional que não pode ultrapassar o limite de uma página.
+\end{agradecimentos}
+% ---
+
+%---------------------------------------------------------------------%
+% Epígrafe
+%---------------------------------------------------------------------%
+\begin{epigrafe}
+    \vspace*{\fill}
+	\begin{flushright}
+    		(Epígrafe é um elemento opcional.\\
+    		Texto alinhado no canto inferior direito.\\
+            Não deve ultrapassar uma página.)
+	\end{flushright}
+\end{epigrafe}
+
+%---------------------------------------------------------------------%
+% RESUMOS
+%---------------------------------------------------------------------%
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\renewcommand{\baselinestretch}{1} 
+\begin{resumo}
+    O resumo deve mostrar a natureza e o objetivo do trabalho, o método que foi empregado, os resultados e as conclusões. O resumo deve conter entre 150 e 500 palavras e constitui-se de um único parágrafo, sem recuo.
+
+ 
+   \noindent 
+    \textbf{Palavras-chave}: Primeira palavra-chave. Segunda palavra-chave. Terceira palavra-chave. Quarta palavra-chave (opcional). Quinta palavra-chave (opcional). 
+\end{resumo}
+
+% resumo em inglês
+\renewcommand{\baselinestretch}{1} 
+\begin{resumo}[Abstract]
+ \begin{otherlanguage*}{english}
+
+   The abstract should show the nature and scope of work, the method that was used, the results and conclusions. The abstract may contain between 150 and 500 words, and it must be only one paragraph. 
+
+
+   %\vspace{-0.8cm}
+ 
+   \noindent 
+   \textbf{Keywords}: First keyword. Second keyword. Third keyword. Fourth keyword (optional). Fifth keyword (optional).  
+ \end{otherlanguage*}
+\end{resumo}
+
+
+%---------------------------------------------------------------------%
+% inserir lista de ilustrações
+%---------------------------------------------------------------------%
+\renewcommand{\listfigurename}{Lista de Figuras}
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de quadros
+%---------------------------------------------------------------------%
+
+\renewcommand{\listquadroname}{Lista de quadros}
+\newfloat{quadro}{\quadroname}{loq}[chapter]
+\setfloatlocations{quadro}{hbtp}
+\newlistof{listofquadros}{loq}{\listquadroname}
+\newlistentry{quadro}{loq}{0}
+\renewcommand{\cftquadroname}{\quadroname\space}
+\renewcommand*{\cftquadroaftersnum}{\hfill\textendash\hfill}
+\counterwithout{quadro}{chapter}
+\listofquadros* 
+\cleardoublepage
+
+
+
+%---------------------------------------------------------------------%
+% inserir lista de tabelas
+%---------------------------------------------------------------------%
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de listings
+%---------------------------------------------------------------------%
+%\pdfbookmark[0]{\lstlistlistingname}{lol}
+%\listoflistings
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de abreviaturas e simbolos
+%---------------------------------------------------------------------%
+%\listofabrev{tex/00-Abreviaturas}
+\imprimirlistadeabreviaturas
+
+% \imprimirlistadesimbolos
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir o sumario
+
+%---------------------------------------------------------------------%
+
+
+\setlength{\cftbeforechapterskip}{4pt plus 0pt}
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+\pagestyle{parpage}%
+\aliaspagestyle{chapter}{parpage}
+% ----------------------------------------------------------
+% Inclusão dos capítulos que estão em outros arquivos .tex
+% ----------------------------------------------------------
+
+\include{tex/cap1}
+\include{tex/cap2}
+\include{tex/cap3}
+\include{tex/cap4}
+\include{tex/cap5}
+\include{tex/cap6}
+
+% ----------------------------------------------------------
+% Como realizar a citação bibliográfica
+% ----------------------------------------------------------
+
+%\citet{jon90} = Jones et al. (1990)
+%\citet[chap.~2]{jon90} = Jones et al. (1990, chap. 2)
+%\citep{jon90} = (Jones et al., 1990)
+%\citep[chap.~2]{jon90} = (Jones et al., 1990, chap. 2)
+%%\citep[see][]{jon90} = (see Jones et al., 1990)
+%\citep[see][chap.~2]{jon90} = (see Jones et al., 1990, chap. 2)
+%\citet*{jon90} = Jones, Baker, and Williams (1990)
+%\citep*{jon90} = (Jones, Baker, and Williams, 1990)
+
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+% ----------------------------------------------------------
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\bibliography{referencias}
+\bibliographystyle{apalike-ejor}
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+ \begin{apendicesenv}         
+     \partapendices
+     \include{tex/Apendices}
+ \end{apendicesenv}
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+ \begin{anexosenv}
+     \partanexos
+     \include{tex/Anexos}
+ \end{anexosenv}
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+%\phantompart
+%\printindex
+%---------------------------------------------------------------------
+
+\end{document}
