@@ -14,6 +14,13 @@ import  xarray as xr
 import geopandas as gpd
 from shapely.geometry import Point
 
+"""
+diretorio_atual = os.getcwd()
+diretorios = diretorio_atual.split(os.path.sep)
+diretorio_dados = os.path.sep.join(diretorios[:-6])
+print(diretorio_dados)
+"""
+
 
 ### Encaminhamento aos Diretórios
 try:
@@ -23,7 +30,6 @@ try:
     elif _LOCAL == "CASA":
         caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     elif _LOCAL == "IFSC":
-        #/dados/...pwd?.../home/sifapsc/scripts/matheus/dengue
         caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
         caminho_samet = "/dados/operacao/samet/clima/"
@@ -34,13 +40,6 @@ except:
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
-diretorio_atual = os.getcwd()
-diretorios = diretorio_atual.split(os.path.sep)
-diretorio_dados = os.path.sep.join(diretorios[:-6])
-print(diretorio_dados)
-sys.exit()
-
-
 ### Renomeação variáveis pelos arquivos
 merge = "MERGE_CPTEC_DAILY_SB_2000_2022.nc"
 samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
@@ -49,11 +48,11 @@ samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivos
-prec = xr.open_dataset(f"{caminho_dados}{merge}")
-tmax = xr.open_dataset(f"{caminho_dados}{samet_tmax}")
-tmed = xr.open_dataset(f"{caminho_dados}{samet_tmed}")
-tmin = xr.open_dataset(f"{caminho_dados}{samet_tmin}")
-municipios = gpd.read_file(f"{caminho_dados}{municipio}")
+prec = xr.open_dataset(f"{caminho_merge}{merge}")
+tmax = xr.open_dataset(f"{caminho_samet}{samet_tmax}")
+tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
+tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
+municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
 ### Pré-processamento
 municipios["centroide"] = municipios["geometry"].centroid
@@ -63,6 +62,6 @@ for idx, linha in municipios.iterrows():
     valor = prec.sel(lon = lon, lat = lat, method = "nearest")
     valores_centroides.append(valor)
 
-valores_centroides = pd.to_DataFrame(valores_centroides)
+valores_centroides = pd.DataFrame(valores_centroides)
 print(valores_centroides)
 
