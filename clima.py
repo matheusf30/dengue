@@ -55,13 +55,56 @@ tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
 ### Pré-processamento
+
 municipios["centroide"] = municipios["geometry"].centroid
+municipios["centroide"] = municipios["centroide"].to_crs(epsg = 4674)
 valores_centroides = []
 for idx, linha in municipios.iterrows():
     lon, lat = linha["centroide"].x, linha["centroide"].y
     valor = prec.sel(lon = lon, lat = lat, method = "nearest")
     valores_centroides.append(valor)
+valores_centroides = pd.DataFrame(data = valores_centroides)
+valores_centroides["Municipio"] = municipios["NM_MUN"].str.upper().copy()
+valores_centroides.drop(columns = ["nest"], inplace = True)
+valores_centroides = valores_centroides[["Municipio", "prec"]]
+valores_tempo = prec["prec"].time.values
+valores_variavel = prec["prec"].values
 
-valores_centroides = pd.DataFrame(valores_centroides)
+prec_valores = []
+for i, linha in valores_centroides.iterrows():
+#    for j in range(0, len(prec["prec"].time)):
+    prec_valor = linha["prec"][0].values.item() if len(linha["prec"]) >= 0 else np.nan
+    prec_valores.append(prec_valor)
+#valores_centroides = pd.concat(prec_valores, axis = 1)
+valores_centroides["precipita"] = prec_valores
+"""
+for i, tempo in enumerate(valores_tempo):
+    valores_centroides[tempo] = [valores_centroides["prec"][i].values.item() if len(valores_centroides["prec"]) > i else np.nan for _, valores_centroides in valores_centroides.iterrows()]
+"""
+print("="*80)
 print(valores_centroides)
+print(valores_centroides.info())
+print("="*80)
+print(prec.variables["prec"][:])
+print(prec.variables["time"][:])
+print(valores_centroides["prec"][0])
+print("="*80)
+print(valores_tempo)
+print(valores_tempo.shape)
+print("="*80)
+print(valores_variavel)
+print(valores_variavel.shape)
+print("="*80)
+
+"""
+prec_pivot = pd.DataFrame()
+prec_pivot["Municipio"] = municipios["NM_MUN"].str.upper().copy()
+prec_pivot = prec_pivot.T
+prec_pivot["data"] = []
+prec_pivot["data"].set_index(inplace = True)
+print(prec_pivot)
+
+print(valores_pivot)
+print(valores_pivot.info())
+"""
 
