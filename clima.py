@@ -14,17 +14,21 @@ from shapely.geometry import Point
 
 
 ### Encaminhamento aos Diretórios
-_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _LOCAL == "GH": # _ = Variável Privada
-    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-elif _LOCAL == "CASA":
-    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
-elif _LOCAL == "IFSC":
-    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-    caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
-    caminho_samet = "/dados/operacao/samet/clima/"
-else:
-    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+try:
+    _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+    if _LOCAL == "GH": # _ = Variável Privada
+        caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+    elif _LOCAL == "CASA":
+        caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+    elif _LOCAL == "IFSC":
+        #/dados/...pwd?.../home/sifapsc/scripts/matheus/dengue
+        caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+        caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
+        caminho_samet = "/dados/operacao/samet/clima/"
+    else:
+        print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+except:
+    print("CAMINHO NÃO RECONHECIDO! VERIFICAR CAMINHO OU LOCAL!")
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
