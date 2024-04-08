@@ -79,6 +79,7 @@ for i, linha in valores_centroides.iterrows():
         prec_valores.append(prec_valor)
 valores_centroides = pd.concat(prec_valores, axis = 1)
 #valores_centroides["precipita"] = prec_valores
+# df = df.explode(list('AC'))
 """
 for j, tempo in enumerate(valores_tempo):
     valores_centroides[tempo] = [valores_centroides["prec"][j].values.item() if len(valores_centroides["prec"]) > j else np.nan for _, valores_centroides in valores_centroides.iterrows()]
