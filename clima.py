@@ -38,7 +38,7 @@ try:
 except:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR CAMINHO OU LOCAL!")
 
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
 ### Renomeação variáveis pelos arquivos
 merge = "MERGE_CPTEC_DAILY_SB_2000_2022.nc"
