@@ -1,4 +1,6 @@
 ### Bibliotecas Correlatas
+# Suporte
+import sys, os
 # Básicas
 import pandas as pd
 import numpy as np
@@ -31,6 +33,13 @@ except:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR CAMINHO OU LOCAL!")
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
+
+diretorio_atual = os.getcwd()
+diretorios = diretorio_atual.split(os.path.sep)
+diretorio_dados = os.path.sep.join(diretorios[:-1])
+print(diretorio_dados)
+sys.exit()
+
 
 ### Renomeação variáveis pelos arquivos
 merge = "MERGE_CPTEC_DAILY_SB_2000_2022.nc"
