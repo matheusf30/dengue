@@ -72,14 +72,16 @@ valores_variavel = prec["prec"].values
 
 prec_valores = []
 for i, linha in valores_centroides.iterrows():
-#    for j in range(0, len(prec["prec"].time)):
-    prec_valor = linha["prec"][0].values.item() if len(linha["prec"]) >= 0 else np.nan
-    prec_valores.append(prec_valor)
-#valores_centroides = pd.concat(prec_valores, axis = 1)
-valores_centroides["precipita"] = prec_valores
+    print(i)
+    for j in range(0, len(prec["prec"].time)):
+        print(i, j)
+        prec_valor = linha["prec"][j].values.item() if len(linha["prec"]) >= 0 else np.nan
+        prec_valores.append(prec_valor)
+valores_centroides = pd.concat(prec_valores, axis = 1)
+#valores_centroides["precipita"] = prec_valores
 """
-for i, tempo in enumerate(valores_tempo):
-    valores_centroides[tempo] = [valores_centroides["prec"][i].values.item() if len(valores_centroides["prec"]) > i else np.nan for _, valores_centroides in valores_centroides.iterrows()]
+for j, tempo in enumerate(valores_tempo):
+    valores_centroides[tempo] = [valores_centroides["prec"][j].values.item() if len(valores_centroides["prec"]) > j else np.nan for _, valores_centroides in valores_centroides.iterrows()]
 """
 print("="*80)
 print(valores_centroides)
