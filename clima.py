@@ -36,7 +36,7 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 
 diretorio_atual = os.getcwd()
 diretorios = diretorio_atual.split(os.path.sep)
-diretorio_dados = os.path.sep.join(diretorios[:-1])
+diretorio_dados = os.path.sep.join(diretorios[:-6])
 print(diretorio_dados)
 sys.exit()
 
