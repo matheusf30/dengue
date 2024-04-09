@@ -54,15 +54,78 @@ tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
 tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
-### Pré-processamento
+### Pré-processamento e Definição de Função
+
+def extrair_centroides(shapefile, netcdf4, str_var):
+
+	"""
+	Função relativa a extração de valores dos arquivos NetCDF4 utilizando os centróides de arquivos shapefile como filtro.
+	Os arquivos NetCDF4 são provenientes de Rozante et.al. e apresentam 2 variáveis: 1 climática + 1 nest (estações de observação).
+	Os arquivos Shapefile são provenientes do IBGE (2022) e apresentam CRS = (epsg = 4674)
+	Estes Arquivos estão alocados no SifapSC, dois diretórios antes do /home.
+	Argumento:
+	- Variável com arquivo NetCDF4;
+	- Variável com arquivo Shapefile;
+	- String da variável referente ao NetCDF4.
+	Retorno:
+	- Retorno próprio de DataFrame com Municípios (centróides) em Colunas e Tempo (dias) em Linhas, preenchidos com valores climáticos.
+	- Salvando Arquivo.csv
+	"""
+	shapefile["centroide"] = shapefile["geometry"].centroid
+	shapefile["centroide"] = shapefile["centroide"].to_crs(epsg = 4674)
+	valores_centroides = []
+	for idx, linha in shapefile.iterrows():
+		lon, lat = linha["centroide"].x, linha["centroide"].y
+		valor = netcdf4.sel(lon = lon, lat = lat, method = "nearest")
+		valores_centroides.append(valor)
+	valores_centroides = pd.DataFrame(data = valores_centroides)
+	valores_centroides["Municipio"] = shapefile["NM_MUN"].str.upper().copy()
+	valores_centroides.drop(columns = ["nest"], inplace = True)
+	valores_centroides = valores_centroides[["Municipio", str_var]]
+	valores_tempo = netcdf4[str_var].time.values
+	valores_variavel = netcdf4[str_var].values
+	var_valores = []
+	for i, linha in valores_centroides.iterrows():
+		if isinstance(linha[str_var], xr.DataArray):
+			var_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha[str_var]]
+			var_valores.append(var_valor)
+			print(f"\n{valores_centroides['Municipio'][i]}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
+		else:
+			var_valores.append([np.nan] * len(valores_tempo))
+			print(f"\n{valores_centroides['Municipio'][i]}: NaN... Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
+	var_valores_df = pd.DataFrame(var_valores, columns = valores_tempo)
+	valores_centroides = pd.concat([valores_centroides, var_valores_df], axis = 1)
+	valores_centroides.drop(columns = [str_var], inplace = True)
+	valores_centroides = valores_centroides.T
+	valores_centroides["Data"] = valores_centroides.index
+	valores_centroides.reset_index(drop = True, inplace = True)
+	valores_centroides.set_index("Data", inplace = True)
+	#valores_centroides = valores_centroides.iloc[2:]
+	valores_centroides.columns.name = str_var
+	#valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
+	print("="*80)
+	print(netcdf4.variables[str_var][:])
+	print(netcdf4.variables["time"][:])
+	print("="*80)
+	print(valores_tempo)
+	print(valores_tempo.shape)
+	print("="*80)
+	print(valores_variavel)
+	print(valores_variavel.shape)
+	print("="*80)
+	print(valores_centroides)
+	print(valores_centroides.info())
+	print(valores_centroides.dtypes)
+	print("="*80)
+	return valores_centroides
 
 municipios["centroide"] = municipios["geometry"].centroid
 municipios["centroide"] = municipios["centroide"].to_crs(epsg = 4674)
 valores_centroides = []
 for idx, linha in municipios.iterrows():
-    lon, lat = linha["centroide"].x, linha["centroide"].y
-    valor = prec.sel(lon = lon, lat = lat, method = "nearest")
-    valores_centroides.append(valor)
+	lon, lat = linha["centroide"].x, linha["centroide"].y
+	valor = prec.sel(lon = lon, lat = lat, method = "nearest")
+	valores_centroides.append(valor)
 valores_centroides = pd.DataFrame(data = valores_centroides)
 valores_centroides["Municipio"] = municipios["NM_MUN"].str.upper().copy()
 valores_centroides.drop(columns = ["nest"], inplace = True)
@@ -71,13 +134,13 @@ valores_tempo = prec["prec"].time.values
 valores_variavel = prec["prec"].values
 prec_valores = []
 for i, linha in valores_centroides.iterrows():
-    if isinstance(linha["prec"], xr.DataArray):
-        prec_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha["prec"]]
-        prec_valores.append(prec_valor)
-        print(f"Finalizado o Município Número: {i + 1}")
-    else:
-        prec_valores.append([np.nan] * len(valores_tempo))
-        print(f"NaN - {i}")
+	if isinstance(linha["prec"], xr.DataArray):
+		prec_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha["prec"]]
+		prec_valores.append(prec_valor)
+		print(f"\n{valores_centroides['Municipio'][i]}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
+	else:
+		prec_valores.append([np.nan] * len(valores_tempo))
+		print(f"\n{valores_centroides['Municipio'][i]}: NaN... Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
 prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
 valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
 valores_centroides.drop(columns = ["prec"], inplace = True)
@@ -85,17 +148,12 @@ valores_centroides = valores_centroides.T
 valores_centroides["Data"] = valores_centroides.index
 valores_centroides.reset_index(drop = True, inplace = True)
 valores_centroides.set_index("Data", inplace = True)
-#valores_centroides.drop([0,1], axis = 0, inplace = True)
+#valores_centroides = valores_centroides.iloc[2:]
 valores_centroides.columns.name = "prec"
-
-print("="*80)
-print(valores_centroides)
-print(valores_centroides.info())
-print(valores_centroides.dtypes)
+#valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
 print("="*80)
 print(prec.variables["prec"][:])
 print(prec.variables["time"][:])
-#print(valores_centroides["prec"][0])
 print("="*80)
 print(valores_tempo)
 print(valores_tempo.shape)
@@ -107,57 +165,3 @@ print(valores_centroides)
 print(valores_centroides.info())
 print(valores_centroides.dtypes)
 print("="*80)
-"""
-prec_valores = []
-for i, linha in valores_centroides.iterrows():
-    print(i)
-    for j in range(0, len(prec["prec"].time)):
-        print(i, j)
-        prec_valor = linha["prec"][j].values.item() if len(linha["prec"]) >= 0 else np.nan
-        prec_valores.append(prec_valor)
-valores_centroides = pd.concat(prec_valores, axis = 1)
-
-prec_valores_df = pd.DataFrame(prec_valores, columns=valores_tempo)
-valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
-
-
-prec_valores_df = pd.DataFrame(prec_valores, columns=valores_tempo)
-valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
-
-print(valores_centroides)
-
-print(valores_centroides)
-
-prec_valores = []
-for i, linha in valores_centroides.iterrows():
-    prec_valor = [x.values.item() if len(x) > 0 else np.nan for x in linha["prec"]]
-    prec_valores.append(prec_valor)
-    print(i, x)
-
-# Create a DataFrame from the list of precipitation values
-prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
-
-# Concatenate the precipitation DataFrame with valores_centroides
-valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
-
-print(valores_centroides)
-#valores_centroides["precipita"] = prec_valores
-# df = df.explode(list('AC'))
-
-for j, tempo in enumerate(valores_tempo):
-    valores_centroides[tempo] = [valores_centroides["prec"][j].values.item() if len(valores_centroides["prec"]) > j else np.nan for _, valores_centroides in valores_centroides.iterrows()]
-"""
-
-
-"""
-prec_pivot = pd.DataFrame()
-prec_pivot["Municipio"] = municipios["NM_MUN"].str.upper().copy()
-prec_pivot = prec_pivot.T
-prec_pivot["data"] = []
-prec_pivot["data"].set_index(inplace = True)
-print(prec_pivot)
-
-print(valores_pivot)
-print(valores_pivot.info())
-"""
-
