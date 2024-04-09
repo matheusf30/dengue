@@ -41,7 +41,7 @@ except:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
 ### Renomeação variáveis pelos arquivos
-merge = "MERGE_CPTEC_DAILY_SB_2000_2022.nc"
+merge = "MERGE_CPTEC_DAILY_SB_2000_2023.nc"
 samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
 samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2022.nc"
 samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
@@ -100,7 +100,6 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides["Data"] = valores_centroides.index
 	valores_centroides.reset_index(drop = True, inplace = True)
 	valores_centroides.set_index("Data", inplace = True)
-	#valores_centroides = valores_centroides.iloc[2:]
 	valores_centroides.columns.name = str_var
 	#valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
 	print("="*80)
@@ -144,11 +143,13 @@ for i, linha in valores_centroides.iterrows():
 prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
 valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
 valores_centroides.drop(columns = ["prec"], inplace = True)
+valores_centroides.set_index("Município", inplace = True)
 valores_centroides = valores_centroides.T
-valores_centroides["Data"] = valores_centroides.index
-valores_centroides.reset_index(drop = True, inplace = True)
-valores_centroides.set_index("Data", inplace = True)
-#valores_centroides = valores_centroides.iloc[2:]
+valores_centroides = valores_centroides.rename(columns = {"index" : "Data"})
+#valores_centroides.index.name = "Data"
+#valores_centroides.reset_index(inplace = True)
+#valores_centroides.set_index("Data", inplace = True)
+valores_centroides = valores_centroides.rename(columns={"index": "Data"})
 valores_centroides.columns.name = "prec"
 #valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
 print("="*80)
