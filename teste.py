@@ -91,7 +91,7 @@ print(prec.info())
 print("~"*80)
 print(prec.dtypes)
 print("~"*80)
-print(prec.iloc[1127:, :])
+print(prec)
 print("="*80)
 
 print("\n \n TEMPERATURA MÍNIMA \n")
