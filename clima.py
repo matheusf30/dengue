@@ -69,7 +69,25 @@ valores_centroides.drop(columns = ["nest"], inplace = True)
 valores_centroides = valores_centroides[["Municipio", "prec"]]
 valores_tempo = prec["prec"].time.values
 valores_variavel = prec["prec"].values
+prec_valores = []
+for i, linha in valores_centroides.iterrows():
+    if isinstance(linha["prec"], xr.DataArray):
+        prec_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha["prec"]]
+        prec_valores.append(prec_valor)
+        print(f"Finalizado o Município Número: {i + 1}")
+    else:
+        prec_valores.append([np.nan] * len(valores_tempo))
+        print(f"NaN - {i}")
+prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
+valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
+valores_centroides.drop(columns = ["prec"], inplace = True)
+valores_centroides = valores_centroides.reset_index(drop = True)
+valores_centroides = valores_centroides.T
+valores_centroides.rename_axis("prec", inplace=True)
+print(valores_centroides)
 
+
+"""
 prec_valores = []
 for i, linha in valores_centroides.iterrows():
     print(i)
@@ -78,9 +96,34 @@ for i, linha in valores_centroides.iterrows():
         prec_valor = linha["prec"][j].values.item() if len(linha["prec"]) >= 0 else np.nan
         prec_valores.append(prec_valor)
 valores_centroides = pd.concat(prec_valores, axis = 1)
+
+prec_valores_df = pd.DataFrame(prec_valores, columns=valores_tempo)
+valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
+
+
+prec_valores_df = pd.DataFrame(prec_valores, columns=valores_tempo)
+valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
+
+print(valores_centroides)
+
+print(valores_centroides)
+
+prec_valores = []
+for i, linha in valores_centroides.iterrows():
+    prec_valor = [x.values.item() if len(x) > 0 else np.nan for x in linha["prec"]]
+    prec_valores.append(prec_valor)
+    print(i, x)
+
+# Create a DataFrame from the list of precipitation values
+prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
+
+# Concatenate the precipitation DataFrame with valores_centroides
+valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis=1)
+
+print(valores_centroides)
 #valores_centroides["precipita"] = prec_valores
 # df = df.explode(list('AC'))
-"""
+
 for j, tempo in enumerate(valores_tempo):
     valores_centroides[tempo] = [valores_centroides["prec"][j].values.item() if len(valores_centroides["prec"]) > j else np.nan for _, valores_centroides in valores_centroides.iterrows()]
 """
@@ -90,7 +133,7 @@ print(valores_centroides.info())
 print("="*80)
 print(prec.variables["prec"][:])
 print(prec.variables["time"][:])
-print(valores_centroides["prec"][0])
+#print(valores_centroides["prec"][0])
 print("="*80)
 print(valores_tempo)
 print(valores_tempo.shape)
