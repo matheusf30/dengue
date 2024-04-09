@@ -81,12 +81,31 @@ for i, linha in valores_centroides.iterrows():
 prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
 valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
 valores_centroides.drop(columns = ["prec"], inplace = True)
-valores_centroides = valores_centroides.reset_index(drop = True)
 valores_centroides = valores_centroides.T
 valores_centroides.rename_axis("prec", inplace=True)
+valores_centroides = valores_centroides.replace("Municipio", "prec")
+valores_centroides["Data"] = valores_centroides.index
+valores_centroides.reset_index(drop = True, inplace = True)
+valores_centroides.set_index("Data", inplace = True)
+print("="*80)
 print(valores_centroides)
-
-
+print(valores_centroides.info())
+print(valores_centroides.dtypes)
+print("="*80)
+print(prec.variables["prec"][:])
+print(prec.variables["time"][:])
+#print(valores_centroides["prec"][0])
+print("="*80)
+print(valores_tempo)
+print(valores_tempo.shape)
+print("="*80)
+print(valores_variavel)
+print(valores_variavel.shape)
+print("="*80)
+print(valores_centroides)
+print(valores_centroides.info())
+print(valores_centroides.dtypes)
+print("="*80)
 """
 prec_valores = []
 for i, linha in valores_centroides.iterrows():
@@ -127,20 +146,7 @@ print(valores_centroides)
 for j, tempo in enumerate(valores_tempo):
     valores_centroides[tempo] = [valores_centroides["prec"][j].values.item() if len(valores_centroides["prec"]) > j else np.nan for _, valores_centroides in valores_centroides.iterrows()]
 """
-print("="*80)
-print(valores_centroides)
-print(valores_centroides.info())
-print("="*80)
-print(prec.variables["prec"][:])
-print(prec.variables["time"][:])
-#print(valores_centroides["prec"][0])
-print("="*80)
-print(valores_tempo)
-print(valores_tempo.shape)
-print("="*80)
-print(valores_variavel)
-print(valores_variavel.shape)
-print("="*80)
+
 
 """
 prec_pivot = pd.DataFrame()
