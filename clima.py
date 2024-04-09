@@ -101,7 +101,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.reset_index(drop = True, inplace = True)
 	valores_centroides.set_index("Data", inplace = True)
 	valores_centroides.columns.name = str_var
-	#valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
+	valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
@@ -132,6 +132,7 @@ valores_centroides = valores_centroides[["Municipio", "prec"]]
 valores_tempo = prec["prec"].time.values
 valores_variavel = prec["prec"].values
 prec_valores = []
+print(valores_centroides)
 for i, linha in valores_centroides.iterrows():
 	if isinstance(linha["prec"], xr.DataArray):
 		prec_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha["prec"]]
@@ -143,15 +144,15 @@ for i, linha in valores_centroides.iterrows():
 prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
 valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
 valores_centroides.drop(columns = ["prec"], inplace = True)
-valores_centroides.set_index("Município", inplace = True)
+valores_centroides.set_index("Municipio", inplace = True)
 valores_centroides = valores_centroides.T
-valores_centroides = valores_centroides.rename(columns = {"index" : "Data"})
-#valores_centroides.index.name = "Data"
-#valores_centroides.reset_index(inplace = True)
-#valores_centroides.set_index("Data", inplace = True)
-valores_centroides = valores_centroides.rename(columns={"index": "Data"})
+valores_centroides["Data"] = valores_centroides.index
+valores_centroides.reset_index(inplace = True)
+colunas_restantes = valores_centroides.columns.drop("Data")
+valores_centroides = valores_centroides[["Data"] + colunas_restantes.tolist()]
 valores_centroides.columns.name = "prec"
-#valores_centroides.to_csv(f"{caminho_dados}{str_var}.csv", index = False)
+valores_centroides.rename(columns = {"index" : "prec"}, inplace = True)
+valores_centroides.to_csv(f"{caminho_dados}prec.csv", index = False)
 print("="*80)
 print(prec.variables["prec"][:])
 print(prec.variables["time"][:])
