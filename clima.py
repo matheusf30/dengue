@@ -82,11 +82,12 @@ prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
 valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
 valores_centroides.drop(columns = ["prec"], inplace = True)
 valores_centroides = valores_centroides.T
-valores_centroides.rename_axis("prec", inplace=True)
-valores_centroides = valores_centroides.replace("Municipio", "prec")
 valores_centroides["Data"] = valores_centroides.index
 valores_centroides.reset_index(drop = True, inplace = True)
 valores_centroides.set_index("Data", inplace = True)
+#valores_centroides.drop([0,1], axis = 0, inplace = True)
+valores_centroides.columns.name = "prec"
+
 print("="*80)
 print(valores_centroides)
 print(valores_centroides.info())
