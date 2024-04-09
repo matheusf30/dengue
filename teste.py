@@ -2,14 +2,14 @@
 import pandas as pd
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _local == "GH": # _ = Variável Privada
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
 else:
@@ -22,6 +22,7 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 casos = "casos.csv"
 focos = "focos.csv"
 merge = "merge_novo.csv"
+prec = "prec.csv"
 tmax = "tmax.csv"
 tmed = "tmed.csv"
 tmin = "tmin.csv"
@@ -31,6 +32,7 @@ tmin = "tmin.csv"
 casos = "casos.csv"
 focos = "focos_se.csv"
 merge = "merge_se.csv"
+prec = "prec.csv" # Dados Brutos
 tmax = "tmax_se.csv"
 tmed = "tmed_se.csv"
 tmin = "tmin_se.csv"
@@ -45,15 +47,19 @@ tmed = "tmed21se.csv"
 tmin = "tmin21se.csv"
 """
 ### Abrindo Arquivos
+"""
 casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
+"""
 merge = pd.read_csv(f"{caminho_dados}{merge}")
+prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}")
 tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
 
 ### Printando Informações
-print("\n \n FOCOS DE _Aedes aegypti_ \n")
+"""
+print("\n \n FOCOS DE _Aedes_ sp. \n")
 print(focos.info())
 print("~"*80)
 print(focos.dtypes)
@@ -70,7 +76,7 @@ print("~"*80)
 #print(casos) #jan2014-dez2022
 print(casos.iloc[417:, :]) #jan2022-dez2022
 print("="*80)
-
+"""
 print("\n \n PRECIPITAÇÃO \n")
 print(merge.info())
 print("~"*80)
@@ -78,6 +84,14 @@ print(merge.dtypes)
 print("~"*80)
 #print(merge.iloc[710:, :]) #jan2014-dez2022
 print(merge.iloc[1127:, :]) #jan2022-dez2022
+print("="*80)
+
+print("\n \n PRECIPITAÇÃO \n")
+print(prec.info())
+print("~"*80)
+print(prec.dtypes)
+print("~"*80)
+print(prec.iloc[1127:, :])
 print("="*80)
 
 print("\n \n TEMPERATURA MÍNIMA \n")
