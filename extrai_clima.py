@@ -112,6 +112,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.columns.name = str_var
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
+	print("\n\nARQUIVO SALVO COM SUCESSO!\n\n"
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
