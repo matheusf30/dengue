@@ -113,7 +113,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
 	print("="*80)
-	print("\n\nARQUIVO SALVO COM SUCESSO!\n\n"
+	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\nARQUIVO SALVO COM SUCESSO!\n\n"
 	print("="*80)
 	print(f"\nVERIFICAÇÃO DE DADOS FALTANTES\nQuantidade de valores NaN: {valores_centroides['FLORIANÓPOLIS'].isnull().sum()}")
 	print(f"Os dias com valores NaN são:\n{valores_centroides[valores_centroides['FLORIANÓPOLIS'].isna()]['Data']}")
