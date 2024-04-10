@@ -86,12 +86,15 @@ print("~"*80)
 print(merge.iloc[1127:, :]) #jan2022-dez2022
 print("="*80)
 
-print("\n \n PRECIPITAÇÃO \n")
+print("\n \n PRECIPITAÇÃO (extrai_clima.py) \n")
 print(prec.info())
 print("~"*80)
 print(prec.dtypes)
 print("~"*80)
 print(prec)
+print("~"*80)
+print(f"Quantidade de NaN: {prec['FLORIANÓPOLIS'].isnull().sum()}")
+print(f"Os dias com Valores NaN são:\n{prec[prec['FLORIANÓPOLIS'].isna()]['Data']}")
 print("="*80)
 
 print("\n \n TEMPERATURA MÍNIMA \n")
