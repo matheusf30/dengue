@@ -153,9 +153,9 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	verifica_nan(valores_centroides)
 	return valores_centroides
 
-#prec = extrair_centroides(municipios, prec, "prec")
-#tmax = extrair_centroides(municipios, tmax, "tmax")
-#tmed = extrair_centroides(municipios, tmed, "tmed")
+prec = extrair_centroides(municipios, prec, "prec")
+tmax = extrair_centroides(municipios, tmax, "tmax")
+tmed = extrair_centroides(municipios, tmed, "tmed")
 tmin = extrair_centroides(municipios, tmin, "tmin")
 
 print("!!"*80)
