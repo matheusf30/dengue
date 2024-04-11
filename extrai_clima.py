@@ -61,9 +61,23 @@ tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
 ### Pré-processamento e Definição de Função
+bold = "\033[1m"
+def verifica_nan(valores_centroides):
+	"""
+	Função relativa a verificação de Valores Não-números (NaN) no arquivo.csv gerado!
+	Argumento: próprio dataframe criado na função extrair_centroides()
+	Retorno: Exibição de mensagens para casos de haver ou não valores NaN.
+	"""
+	print(f"\n{bold}VERIFICAÇÃO DE DADOS FALTANTES{bold}\n")
+	print(f"\nQuantidade de valores {bold}NaN: {valores_centroides['FLORIANÓPOLIS'].isnull().sum()}{bold}")
+	if valores_centroides["FLORIANÓPOLIS"].isnull().sum() == 0:
+		print(f"\n{bold}NÃO{bold} há valores {bold}NaN{bold}\n")
+	else:
+		print(f"\nOs dias com valores {bold}NaN{bold} são:")
+		print(f"{valores_centroides[valores_centroides['FLORIANÓPOLIS'].isna()]['Data']}\n")
+	print("="*80)
 
 def extrair_centroides(shapefile, netcdf4, str_var):
-
 	"""
 	Função relativa a extração de valores dos arquivos NetCDF4 utilizando os centróides de arquivos shapefile como filtro.
 	Os arquivos NetCDF4 são provenientes de Rozante et.al. e apresentam 2 variáveis: 1 climática + 1 nest (estações de observação).
@@ -96,7 +110,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 		if isinstance(linha[str_var], xr.DataArray):
 			var_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha[str_var]]
 			var_valores.append(var_valor)
-			print(f"\n---{str_var}---\n{valores_centroides['Municipio'][i]}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
+			print(f"\n---{str_var}---\n{bold}{valores_centroides['Municipio'][i]}{bold}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
 		else:
 			var_valores.append([np.nan] * len(valores_tempo))
 			print(f"\n{valores_centroides['Municipio'][i]}: NaN... Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
@@ -113,10 +127,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
 	print("="*80)
-	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\nARQUIVO SALVO COM SUCESSO!\n\n"
-	print("="*80)
-	print(f"\nVERIFICAÇÃO DE DADOS FALTANTES\nQuantidade de valores NaN: {valores_centroides['FLORIANÓPOLIS'].isnull().sum()}")
-	print(f"Os dias com valores NaN são:\n{valores_centroides[valores_centroides['FLORIANÓPOLIS'].isna()]['Data']}")
+	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\n\n{bold}ARQUIVO SALVO COM SUCESSO!{bold}\n\n")
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
@@ -131,6 +142,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	print(valores_centroides.info())
 	print(valores_centroides.dtypes)
 	print("="*80)
+	verifica_nan(valores_centroides)
 	return valores_centroides
 
 prec = extrair_centroides(municipios, prec, "prec")
@@ -139,57 +151,6 @@ tmed = extrair_centroides(municipios, tmed, "tmed")
 tmin = extrair_centroides(municipios, tmin, "tmin")
 
 print("!!"*80)
-print(f"\nFINALIZADA ATUALIZAÇÃO\nAtualização feita em produtos de reanálise até {_ANO_FINAL}!\n(MERGE e SAMeT - tmin, tmed, tmax)")
+print(f"\n{bold}FINALIZADA ATUALIZAÇÃO{bold}\n\nAtualização feita em produtos de reanálise até {_ANO_FINAL}!\n")
+print("{bold}(MERGE e SAMeT - tmin, tmed, tmax){bold}")
 print("!!"*80)
-
-"""
-municipios["centroide"] = municipios["geometry"].centroid
-municipios["centroide"] = municipios["centroide"].to_crs(epsg = 4674)
-valores_centroides = []
-for idx, linha in municipios.iterrows():
-	lon, lat = linha["centroide"].x, linha["centroide"].y
-	valor = prec.sel(lon = lon, lat = lat, method = "nearest")
-	valores_centroides.append(valor)
-valores_centroides = pd.DataFrame(data = valores_centroides)
-valores_centroides["Municipio"] = municipios["NM_MUN"].str.upper().copy()
-valores_centroides.drop(columns = ["nest"], inplace = True)
-valores_centroides = valores_centroides[["Municipio", "prec"]]
-valores_tempo = prec["prec"].time.values
-valores_variavel = prec["prec"].values
-prec_valores = []
-print(valores_centroides)
-for i, linha in valores_centroides.iterrows():
-	if isinstance(linha["prec"], xr.DataArray):
-		prec_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha["prec"]]
-		prec_valores.append(prec_valor)
-		print(f"\n{valores_centroides['Municipio'][i]}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
-	else:
-		prec_valores.append([np.nan] * len(valores_tempo))
-		print(f"\n{valores_centroides['Municipio'][i]}: NaN... Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
-prec_valores_df = pd.DataFrame(prec_valores, columns = valores_tempo)
-valores_centroides = pd.concat([valores_centroides, prec_valores_df], axis = 1)
-valores_centroides.drop(columns = ["prec"], inplace = True)
-valores_centroides.set_index("Municipio", inplace = True)
-valores_centroides = valores_centroides.T
-valores_centroides["Data"] = valores_centroides.index
-valores_centroides.reset_index(inplace = True)
-colunas_restantes = valores_centroides.columns.drop("Data")
-valores_centroides = valores_centroides[["Data"] + colunas_restantes.tolist()]
-valores_centroides.columns.name = "prec"
-valores_centroides.rename(columns = {"index" : "prec"}, inplace = True)
-valores_centroides.to_csv(f"{caminho_dados}prec.csv", index = False)
-print("="*80)
-print(prec.variables["prec"][:])
-print(prec.variables["time"][:])
-print("="*80)
-print(valores_tempo)
-print(valores_tempo.shape)
-print("="*80)
-print(valores_variavel)
-print(valores_variavel.shape)
-print("="*80)
-print(valores_centroides)
-print(valores_centroides.info())
-print(valores_centroides.dtypes)
-print("="*80)
-"""
