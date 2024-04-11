@@ -45,12 +45,14 @@ _ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
 merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2022.nc"
-samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
 """
+samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
+
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_{_ANO_FINAL}.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_{_ANO_FINAL}.nc"
-samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
 """
+samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
+
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivos
@@ -62,6 +64,10 @@ municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
 ### Pré-processamento e Definição de Função
 bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+reset = "\033[0m"
+
 def verifica_nan(valores_centroides):
 	"""
 	Função relativa a verificação de Valores Não-números (NaN) no arquivo.csv gerado!
@@ -69,11 +75,11 @@ def verifica_nan(valores_centroides):
 	Retorno: Exibição de mensagens para casos de haver ou não valores NaN.
 	"""
 	print(f"\n{bold}VERIFICAÇÃO DE DADOS FALTANTES{bold}\n")
-	print(f"\nQuantidade de valores {bold}NaN: {valores_centroides['FLORIANÓPOLIS'].isnull().sum()}{bold}")
+	print(f"\nQuantidade de valores {red}{bold}NaN: {valores_centroides['FLORIANÓPOLIS'].isnull().sum()}{bold}{reset}")
 	if valores_centroides["FLORIANÓPOLIS"].isnull().sum() == 0:
-		print(f"\n{bold}NÃO{bold} há valores {bold}NaN{bold}\n")
+		print(f"\n{green}{bold}NÃO{bold} há valores {bold}NaN{bold}{reset}\n")
 	else:
-		print(f"\nOs dias com valores {bold}NaN{bold} são:")
+		print(f"\nOs dias com valores {red}{bold}NaN{bold}{reset} são:")
 		print(f"{valores_centroides[valores_centroides['FLORIANÓPOLIS'].isna()]['Data']}\n")
 	print("="*80)
 
@@ -102,6 +108,8 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides["Municipio"] = shapefile["NM_MUN"].str.upper().copy()
 	if str_var == "prec":
 		valores_centroides.drop(columns = ["nest"], inplace = True)
+	else:
+		valores_centroides.drop(columns = ["nobs"], inplace = True)
 	valores_centroides = valores_centroides[["Municipio", str_var]]
 	valores_tempo = netcdf4[str_var].time.values
 	valores_variavel = netcdf4[str_var].values
@@ -127,7 +135,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
 	print("="*80)
-	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\n\n{bold}ARQUIVO SALVO COM SUCESSO!{bold}\n\n")
+	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\n\n{green}{bold}ARQUIVO SALVO COM SUCESSO!{bold}{reset}\n\n")
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
@@ -145,12 +153,12 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	verifica_nan(valores_centroides)
 	return valores_centroides
 
-prec = extrair_centroides(municipios, prec, "prec")
-tmax = extrair_centroides(municipios, tmax, "tmax")
-tmed = extrair_centroides(municipios, tmed, "tmed")
+#prec = extrair_centroides(municipios, prec, "prec")
+#tmax = extrair_centroides(municipios, tmax, "tmax")
+#tmed = extrair_centroides(municipios, tmed, "tmed")
 tmin = extrair_centroides(municipios, tmin, "tmin")
 
 print("!!"*80)
-print(f"\n{bold}FINALIZADA ATUALIZAÇÃO{bold}\n\nAtualização feita em produtos de reanálise até {_ANO_FINAL}!\n")
-print("{bold}(MERGE e SAMeT - tmin, tmed, tmax){bold}")
+print(f"\n{green}{bold}FINALIZADA ATUALIZAÇÃO{bold}{reset}\n\nAtualização feita em produtos de reanálise até {red}{_ANO_FINAL}{reset}!\n")
+print(f"{bold}(MERGE e SAMeT - tmin, tmed, tmax){bold}")
 print("!!"*80)
