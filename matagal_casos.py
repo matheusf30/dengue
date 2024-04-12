@@ -63,9 +63,17 @@ prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
-unicos = pd.read_csv(f"{caminho_dados}{unicos}")
+unicos = pd.read_csv(f"{caminho_dados}{unicos}", low_memory = False)
+
+### Recortes Temporais
+_ANO = "2022" # apenas ano de 2022
+casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
+focos = focos.iloc[:573] # Desconsiderando 2023
+unicos = unicos.iloc[:151] # Desconsiderando 2023
 
 ### Sanando Erros
+cidades = unicos["Município"].copy()
+cidade = cidade.upper()
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
@@ -94,17 +102,13 @@ for erro in key_error:
 print("!"*80)    
 
 ### Pré-Processamento
-cidades = unicos["Município"].copy()
-cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
 casos["Semana"] = pd.to_datetime(casos["Semana"])
 prec["Semana"] = pd.to_datetime(prec["Semana"])
 tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
-### Recortes Temporais
-casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
-unicos = unicos.iloc[:151] # Desconsiderando 2023
+
 
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()

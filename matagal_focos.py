@@ -48,14 +48,22 @@ prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
-unicos = pd.read_csv(f"{caminho_dados}{unicos}")
-cidades = unicos["Município"].copy()
+
+
+### Recortes Temporais
+_ANO = "2022" # apenas ano de 2022
+casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
+focos = focos.iloc[:573] # Desconsiderando 2023
+unicos = unicos.iloc[:151] # Desconsiderando 2023
 
 ### Condições para Variar
 _retroagir = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis"
 _automatiza = True
 
+### Sanando Erros
+unicos = pd.read_csv(f"{caminho_dados}{unicos}")
+cidades = unicos["Município"].copy()
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
 # ValueError: This RandomForestRegressor estimator requires y to be passed, but the target y is None.
 # KeyError: 'CIDADE' The above exception was the direct cause of the following exception:
