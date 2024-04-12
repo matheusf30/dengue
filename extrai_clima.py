@@ -62,6 +62,12 @@ tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
 tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 
+print(tmin.variables["tmin"][:])
+print(tmin.variables["time"][:])
+print(tmin.variables["nobs"][:])
+print(tmin)
+sys.exit()
+
 ### Pré-processamento e Definição de Função
 bold = "\033[1m"
 red = "\033[91m"
@@ -108,8 +114,8 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides["Municipio"] = shapefile["NM_MUN"].str.upper().copy()
 	if str_var == "prec":
 		valores_centroides.drop(columns = ["nest"], inplace = True)
-	else:
-		valores_centroides.drop(columns = ["nobs"], inplace = True)
+	#else:
+	#	valores_centroides.drop(columns = ["nobs"], inplace = True)
 	valores_centroides = valores_centroides[["Municipio", str_var]]
 	valores_tempo = netcdf4[str_var].time.values
 	valores_variavel = netcdf4[str_var].values
@@ -153,9 +159,9 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	verifica_nan(valores_centroides)
 	return valores_centroides
 
-prec = extrair_centroides(municipios, prec, "prec")
-tmax = extrair_centroides(municipios, tmax, "tmax")
-tmed = extrair_centroides(municipios, tmed, "tmed")
+#prec = extrair_centroides(municipios, prec, "prec")
+#tmax = extrair_centroides(municipios, tmax, "tmax")
+#tmed = extrair_centroides(municipios, tmed, "tmed")
 tmin = extrair_centroides(municipios, tmin, "tmin")
 
 print("!!"*80)
