@@ -14,12 +14,28 @@ import  xarray as xr
 import geopandas as gpd
 from shapely.geometry import Point
 
-"""
-diretorio_atual = os.getcwd()
-diretorios = diretorio_atual.split(os.path.sep)
-diretorio_dados = os.path.sep.join(diretorios[:-6])
-print(diretorio_dados)
-"""
+# Load the shapefile
+mask = gpd.read_file('path_to_shapefile.shp')
+
+# Open the NetCDF file
+ds = xr.open_dataset('path_to_netcdf_file.nc')
+
+mask = mask.to_crs(ds.crs)
+
+import numpy as np
+
+# Create a mask from the shapefile
+lon, lat = np.meshgrid(ds['lon'], ds['lat'])
+mask_shape = mask.geometry.values[0]
+mask_arr = rasterio.mask.rasterize([mask_shape], out_shape=(len(ds['lat']), len(ds['lon'])),
+                                   transform=rasterio.transform.from_origin(lon.min(), lat.max(),
+                                                                            abs(lon[1] - lon[0]),
+                                                                            abs(lat[1] - lat[0])))
+mask_xr = xr.DataArray(mask_arr, coords={'lat': ds['lat'], 'lon': ds['lon']}, dims=['lat', 'lon'])
+
+# Apply the mask to the NetCDF variable data
+masked_data = ds['variable_name'].where(mask_xr == 1, drop=True)
+
 
 ### Encaminhamento aos Diretórios
 try:
