@@ -77,9 +77,6 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 br = gpd.read_file(f"{caminho_dados}{br}")
-casos = casos.iloc[:467]      # Desconsiderando 2023
-unicos = unicos.iloc[:151]    # Desconsiderando 2023
-cidades = unicos["Município"].copy()
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
          'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
@@ -87,6 +84,10 @@ troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
 
+focos = focos.iloc[:573] # Desconsiderando 2023
+casos = casos.iloc[:467]      # Desconsiderando 2023
+unicos = unicos.iloc[:151]    # Desconsiderando 2023
+cidades = unicos["Município"].copy()
 
 # modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
@@ -170,6 +171,13 @@ print(dataset)
 print("="*80)
 """
 ### Definindo Funções
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+reset = "\033[0m"
+
 def abre_modelo(cidade):
     troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
@@ -180,7 +188,7 @@ def abre_modelo(cidade):
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
     modelo = joblib.load(f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
     return modelo
 
@@ -373,7 +381,7 @@ def salva_modelo(modelo, cidade):
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
     joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    print(f"{green}\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
 
 ######################################################MODELAGEM############################################################
@@ -390,9 +398,9 @@ previsao_total.drop(1, axis = 0, inplace = True)
 if _automatiza == True:
     for cidade in cidades:
         if cidade in value_error:
-            print(f"\nModelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!\n")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\nValueError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}\n")
         elif cidade in key_error:
-            print(f"\nModelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!\n")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\nKeyError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}\n")
         else:
             modelo = abre_modelo(cidade)
             dataset, x, y = monta_dataset(cidade)
@@ -420,7 +428,7 @@ geometry = [Point(xy) for xy in zip(previsao_melt_xy["longitude"], previsao_melt
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
 previsao_melt_geo = previsao_melt_geo[["Semana", "Município", "Casos", "geometry"]]
 previsao_melt_geo["Semana"] = pd.to_datetime(previsao_melt_geo["Semana"])
-print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
 
 
 
@@ -526,7 +534,7 @@ plt.show()
 xy = municipios.copy()
 xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 xy = xy.rename(columns = {"NM_MUN" : "Município"})
-xy["Município"] = xy["Município"].str.upper()
+xy["Município"] = xy["Município"].str.upper() 
 previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 previsao_melt_poligeo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
 fig, ax = plt.subplots(figsize = (20, 12))
@@ -581,7 +589,8 @@ print(previsao_melt_poligeo.info())
 
 sys.exit()
 
-
+# Salvar a figura com o título correspondente ao VCM
+plt.savefig(f'{output}/{os.path.splitext(vcm_file)[0]}_map.png')
 
 
 

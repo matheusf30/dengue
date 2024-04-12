@@ -75,7 +75,6 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 municipios = gpd.read_file(f"{caminho_dados}{municipios}")
 br = gpd.read_file(f"{caminho_dados}{br}")
-cidades = unicos["Município"].copy()
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
          'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
@@ -83,6 +82,10 @@ troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
 
+#casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
+focos = focos.iloc[:573] # Desconsiderando 2023
+unicos = unicos.iloc[:151] # Desconsiderando 2023
+cidades = unicos["Município"].copy()
 
 # modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
@@ -166,6 +169,13 @@ print(dataset)
 print("="*80)
 """
 ### Definindo Funções
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+reset = "\033[0m"
+
 def abre_modelo(cidade):
     troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
@@ -176,7 +186,7 @@ def abre_modelo(cidade):
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
     modelo = joblib.load(f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
     return modelo
 
@@ -363,7 +373,7 @@ def salva_modelo(modelo, cidade):
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
     joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
 
 ######################################################MODELAGEM############################################################
@@ -380,9 +390,9 @@ previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = Tr
 if _automatiza == True:
     for cidade in cidades:
         if cidade in value_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+            print(f"{red}Modelo para {cidade} não está no diretório!\nValueError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}")
         elif cidade in key_error:
-            print(f"Modelo para {cidade} não está no diretório!\nPor favor, entre em contato para resolver o problema!")
+            print(f"{red}Modelo para {cidade} não está no diretório!\nKeyError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}")
         else:
             modelo = abre_modelo(cidade)
             dataset, x, y = monta_dataset(cidade)
@@ -408,7 +418,7 @@ previsao_melt_xy = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 geometry = [Point(xy) for xy in zip(previsao_melt_xy['longitude'], previsao_melt_xy['latitude'])]
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
 
-print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
 print(xy)
 print(dataset)
 print(municipios)
