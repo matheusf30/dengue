@@ -1,0 +1,88 @@
+\chapter{Metodologia}
+
+\section{Materiais}
+
+Para organização, os dados serão agrupados em três divisões distintas: 
+
+\begin{alineas}
+    \item \acrfull{DEE}: Informações referentes a questões sanitárias (tanto ao vetor, quanto ao hospedeiro) e provenientes de banco de dados oficiais.  Os casos de focos de \latim{Aedes} sp. foram obtidos diretamente da \acrshort{Dive}. Em relação aos casos de dengue, foram obtidos de plataformas \ingles{on-line}: TabNet-\acrshort{Sinan}-\acrshort{DataSUS} e TabNet-\acrshort{Sinan}-\acrshort{Dive}; 
+    
+    \item \acrfull{DEC}: Informações referentes a variáveis meteorológicas/climatológicas (temperatura - mínima, máxima e média - e precipitação) e provenientes de banco de dados oficiais (reanálise e produtos de reanálise):  \ingles{\acrshort{GFS}}, \ingles{\acrshort{MERGE}} e \ingles{\acrshort{SAMeT}};
+
+    \item \acrfull{DGR}: Informações referentes a aspectos geográficos atualizados para o momento atual, provenientes do \acrshort{IBGE}. 
+\end{alineas}
+
+\indent O \acrshort{MERGE} são dados de precipitação acumulada a superfície (mm), sendo dados diários e tendo início da série histórica em junho de 2000. Os dados do \acrshort{SAMeT} são coletados a dois metros (2m) da superfície e agrupados em médias diárias, sendo as temperaturas dadas em celsius (C), e a série histórica tem início em janeiro de 2000. \textcolor{red}{FALTA CITAR GFS/CFS!}.\\
+\indent ...\\
+\indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012. A série histórica dos casos de dengue começa em 2014, sendo previamente agrupado e disponilizado em semanas epidemiológicas.\\
+
+
+\section{Métodos}
+
+\indent Para isso, pretende-se dividir o estudo em etapas, relativas ao percurso de execução do próprio projeto, sendo: pré-processamento, análise estatística descritiva, modelagem (treinamento e predição), espacialização dos dados preditos e Síntese do \acrfull{PTT}.\\
+
+
+\subsection{Pré-processamento}
+
+Em relação aos \acrshort{DEE}, as planilhas 
+
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import geopandas as gpd
+
+
+\subsection{Análise Estatística Descritiva}
+
+\indent Enquanto a etapa de Regionalização está em andamento, optou-se pelo desenvolvimento do \acrfull{ICOb}, que é resultado do acoplamento de \acrshort{DEC} [temperatura e precipitação - MERRA2 (0,5º / 0,25º) e SAMeT(0,05º) / MERGE (0,1º)]  interagindo com o \acrfull{LACOb} por \citeonline{Matiola2020Dissertação}.\\
+\indent O índice normalizado foi calculado à partir do limiar (\acrshort{LACOb}) encontrado por \citeonline{Matiola2020Dissertação}, estabelecido como 15C através da correlação de Spearman (0,74), considerando 30 dias retroativos. O método aplicado nesse trabalho subtrai o \acrshort{LACOb} da matriz de temperaturas máximas diárias (TMAX) obtidas em produtos distintos: \acrshort{GFS} e \acrshort{SAMeT}. Essa matriz resultante da subtração foi somada à própria matriz em seus valores numéricos absolutos, onde os valores abaixo do limiar foram zerados. Essa nova matriz com valores zerados foi dividida por dois (2) para definição do \acrfull{ICOb}. As equações (\ref{eq:resultante}) e (\ref{eq:icob}) ilustram o cálculo do índice.
+\begin{equation}
+\hspace{4,5cm} [Resultante] = TMAX - \acrshort{LACOb}
+    \label{eq:resultante}
+\end{equation}
+\begin{equation}
+\hspace{4.5cm} \acrshort{ICOb} = \frac{(abs[Resultante])+[Resultante]}{2}
+    \label{eq:icob}
+\end{equation}
+%ESCREVER COMO SE CHEGOU NO 'idenguen' >> 'define idenguen=10*at1*idengue/'_nvmax\\
+
+
+\subsection{Modelagem}
+
+\indent Na terceira etapa do estudo, serão definidos os  \acrfull{LACRe} entre os elementos climáticos e os resultados observados em relação aos focos de \latim{Aedes aegypti} distribuídos no Estado catarinense. Como resultado preliminar, foi utilizado o \acrshort{LACOb} desenvolvido por \citeonline{Matiola2020Dissertação}.
+
+
+\subsection{Espacialização dos Dados Preditos}
+
+\indent Para esse estudo, foi utilizado o recorte espacial durante a execução do prório \ingles{script}, sendo: longitude entre 54º5' e 57º5', ambas sul; e latitude entre 29º5' e 25º5', ambas oeste. Com esse recorte, pode-se evidenciar a totalidade do Estado de \acrlong{SC} e um pouco além de seus limites.\\
+\indent Obteve-se os \ingles{shapefiles} do \acrshort{IBGE} (2022) para os limites territoriais (federal, estadual e municipais) do Estado de \acrlong{SC}.\\
+
+\indent Durante a quarta etapa, retorna-se ao acoplamento e espacialização, que resultará na determinação dos \acrfull{ICRe}. Esses \acrshort{ICRe} serão corrigidos pelo acoplamento dos \acrshort{DEC} à interação dos \acrshort{LACRe} e ajustados na distribuição do Estado de \acrlong{SC}. Após isso, os novos limiares serão aplicados ao modelo preditivo proposto \acrshort{SAMeT}-\acrshort{MERGE}-\acrshort{GFS}.
+
+
+\subsection{Refinamento com Dados Socioeconômicos e Epidemiológicos}
+
+\indent Após a aplicação dos \acrshort{ICRe} ao modelo, pretende-se refinar o próprio modelo com a inclusão de dados Socioeconômicos do \acrshort{IBGE} e dados Epidemiológicos da \acrshort{Dive}. Desta maneira, a dinâmica epidemiológica poderá ser entendida à partir da ótica de diversas variáveis.
+
+
+\subsection{Síntese do \acrfull{PTT}} 
+
+\indent O \acrshort{PTT} resultante será: i) o sistema computacional e ii) a visualização cartográfica desses resultados, como preditivo da dinâmica regionalizada de focos de \latim{Aedes} sp. no Estado de \acrlong{SC}. O limiar temporal estipulado para previsão da incidência dos focos será de 60 dias. Os primeiros 30 dias serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias serão determinados através do modelo de previsão \acrshort{GFS}.
+
+
+%\section{Conjutos de Dados Utilizados}
+%sobre as arboviroses emergentes e re-mergentes (\textbf{Dengue}, Febre Amarela, Zika, Chikungunya)
+%Tornar cada parte do método em objetivo específico
+%ATUALIZAR, PENSANDO NO PROCESSO FUTURO\\
+
+
+%A princípio, os dados de regionalização espacial encontram-se em processo de definição.
+
+
+
+
+\subsection{Pré-processamento dos Dados}
+\indent Para desenvolvimento do trabalho, os dados foram ajustados em mesma escala temporal, deixando-os em semanas epidemiológicas. Dessa forma, fez-se o somatório dos registros de focos de \latim{Aedes} sp. por semana epidemiológica. Mesmo tratamento foi realizado com a precipitação, retornando o acumulado de precipitação por semana epidemiológica. As temperaturas foram agrupadas de forma diferente, porém também ajustando a dados semanais. Ao final, teríamos a média das temperaturas (mínima, média e máxima) por semana epidemiológica.\\
+
+
+
