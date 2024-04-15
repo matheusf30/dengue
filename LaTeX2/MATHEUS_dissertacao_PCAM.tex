@@ -1,30 +1,3 @@
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{abntex2}}
-\ProcessOptions
-
-
-\documentclass[
-	% -- opções da classe memoir --
-	12pt,				% tamanho da fonte
-	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
-	oneside,			% para impressão em verso e anverso. Oposto a oneside
-	a4paper,			% tamanho do papel. 
-	% -- opções da classe abntex2 --
-	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
-	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
-	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
-	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
-	% -- opções do pacote babel --
-	english,			% idioma adicional para hifenização
-	french,				% idioma adicional para hifenização
-	spanish,			% idioma adicional para hifenização
-	brazil				% o último idioma é o principal do documento
-	]{abntex2}
-
-%sudo apt update
-%sudo apt install texlive-latex-extra (instalar pacote abntex2)
-
-\usepackage{abntex2}
-	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % conf-comandos.sty
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -792,11 +765,36 @@
 % main.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{abntex2}}
+\ProcessOptions
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	oneside,			% para impressão em verso e anverso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	french,				% idioma adicional para hifenização
+	spanish,			% idioma adicional para hifenização
+	brazil				% o último idioma é o principal do documento
+	]{abntex2}
+
+%sudo apt update
+%sudo apt install texlive-latex-extra (instalar pacote abntex2)
+
+\usepackage{abntex2}
+
 \usepackage{setspace}
 \usepackage{conf-ifsc}	
 \usepackage{hyperref}
 \usepackage{graphicx}
-% \graphicspath{ {./fig/} } se necessário indicar caminho
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[utf8]{inputenc}
@@ -822,13 +820,15 @@
 
 \newcommand{\source}[1]{\caption*{\normalfont Fonte: {#1}}}
 
-
 \counterwithout{equation}{chapter}
 \counterwithout{figure}{chapter}
 \counterwithout{table}{chapter}
 
 \newcommand\ChangeRT[1]{\noalign{\hrule height #1}}
 
+\newcommand{\ingles}[1]{{\textit{#1}}}
+\newcommand{\latim}[1]{{\textit{#1}}}
+% \renewcommand{\coorientadorb}{coorientador:}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -856,32 +856,98 @@
 
 \lstset{style=mystyle}
 
+%--- PACOTE E LISTA DE ACRÔNIMOS--------------------------------------%
+\usepackage{glossaries}
+\makeglossaries
+%\newacronym{}{}{} Anvisa/Dive/Gezoo/DATASUS, TABNET, VIGILANTOS 
+\newacronym{GFS}{GFS}{Global Forecast System}
+\newacronym{MERRA2}{MERRA2}{Modern-Era Retrospective analysis for Research and Applications, Version 2}
+\newacronym{MERGE}{MERGE}{Merging Technique}
+\newacronym{SAMeT}{SAMeT}{South American Mapping of Temperature}
+\newacronym{IBGE}{IBGE}{Instituto Brasileiro de Geografia e Estatística}
+\newacronym{TRMM}{TRMM}{Tropical Rainfall Measuring Mission }
+\newacronym{ERA5}{ERA5}{ECMWF Reanalysis 5th Generation}
+\newacronym{ECMWF}{ECMWF}{European Centre for Medium-Range Weather Forecasts}
+\newacronym{GTOPO30}{GTOPO30}{Global Digital Elevation}
+\newacronym{PTT}{PTT}{Produto Técnico-Tecnológico}
+\newacronym{FF}{FF}{Frentes Frias}
+\newacronym{LI}{LI}{Linhas de Instabilidade}
+\newacronym{CCM}{CCM}{Complexos Convectivos de Mesoescala}
+\newacronym{ZCAS}{ZCAS}{Zona de Convergência do Atlântico Sul}
+\newacronym{CDO}{CDO}{Climate Data Operators}
+\newacronym{GrADS}{GrADS}{Grid Analysis and Display System}
+\newacronym{GTS}{GTS}{[Global Telecommunications System}
+\newacronym{CPTEC}{CPTEC}{Centro de Previsãoo de Tempo e Estudos Climáticos}
+\newacronym{INPE}{INPE}{Instituto Nacional de Pesquisas Espaciais}
+\newacronym{ASOS}{ASOS}{Automatic Surface Observation Station}
+\newacronym{OMS}{OMS}{Organização Mundial de Saúde}
+\newacronym{ONU}{ONU}{Organização das Nações Unidas}
+\newacronym{FAO}{FAO}{Organização das Nações Unidas para a Alimentação e a Agricultura}
+\newacronym{CFMV}{CFMV}{Conselho Federal de Medicina Veterinária}
+\newacronym{CRMV}{CRMV}{Conselho Regional de Medicina Veterinária}
+\newacronym{SC}{SC}{Santa Catarina}
+\newacronym{PR}{PR}{Paraná}
+\newacronym{CEGRADE}{CEGRADE}{Comissão Estadual de Gestão de Riscos de Animais em Desastres}
+\newacronym{DF}{DF}{Distrito Federal}
+\newacronym{PNCD}{PNCD}{Programa Nacional de Controle da Dengue}
+\newacronym{DENV}{DENV}{vírus Dengue}
+\newacronym{Funasa}{Funasa}{Fundação Nacional de Saúde}
+\newacronym{ESRI}{ESRI}{Environmental Systems Research Institute}
+\newacronym{DataSUS}{DataSUS}{Departamento de Informática do Sistema Único de Saúde}
+\newacronym{Dive}{Dive}{Diretoria de Vigilância Epidemiológica}
+\newacronym{LACEN}{LACEN}{Laboratório Central de Saúde Pública}
+\newacronym{IFSC}{IFSC}{Instituto Federal de Ensino, Ciência e Tecnologia de Santa Catarina}
+\newacronym{UFSM}{UFSM}{Universidade Federal de Santa Maria}
+\newacronym{ESBMet}{ESBMet}{Encontro Sul Brasileiro de Meteorologia}
+\newacronym{PCAM}{PCAM}{Programa de Pós-graduação em Clima e Ambiente}
+\newacronym{DEE}{DEE}{Dados Entomo-Epidemiológicos}
+\newacronym{DEC}{DEC}{Dados de Elementos Climáticos}
+\newacronym{DSG}{DSG}{Dados Socioeconômicos e Geográficos}
+\newacronym{DGR}{DGR}{Dados Georreferenciados}
+\newacronym{ICOb}{ICOb}{Índice Combinado por Observação}
+\newacronym{ICRe}{ICRe}{Índices Corrigidos por Região}
+\newacronym{LACOb}{LACOb}{Limiar de Alta Correlação Observado}
+\newacronym{LACRe}{LACRe}{Limiares de Alta Correlação Regionalizados}
+\newacronym{SBP}{SBP}{Sociedade Brasileira Técnico-Científica de Parasitologia}
+\newacronym{JBN}{JBN}{Jatos de Baixos Níveis}
+\newacronym{Bdmep/Inmet}{Bdmep/Inmet}{Banco de Dados Meteorológicos do Instituto Nacional de Meteorologia}
+\newacronym{Inmet}{Inmet}{Instituto Nacional de Meteorologia}
+\newacronym{MAPA}{MAPA}{Ministério da Agricultura, Pecuária e Abastecimento}
+\newacronym{Sinan}{Sinan}{Sistema de Informação de Agravos de Notificação}
+\newacronym{Cenepi}{Cenepi}{Centro Nacional de Epidemiologia}
+\newacronym{SVS}{SVS}{Secretaria de Vigilância em Saúde}
+%----------------------------------------------------------------------%
+
+
 %---------------------------------------------------------------------%
 %---------------------------------------------------------------------%
 % Informações de dados para CAPA e FOLHA DE ROSTO
 %---------------------------------------------------------------------%
 %---------------------------------------------------------------------%
 
-\titulo{TÍTULO DO TRABALHO: e subtítulo se houver}
+% \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
+% Papel dos elementos meteorológicos na reprodução do \latim{Aedes aegypti}\\
+% no Estado de Santa Catarina}
+\titulo{Utilização de Reanálise e Produtos de Reanálise\\para previsão de focos de  \latim{Aedes}\  sp. e casos de dengue\\no Estado de Santa Catarina}
 
-\autor{NOME DO AUTOR}
+\autor{MATHEUS FERREIRA DE SOUZA}
 
 \local{FLORIANÓPOLIS}
 
-\data{20XX.}
+\data{2024.}
 
-\orientador[Orientador:\\]{Nome do professor, titulação}
-
-
-%\coorientador[Coorientador:\\]{Nome do coorientador}
+\orientador[Orientador:\\]{Mário Francisco Leal de Quadro, Doutor em Meteorologia.}
+\coorientador[Coorientadores:\\]{Adriano Vitor, Doutor em Métodos Numéricos em Engenharia.\\João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental. }
+% \renewcommand{\coorientador}{Coorientadores}
+% \coorientadorb[Coorientador:\\]{João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental.}
+% \coorientadores[Coorientadores:\\]{}{Adriano Vitor, Doutor em Matemática.}{João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental.}
 
 \tipotrabalho{Dissertação (Mestrado)}
 
 % O preambulo deve conter o tipo do trabalho, o objetivo, o nome da instituição e a área de concentração 
-\preambulo{Dissertação submetido ao Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina como parte dos requisitos para obtenção do título de Mestre Profissional em Clima e Ambiente.}
+\preambulo{Dissertação submetida ao Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina como parte dos requisitos para obtenção do título de Mestre Profissional em Clima e Ambiente.}
 
 % \textoaprovacao{Este Trabalho foi julgado adequado para obtenção do Título de Engenheira Eletrônica em abril de 2021 e aprovado na sua forma final pela banca examinadora do Curso de Engenharia Eletrônica do instituto Federal de Educação Ciência, e Tecnologia de Santa Catarina.}
-
 
 
 %---------------------------------------------------------------------%
@@ -933,9 +999,16 @@
 \begin{dedicatoria}
     \vspace*{\fill}
 	\begin{flushright}
-    		(Dedicatória é um elemento opcional.\\ 
-            Texto alinhado no canto inferior direito.\\
-            Não deve ultrapassar uma página.)
+
+Ao avanço e\\ persistência\\ da ciência,\\ principal-\\mente nos\\ períodos \\mais \\contur-\\bados. 
+
+A todos \\que \\tiveram\\ a vida \\cessada
+
+\vspace{50}
+
+por falsa\\ informação,\\ desinformação\\ ou negação\\ da mesma.
+      
+      
 	\end{flushright}
 \end{dedicatoria}
 
@@ -956,9 +1029,7 @@
 \begin{epigrafe}
     \vspace*{\fill}
 	\begin{flushright}
-    		(Epígrafe é um elemento opcional.\\
-    		Texto alinhado no canto inferior direito.\\
-            Não deve ultrapassar uma página.)
+        		"If I have seen further, it is by standing on the shoulders of giants"\\(Sir Isaac Newton).
 	\end{flushright}
 \end{epigrafe}
 
@@ -969,25 +1040,24 @@
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \renewcommand{\baselinestretch}{1} 
 \begin{resumo}
-    O resumo deve mostrar a natureza e o objetivo do trabalho, o método que foi empregado, os resultados e as conclusões. O resumo deve conter entre 150 e 500 palavras e constitui-se de um único parágrafo, sem recuo.
-
+    % O resumo deve mostrar a natureza e o objetivo do trabalho, o método que foi empregado, os resultados e as conclusões. O resumo deve conter entre 150 e 500 palavras e constitui-se de um único parágrafo, sem recuo.
+A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Atualmente é um dos principais problemas de saúde coletiva no mundo. Está presente nas regiões tropicais e subtropicais do planeta, sendo estimado que 390 milhões de pessoas sejam infectadas anualmente pelos quatro sorotipos. Há tendência de resposta à sazonalidade em relação ao número de focos de dengue, na qual os meses com temperaturas mais elevadas se observa crescimento, principalmente quando retroagidos por um período de 30 dias; e tem diminuição nos meses mais frios, logo, temperatura é um elemento crítico para o desenvolvimento do mosquito. A geomedicina porporciona base para o próprio estudo espacializado de doenças, sendo assim, a seguinte proposta tem o objetivo direto de observar a relação entre o histórico e a distribuição de focos do vetor biológico \latim{Aedes aegypti}, transmissor das principais arboviroses no Estado de Santa Catarina (dengue, febre amarela, zika e chikungunya), e o comportamento de elementos climáticos. Foram utilizados dados de temperatura do \ingles{\acrfull{GFS}}, após isso, foi sintetizado o \acrfull{ICOb}, utilizando-se o \acrfull{LACOb}. Dessa forma, pode-se modelar e visualizar cartograficamente esses resultados, como previsão de aumento regionalizado de focos de \latim{Aedes aegypti} no Estado de Santa Catarina. Ademais, pretende-se alcançar outros objetivos, tais como: mapeamento das ocorrências dentro do Estado, análise de dados entomológicos e epidemiológico; além de relacionar aos dados socioeconômicos da população catarinense. Investigar esses múltiplos aspectos e compreender essas informações auxiliam no processo de tomada de decisões, buscando, assim, uma melhor resposta frente a zoonoses emergentes e re-emergentes.
  
    \noindent 
-    \textbf{Palavras-chave}: Primeira palavra-chave. Segunda palavra-chave. Terceira palavra-chave. Quarta palavra-chave (opcional). Quinta palavra-chave (opcional). 
+    \textbf{Palavras-chave}: Variabilidade Climática. Geomedicina. Saúde Única. Zoonose. 
 \end{resumo}
 
 % resumo em inglês
 \renewcommand{\baselinestretch}{1} 
 \begin{resumo}[Abstract]
  \begin{otherlanguage*}{english}
-
-   The abstract should show the nature and scope of work, the method that was used, the results and conclusions. The abstract may contain between 150 and 500 words, and it must be only one paragraph. 
-
+   % The abstract should show the nature and scope of work, the method that was used, the results and conclusions. The abstract may contain between 150 and 500 words, and it must be only one paragraph. 
+ Dengue is an viral infectious disease transmitted by the female mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Nowadays, it is one of the main public health problems in the world. It is present in the tropical and subtropical regions of the planet, with an estimated 390 million people are infected annually with all four serotypes. There is a tendency to respond to seasonality in relation to the number of dengue outbreaks, in which the months with higher temperatures are observed growth, mainly when retroacted for a period of 30 days; and observe decrease in the colder months, therefore, temperature is a critical element for the growth of the mosquito. Geomedicine provides a basis for the spatialized study of diseases, thus, this project has the direct objective of observing the relationship between the history and the distribution of outbreaks of the biological vector \latim{Aedes aegypti}, transmitter of the main arboviruses in the State of Santa Catarina (dengue, yellow fever, zika and chikungunya), and the observation of climate elements. The temperature data were used from the \acrfull{GFS}, after which the Combined Index by Observation [\acrfull{ICOb}] was synthesized, using the Observed High Correlation Limit [\acrfull{LACOb}]. In this way, it is possible to model and visualize these results cartographically, as forecast of a regionalized increase in outbreaks of \latim{Aedes aegypti} in the State of Santa Catarina. Furthermore, it is intended to achieve other objectives, such as: mapping of occurrences within the State, analysis of entomological and epidemiological data; in addition to relating to socioeconomic data of the Santa Catarina population. Investigate these multiple aspects and understand this information assist in the decision-making process, thus seeking a better response to emerging and reemerging  zoonotic diseases. 
 
    %\vspace{-0.8cm}
  
    \noindent 
-   \textbf{Keywords}: First keyword. Second keyword. Third keyword. Fourth keyword (optional). Fifth keyword (optional).  
+   \textbf{Keywords}: Climate Variability. Geomedicine. One Health. Zoonosis.  
  \end{otherlanguage*}
 \end{resumo}
 
@@ -1035,7 +1105,10 @@
 % inserir lista de abreviaturas e simbolos
 %---------------------------------------------------------------------%
 %\listofabrev{tex/00-Abreviaturas}
-\imprimirlistadeabreviaturas
+% \imprimirlistadeabreviaturas
+%ESTOU USANDO \usepackage{glossaries}---------------------------------%
+\printglossary[title = Lista de Abreviaturas e Siglas, type = \acronymtype]
+%---------------------------------------------------------------------%
 
 % \imprimirlistadesimbolos
 \cleardoublepage
@@ -1061,25 +1134,12 @@
 % Inclusão dos capítulos que estão em outros arquivos .tex
 % ----------------------------------------------------------
 
-\include{tex/cap1}
-\include{tex/cap2}
-\include{tex/cap3}
-\include{tex/cap4}
-\include{tex/cap5}
-\include{tex/cap6}
-
-% ----------------------------------------------------------
-% Como realizar a citação bibliográfica
-% ----------------------------------------------------------
-
-%\citet{jon90} = Jones et al. (1990)
-%\citet[chap.~2]{jon90} = Jones et al. (1990, chap. 2)
-%\citep{jon90} = (Jones et al., 1990)
-%\citep[chap.~2]{jon90} = (Jones et al., 1990, chap. 2)
-%%\citep[see][]{jon90} = (see Jones et al., 1990)
-%\citep[see][chap.~2]{jon90} = (see Jones et al., 1990, chap. 2)
-%\citet*{jon90} = Jones, Baker, and Williams (1990)
-%\citep*{jon90} = (Jones, Baker, and Williams, 1990)
+\include{tex/1-intro} % Introdução + Justificativa + Objetivos
+\include{tex/2-fundamenteo} % Fundamentação Teórica
+\include{tex/3-meto} % Metodologia + Métodos Aplicados
+\include{tex/4-resultados} % Resultados + Análises + Discussões
+\include{tex/5-consfinais} % Considerações Finais
+\include{tex/6-futura} % Futuros Trabalhos + Sugestões Futuras
 
 
 
@@ -1092,24 +1152,23 @@
 % ----------------------------------------------------------
 % Referências bibliográficas
 % ----------------------------------------------------------
-\bibliography{referencias}
-\bibliographystyle{apalike-ejor}
+\bibliography{bibliografia}
 
 % ----------------------------------------------------------
 % Apêndices
 % ----------------------------------------------------------
- \begin{apendicesenv}         
-     \partapendices
-     \include{tex/Apendices}
- \end{apendicesenv}
+ % \begin{apendicesenv}         
+ %     \partapendices
+ %     \include{tex/Apendices}
+ % \end{apendicesenv}
 
 % ----------------------------------------------------------
 % Anexos
 % ----------------------------------------------------------
- \begin{anexosenv}
-     \partanexos
-     \include{tex/Anexos}
- \end{anexosenv}
+ % \begin{anexosenv}
+ %     \partanexos
+ %     \include{tex/Anexos}
+ % \end{anexosenv}
 
 %---------------------------------------------------------------------
 % INDICE REMISSIVO
@@ -1119,3 +1178,4 @@
 %---------------------------------------------------------------------
 
 \end{document}
+
