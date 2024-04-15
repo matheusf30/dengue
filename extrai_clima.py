@@ -43,14 +43,13 @@ _ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
 
 ### Renomeação variáveis pelos arquivos
 merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
+"""
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2022.nc"
-"""
 samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
-
+"""
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_{_ANO_FINAL}.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_{_ANO_FINAL}.nc"
-"""
 samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
 
 municipios = "SC_Municipios_2022.shp"
@@ -160,8 +159,8 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	return valores_centroides
 
 #prec = extrair_centroides(municipios, prec, "prec")
-#tmax = extrair_centroides(municipios, tmax, "tmax")
-#tmed = extrair_centroides(municipios, tmed, "tmed")
+tmax = extrair_centroides(municipios, tmax, "tmax")
+tmed = extrair_centroides(municipios, tmed, "tmed")
 tmin = extrair_centroides(municipios, tmin, "tmin")
 
 print("!!"*80)
