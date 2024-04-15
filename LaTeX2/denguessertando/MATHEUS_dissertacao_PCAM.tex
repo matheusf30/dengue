@@ -1,0 +1,1181 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% conf-comandos.sty
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+\ProvidesPackage{conf-comandos}
+
+% ----------------------------------------------------------
+% Imprimir a ficha catalográfica
+% ----------------------------------------------------------
+\newcommand{\imprimirficha}[1]{
+    \begin{fichacatalografica}
+        \includepdf{#1}
+    \end{fichacatalografica}
+}
+
+% ----------------------------------------------------------
+% Imprimir a folha de aprovação
+% ----------------------------------------------------------
+ %\providecommand{\imprimirtextoaprovacao}{}
+% \newcommand{\textoaprovacao}[1]{
+%     \renewcommand{\imprimirtextoaprovacao}{
+%         \begin{center}#1\end{center}
+%     }
+% } 
+% \newcommand{\imprimiraprovacao}{
+%     \begin{folhadeaprovacao}
+%         \begin{center}
+%             \ABNTEXchapterfont\SingleSpacing\bfseries\Large\MakeUppercase\imprimirtitulo
+%             \vspace*{2.0cm}
+            
+%             \ABNTEXchapterfont\normalsize\bfseries\MakeUppercase\imprimirautor
+%             \vspace*{1.0cm}
+%         \end{center}
+        
+%         \noindent\OnehalfSpacing\imprimirtextoaprovacao
+        
+%         \vspace*{1.0cm}
+%         \begin{center}    
+%             \imprimirlocal, 19 de abril, 2021.
+%         \end{center}
+        
+%         \noindent Banca Examinadora:
+        
+%         \assinatura{\imprimirorientador, Dr. Eng.} 
+% %        \assinatura{\imprimircoorientador, Dr.}
+%         \assinatura{Matheus Leitzke Pinto, Msc.}
+%         \assinatura{Gustavo Martins de Araújo Silvano, Eng.
+            
+%         }
+%     \end{folhadeaprovacao}
+% }
+
+% ----------------------------------------------------------
+% Imprimir a folha de dedicatória
+% ----------------------------------------------------------
+\newcommand{\imprimirdedicatoria}[1]{
+    \begin{dedicatoria}
+        \vspace*{\fill}
+        \begin{flushright}
+        \noindent
+        \textit{#1}
+        \vspace*{2cm}
+        \end{flushright}
+    \end{dedicatoria}
+}
+
+% ----------------------------------------------------------
+% Imprimir a lista de códigos
+% ----------------------------------------------------------
+\newcommand{\listoflistings}{
+    \begin{KeepFromToc}
+        \lstlistoflistings
+    \end{KeepFromToc}
+}
+
+% ----------------------------------------------------------
+% Imprimir a lista de abreviaturas
+% ----------------------------------------------------------
+\newcommand{\sortitem}[2]{%
+    \DTLnewrow{sortlist}%
+    \DTLnewdbentry{sortlist}{sig}{#1}% 
+    \DTLnewdbentry{sortlist}{desc}{#2}% 
+}
+
+\newenvironment{sortsiglas}{%
+    \DTLifdbexists{sortlist}{\DTLcleardb{sortlist}}{\DTLnewdb{sortlist}}%
+}{%
+    \DTLsort{sig}{sortlist}% Sort list
+    \begin{siglas}%
+        \DTLforeach*{sortlist}{\theDesc=desc, \theSig=sig}{\item[\theSig] \theDesc}% Print each item
+    \end{siglas}%
+}%
+
+\makeatletter
+
+% \abreviatura{abrev.}{definição}
+% ret = 
+\newcommand{\abreviatura}[2]{%
+    \write\@auxout{\noexpand\@writefile{abrv}{\noexpand\sortitem{#1}{\xmakefirstuc{#2}}}}%
+}%
+
+% \abreviatura*{abrev.}{definição}
+% ret = abrev. (definição)
+\WithSuffix\newcommand\abreviatura*[2]{%
+    #1 (#2)%
+    \write\@auxout{\noexpand\@writefile{abrv}{\noexpand\sortitem{#1}{\xmakefirstuc{#2}}}}%
+}%
+
+% \abreviatura.{abrev.}{definição}
+% ret = definição (abrev.)
+\WithSuffix\newcommand\abreviatura.[2]{%
+    #2 (#1)%
+    \write\@auxout{\noexpand\@writefile{abrv}{\noexpand\sortitem{#1}{\xmakefirstuc{#2}}}}%
+}%
+
+% \abreviatura'{abrev.}{definição}{tradução}
+% ret = 
+\WithSuffix\newcommand\abreviatura'[3]{%
+    \write\@auxout{\noexpand\@writefile{abrv}{\noexpand\sortitem{#1}{\textit{#2} - \xmakefirstuc{#3}}}}%
+}%
+
+% \abreviatura&{abrev.}{definição}{tradução}
+% ret = tradução (definição - abrev.)
+\WithSuffix\newcommand\abreviatura&[3]{%
+    #3 (\textit{#2} - #1)%
+    \write\@auxout{\noexpand\@writefile{abrv}{\noexpand\sortitem{#1}{\textit{#2} - \xmakefirstuc{#3}}}}%
+}%
+
+\newcommand{\imprimirlistadeabreviaturas}{%
+    \begin{sortsiglas}%
+        \@starttoc{abrv}%
+    \end{sortsiglas}%
+}%
+\makeatother
+
+% ----------------------------------------------------------
+% Imprimir a lista de simbolos
+% ----------------------------------------------------------
+\newenvironment{sortsimbolos}{%
+    \DTLifdbexists{sortlist}{\DTLcleardb{sortlist}}{\DTLnewdb{sortlist}}%
+}{%
+    \DTLsort{desc}{sortlist}% Sort list
+    \begin{simbolos}%
+        \DTLforeach*{sortlist}{\theDesc=desc, \theSig=sig}{\item[\theSig] \theDesc}% Print each item
+    \end{simbolos}%
+}%
+
+\makeatletter
+
+% \simbolo{simbolo}{definição}
+% ret = 
+\newcommand{\simbolo}[2]{%
+    \write\@auxout{\noexpand\@writefile{asbl}{\noexpand\sortitem{#1}{\xmakefirstuc{#2}}}}%
+}%
+
+% \simbolo*{simbolo}{definição}
+% ret = simbolo
+\WithSuffix\newcommand\simbolo*[2]{%
+    #1%
+    \write\@auxout{\noexpand\@writefile{asbl}{\noexpand\sortitem{#1}{\xmakefirstuc{#2}}}}%
+}%
+
+\newcommand{\imprimirlistadesimbolos}{%
+    \begin{sortsimbolos}%
+        \@starttoc{asbl}%
+    \end{sortsimbolos}%
+}%
+\makeatother
+
+% ----------------------------------------------------------
+% Imprimir a fonte da figura
+% ----------------------------------------------------------
+\newcommand{\indentedfont}[2][\textwidth]{%
+    \captionsetup{singlelinecheck=off,width=#1}%
+    \caption*{\raggedright\footnotesize\mdseries Fonte: #2.}%
+}%
+
+% ----------------------------------------------------------
+% Incluindo códigos que estão em um arquivo externo
+% ----------------------------------------------------------
+\newcommand{\includecode}[4][c]{
+    \lstinputlisting[captionpos=t,caption=#3, label=#2,escapechar={@*}, style=#1]{#4}
+}
+%-- \includecode[linguagem]{label}{Titulo}{arquivo}
+%-- \includecode[shell]{l_olamundo}{Olá mundo em shell script}{codigos/ola.sh}
+
+
+
+
+% ----------------------------------------------------------
+% Comandos para organizar a escrita
+% ----------------------------------------------------------
+% alterar | alterado | nota | add
+\newcommand{\marcador}[2]{%
+%
+    \def\param{#1}%
+    \def\ifalterar{alterar}%
+    \def\ifalterado{alterado}%
+    \def\ifnota{nota}%
+    \def\ifadic{add}%
+%
+	\ifx\param\ifalterar%
+		\textcolor{red}{#2}%
+	\else%
+		\ifx\param\ifalterado%
+	        \textcolor{blue}{#2}%
+	    \else%
+        	\ifx\param\ifnota%
+		        \textcolor{OliveGreen}{#2}%
+            \else%
+                \ifx\param\ifadic%
+    		        \textcolor{Fuchsia}{#2}%
+                \else%
+                    \textcolor{black}{#2}%
+                \fi%
+            \fi%
+        \fi%
+	\fi%
+}%
+
+\WithSuffix\newcommand\marcador*[3]{%
+%
+    \def\param{#1}%
+    \def\ifalterar{alterar}%
+    \def\ifalterado{alterado}%
+    \def\ifnota{nota}%
+    \def\ifadic{add}%
+%
+	\ifx\param\ifalterar%
+		\textcolor{red}{\underline{#2}} \textcolor{Mahogany}{(#3)}%
+	\else%
+		\ifx\param\ifalterado%
+		    \textcolor{blue}{\underline{#2}} \textcolor{NavyBlue}{(#3)}%
+	    \else%
+        	\ifx\param\ifnota%
+        	    \textcolor{OliveGreen}{\underline{#2}} \textcolor{Green}{(#3)}%
+            \else%
+                \ifx\param\ifadic%
+            	    \textcolor{Fuchsia}{#2} \textcolor{Mulberry}{(\underline{#3})}%
+                \else%
+                    \textcolor{black}{\underline{#2}} \textcolor{gray}{(#3)}%
+                \fi%
+            \fi%
+        \fi%
+	\fi%
+}%
+
+\begin{comment}
+    % Abreviatura em pt
+    \abreviatura{abrev.}{definição}  -> ret: 
+    \abreviatura*{abrev.}{definição} -> ret: abrev. (definição)
+    \abreviatura.{abrev.}{definição} -> ret: definição (abrev.)
+    % Abreviatura em língua estrangeira
+    \abreviatura'{abrev.}{definição}{tradução} -> ret:
+    \abreviatura&{abrev.}{definição}{tradução} -> ret: tradução (abrev. - definição)
+    
+    \simbolo{simbolo}{definição}  -> ret: 
+    \simbolo*{simbolo}{definição} -> ret: simbolo
+    
+    \marcador{tipo}{texto}             -> ret: texto
+    \marcador*{tipo}{texto}{alteração} -> ret: texto (alteração)
+        alterar     | alterado  | nota      | add
+        Vermelho    | Azul      | Verde     | Roxo
+    
+    \indentedfont{tamanho}{texto} -> ret: Fonte: texto.
+    
+    \includecode[linguagem]{label}{Titulo}{arquivo}
+\end{comment}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% conf-ifsc.sty
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% !TEX root = monografia.tex
+
+\ProvidesPackage{conf-ifsc}
+
+\usepackage{conf-pacotes}
+\usepackage{conf-comandos}
+\usepackage{tocloft}
+
+% ----------------------------------------------------------
+% Macros
+% ----------------------------------------------------------
+\newcommand{\buck}{Buck \textit{interleaved}}
+
+% ----------------------------------------------------------
+% Configuração do pacote de SI
+% ----------------------------------------------------------
+\sisetup{detect-all} % Configura fonte do pacote siunitx
+\sisetup{output-decimal-marker = {,}}
+\sisetup{mode = text, detect-italic = true}
+
+% ----------------------------------------------------------
+% Configuração das figuras
+% ----------------------------------------------------------
+\newlength{\imagewidth}  % the name can be chosen, e.g. picwidth...
+\captionsetup[figure]{font={footnotesize,bf}}
+\captionsetup[table]{font={footnotesize,bf}}
+
+% ----------------------------------------------------------
+% Definicao da geometria da página - Conforme Norma para TCC IFSC
+% ----------------------------------------------------------
+\RequirePackage[
+    inner=3.0cm,
+    outer=2.0cm,
+    top=3.0cm,
+    bottom=2.0cm,
+    head=0.7cm,
+    foot=0.7cm
+    ]{geometry}
+
+% ----------------------------------------------------------
+% ..........................................................
+% CONFIGURAÇÕES DE PACOTES
+% ..........................................................
+% ----------------------------------------------------------
+
+% ----------------------------------------------------------
+% Fontes padroes de part, chapter, section, subsection e subsubsection
+% ----------------------------------------------------------
+\renewcommand{\familydefault}{\sfdefault}             % Fonte Arial
+
+\renewcommand{\ABNTEXchapterfont}{\sffamily}
+\renewcommand{\ABNTEXchapterfontsize}{\normalsize\scshape\bfseries}
+
+\renewcommand{\ABNTEXpartfont}{\ABNTEXchapterfont}
+\renewcommand{\ABNTEXpartfontsize}{\ABNTEXchapterfontsize}
+
+\renewcommand{\ABNTEXsectionfont}{\ABNTEXchapterfont}
+\renewcommand{\ABNTEXsectionfontsize}{\normalsize\bfseries}
+
+\renewcommand{\ABNTEXsubsectionfont}{\ABNTEXsectionfont}
+\renewcommand{\ABNTEXsubsectionfontsize}{\normalsize}
+
+\renewcommand{\ABNTEXsubsubsectionfont}{\ABNTEXsubsectionfont}
+\renewcommand{\ABNTEXsubsubsectionfontsize}{\normalsize\itshape}
+
+%\renewcommand{\ABNTEXsubsubsubsectionfont}{\ABNTEXsubsectionfont}
+%\renewcommand{\ABNTEXsubsubsubsectionfontsize}{\normalsize}
+
+
+
+\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}} 
+\renewcommand{\tocpartapendices}{                
+    \addtocontents{toc}{\vspace{-0.6cm}}         
+    \addtocontents{toc}{\cftsetindents{part}{\cftlastnumwidth}{2em}}          
+    \cftinserthook{toc}{A}     
+}
+
+\renewcommand{\tocpartanexos}{
+    \addtocontents{toc}{\vspace{-0.6cm}}
+    \addtocontents{toc}{\cftsetindents{part}{\cftlastnumwidth}{2em}}
+    \cftinserthook{toc}{A}
+}
+ 
+ 
+ 
+ 
+% ----------------------------------------------------------
+% Fontes das entradas do sumario
+% ----------------------------------------------------------
+\renewcommand{\cftpartfont}{\bfseries\normalsize}
+\renewcommand{\cftpartpagefont}{\bfseries\normalsize}
+
+\renewcommand{\cftchapterfont}{\bfseries}
+\renewcommand{\cftchapterpagefont}{\normalsize\cftchapterfont}
+
+\renewcommand{\cftsectionfont}{\bfseries}
+\renewcommand{\cftsectionpagefont}{\cftsectionfont}
+
+\renewcommand{\cftsubsectionfont}{\normalsize}
+\renewcommand{\cftsubsectionpagefont}{\cftsubsectionfont}
+
+\renewcommand{\cftsubsubsectionfont}{\textit}
+\renewcommand{\cftsubsubsectionpagefont}{\cftsubsubsectionfont}
+
+\renewcommand{\cftparagraphfont}{\footnotesize}
+\renewcommand{\cftparagraphpagefont}{\cftparagraphfont}
+
+
+% ----------------------------------------------------------
+% Remover cabeçalho nas paginas pares
+% ----------------------------------------------------------
+\makepagestyle{parpage}
+\makeevenhead{parpage}{\ABNTEXfontereduzida\thepage}{}{}
+\makeoddhead{parpage}{\ABNTEXfontereduzida\rightmark}{\rule[-.3\baselineskip]{\linewidth}{.4pt}}{\ABNTEXfontereduzida\thepage}
+
+% ----------------------------------------------------------
+% Configuração de espaçamento 
+% ----------------------------------------------------------
+\setlength{\afterchapskip}{0.5cm}   % Espaço 1,5 após os capítulos
+\setlength{\parindent}{2.0cm}       % Identação do paragrafo conforme norma para TCC IFSC
+\setlength{\parskip}{0.1cm}         % Controle do espaçamento entre um parágrafo
+
+% ----------------------------------------------------------
+% Configurações do pacote backref
+% ----------------------------------------------------------
+%\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+%\renewcommand{\backref}{}       % Texto padrão antes do número das páginas
+%\renewcommand*{\backrefalt}[4]{ % Define os textos da citação
+%	\ifcase #1 
+%		Nenhuma citação no texto.
+%	\or
+%		Citado na página #2.
+%	\else
+%		Citado #1 vezes nas páginas #2.
+%	\fi
+%}
+
+\def\UrlLeft{}
+\def\UrlRight{}
+
+% --------------------------------------------------------------------------
+% Personalização do modelo da abnTeX2 para se adequar com o modelo do IFSC
+% 2017-08-23 - Segue o modelo do IFSC publicado em setembro de 2016
+% --------------------------------------------------------------------------
+
+% ----------------------------------------------------------
+% Alteração da capa
+% ----------------------------------------------------------
+\renewcommand{\imprimircapa}{
+    \begin{capa}
+        \begin{SingleSpacing}
+            \center
+            \ABNTEXchapterfont\bfseries\ INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE\\SANTA CATARINA - CÂMPUS FLORIANÓPOLIS\\DEPARTAMENTO ACADÊMICO DE SAÚDE E SERVIÇO\\CURSO DE MESTRADO PROFISSIONAL EM CLIMA E AMBIENTE
+            
+            \vspace*{3.0cm}
+            
+            \ABNTEXchapterfont\bfseries\imprimirautor
+        
+            \begin{vplace}[0.5]
+                \begin{center}
+                    \ABNTEXchapterfont\SingleSpacing\bfseries\imprimirtitulo
+                \end{center}
+            \end{vplace}
+            \begin{figure}[h]
+    	\centering
+    	\includegraphics[scale=0.12]{figuras/ifsc.jpg}
+    \end{figure}
+    \\
+    \vspace*{2.5cm}
+            \begin{center}
+                \ABNTEXchapterfont\bfseries\imprimirlocal, \ABNTEXchapterfont\bfseries\imprimirdata
+            \end{center}
+        \end{SingleSpacing}
+    \end{capa}
+}
+
+% ----------------------------------------------------------
+% folha de rosto 
+% ----------------------------------------------------------
+\makeatletter
+\renewcommand{\folhaderostocontent}{
+    \begin{SingleSpacing}
+        \center
+        \ABNTEXchapterfont\bfseries\ INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DE\\SANTA CATARINA - CÂMPUS FLORIANÓPOLIS\\DEPARTAMENTO ACADÊMICO DE SAÚDE E SERVIÇO\\CURSO DE MESTRADO PROFISSIONAL EM CLIMA E AMBIENTE
+        
+        \vspace*{3.0cm}     % três espaços simples - conforme norma para TCC do IFSC
+        
+        \ABNTEXchapterfont\bfseries\imprimirautor
+        
+        %\begin{vplace}[0.5]
+        \vspace*{\fill} 
+            \begin{center}
+                \ABNTEXchapterfont\SingleSpacing\bfseries\imprimirtitulo
+            \end{center}
+        \vspace*{\fill} 
+        %\end{vplace}
+        
+        \hspace{.45\textwidth}
+        \begin{minipage}{.5\textwidth}
+            \begin{SingleSpacing}
+                \normalfont\imprimirpreambulo
+                \vspace*{1.0cm}
+
+                \imprimirorientadorRotulo~Prof. \imprimirorientador\par
+                 \vspace*{1.0cm}
+                \imprimircoorientadorRotulo~ \imprimircoorientador%
+                
+            \end{SingleSpacing}
+        \end{minipage}%
+        \vspace*{\fill}
+
+         \begin{center}
+            \ABNTEXchapterfont\bfseries\imprimirlocal, \ABNTEXchapterfont\bfseries\imprimirdata
+        \end{center}
+    \end{SingleSpacing}
+}
+\makeatother
+
+
+% ----------------------------------------------------------
+% Configurações de aparência do PDF final
+% ----------------------------------------------------------
+\definecolor{blue}{RGB}{41,5,195}   % alterando o aspecto da cor azul
+
+\makeatletter
+\hypersetup{                        % informações do PDF
+     %	pagebackref=true,
+		pdftitle={\@title}, 
+		pdfauthor={\@author},
+    	pdfsubject={\imprimirpreambulo},
+		pdfkeywords={Palavra chave 1}{Palavra chave 2}{Palavra chave 3}, 
+		colorlinks=true,       		% false: boxed links; true: colored links
+    	linkcolor=black,          	% color of internal links
+    	citecolor=black,        		% color of links to bibliography
+    	filecolor=black,      		% color of file links
+		urlcolor=black,
+		bookmarksdepth=4
+}
+\makeatother
+
+% ----------------------------------------------------------
+% compila o indice
+% ----------------------------------------------------------
+\makeindex 
+
+% --------------------------------------------------------------------------
+% Configurações para inserir código fonte de programas - pacote listings
+% --------------------------------------------------------------------------
+
+\renewcommand{\lstlistingname}{Código} % Altera o nome padrão do rótulo usado no comando \autoref{}
+\renewcommand{\lstlistlistingname}{Lista de códigos} % Altera o rótulo a ser usando no elemento pré-textual
+
+% ----------------------------------------------------------
+% Configura a "Lista de Códigos" conforme as regras da ABNT
+% ----------------------------------------------------------
+\begingroup\makeatletter
+\let\newcounter\@gobble\let\setcounter\@gobbletwo
+  \globaldefs\@ne \let\c@loldepth\@ne
+  \newlistof{listings}{lol}{\lstlistlistingname}
+  \newlistentry{lstlisting}{lol}{0}
+\endgroup
+
+\renewcommand{\cftlstlistingaftersnum}{\hfill--\hfill}
+
+\let\oldlstlistoflistings\lstlistoflistings
+\renewcommand{\lstlistoflistings}{
+   \begingroup
+   \let\oldnumberline\numberline
+   \renewcommand{\numberline}{\lstlistingname\space\oldnumberline}
+   \oldlstlistoflistings
+   \endgroup
+}
+
+% ----------------------------------------------------------
+% Definindo cores
+% ----------------------------------------------------------
+\definecolor{hellgelb}{rgb}{1,1,0.9}
+\definecolor{colKeys}{rgb}{0,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0.9}
+\definecolor{colComments}{rgb}{.4,.4,.4}
+\definecolor{colString}{rgb}{0,0,0.6}
+
+\definecolor{colBack}{rgb}{1,1,.98}
+\definecolor{colKeys}{rgb}{0,0,0}
+\definecolor{colIdentifier}{rgb}{0,0,0.9}
+\definecolor{colComments}{rgb}{.4,.4,.4}
+\definecolor{colString}{rgb}{0,0,0.6}
+
+\lstset{ %
+    aboveskip=\bigskipamount,
+    backgroundcolor=\color{colBack},   % choose the background color; you must add \usepackage{color} or 
+    basicstyle=\ttfamily\footnotesize,       % the size of the fonts that are used for the code
+    breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+    breaklines=true,                 % sets automatic line breaking
+    captionpos=n,                    % sets the caption-position to bottom
+    columns=flexible,
+    commentstyle=\color{colComments},    % comment style
+    deletekeywords={...},            % if you want to delete keywords from the given language
+    escapechar={@*},          % if you want to add LaTeX within your code
+    extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+    linewidth=0.98\linewidth,
+    tab=$\to$,
+    float=tbph,
+    xleftmargin=10pt,
+    frame=single,	                    % adds a frame around the code
+    keepspaces=true,                    % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+    identifierstyle=\color{colIdentifier},
+    keywordstyle=\color{colKeys},       % keyword style
+    %  otherkeywords={*,...},           % if you want to add more keywords to the set
+    firstnumber=last,
+    numbers=left,                       % where to put the line-numbers; possible values are (none, left, right)
+    numbersep=5pt,                      % how far the line-numbers are from the code
+    numberstyle=\tiny,
+    rulecolor=\color{black},            % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+    showspaces=false,                   %show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+    showstringspaces=false,             % underline spaces within strings only
+    showtabs=false,                     % show tabs within strings adding particular underscores
+    %   stepnumber=2,                   % the step between two line-numbers. If it's 1, each line will be numbered
+    stringstyle=\color{colString},      % string literal style
+    tabsize=2,	                        % sets default tabsize to 2 spaces
+    title=\lstname                      % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+% ----------------------------------------------------------
+% Permitindo caracteres acentuados dentro do ambiente lstlisting
+% ----------------------------------------------------------
+\lstset{%
+        inputencoding=utf8,
+        extendedchars=true,
+        literate=%
+        {é}{{\'{e}}}1
+        {è}{{\`{e}}}1
+        {ê}{{\^{e}}}1
+        {ë}{{\¨{e}}}1
+        {É}{{\'{E}}}1
+        {Ê}{{\^{E}}}1
+        {û}{{\^{u}}}1
+        {ù}{{\`{u}}}1
+        {â}{{\^{a}}}1
+        {à}{{\`{a}}}1
+        {á}{{\'{a}}}1
+        {ã}{{\~{a}}}1
+        {Á}{{\'{A}}}1
+        {Â}{{\^{A}}}1
+        {Ã}{{\~{A}}}1
+        {ç}{{\c{c}}}1
+        {Ç}{{\c{C}}}1
+        {õ}{{\~{o}}}1
+        {ó}{{\'{o}}}1
+        {ú}{{\'{u}}}1
+        {Ú}{{\'{U}}}1
+        {ô}{{\^{o}}}1
+        {Õ}{{\~{O}}}1
+        {Ó}{{\'{O}}}1
+        {Ô}{{\^{O}}}1
+        {î}{{\^{i}}}1
+        {Î}{{\^{I}}}1
+        {í}{{\'{i}}}1
+        {Í}{{\~{Í}}}1
+}
+
+% ----------------------------------------------------------
+% Criando comandos para algumas linguagens de programação
+% ----------------------------------------------------------
+\lstdefinestyle{shell}{language=csh,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{shellp}{language=csh,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{php}{language=php,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{phpp}{language=php,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{ansic}{language=c,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{ansicp}{language=c,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{java}{language=java,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{javap}{language=java,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{matlab}{language=matlab,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{matlabp}{language=matlab,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{python}{language=python,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{pythonp}{language=python,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{xml}{language=xml,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{xmlp}{language=xml,basicstyle=\ttfamily\scriptsize}
+\lstdefinestyle{sql}{language=sql,basicstyle=\ttfamily\footnotesize}
+\lstdefinestyle{sqlp}{language=sql,basicstyle=\ttfamily\scriptsize}
+
+\newcommand{\ansic}{\lstset{style=ansic}}
+\newcommand{\ansicp}{\lstset{style=ansicp}}
+\newcommand{\java}{\lstset{style=java}}
+\newcommand{\javap}{\lstset{style=javap}}
+\newcommand{\sql}{\lstset{style=sql}}
+\newcommand{\sqlp}{\lstset{style=sqlp}}
+\newcommand{\xml}{\lstset{style=xml}}
+\newcommand{\xmlp}{\lstset{style=xmlp}}
+\newcommand{\python}{\lstset{style=python}}
+\newcommand{\pythonp}{\lstset{style=pythonp}}
+\newcommand{\csh}{\lstset{style=shell}}
+\newcommand{\cshp}{\lstset{style=shellp}}
+\newcommand{\shell}{\lstset{style=shell}}
+\newcommand{\shellp}{\lstset{style=shellp}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% conf-pacotes.sty
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ProvidesPackage{conf-pacotes}
+
+% ----------------------------------------------------------
+% Fontes para equações
+% ----------------------------------------------------------
+%\usepackage{sansmathfonts} 
+%\usepackage[eulergreek]{sansmath} \sansmath
+%\usepackage{arev}
+
+% ----------------------------------------------------------
+% ABNTEX
+% ----------------------------------------------------------
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[scaled=1]{helvet}   % Fonte Arial 
+\usepackage[helvet]{sfmath}
+%\everymath={\sf}
+
+%\usepackage{lmodern}			% Usa a fonte Latin Modern			
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{lastpage}			% Usado pela Ficha catalográfica
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{listings}           % Inclusão de códigos de softwares
+\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{url,listings,color}
+\usepackage[fleqn]{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[printonlyused,withpage]{acronym}
+\usepackage[withpage]{acronym}
+\usepackage{lipsum}				% para geração de dummy text
+\usepackage{float}              % Inclusão de numeros float
+\usepackage[final]{pdfpages}    % Inclusão de PDFs
+\usepackage{lipsum}				% para geração de dummy text
+\usepackage{natbib}
+
+% ----------------------------------------------------------
+% Usados no anexo do modelo de folha de identificação
+% ----------------------------------------------------------
+\usepackage{multicol}
+\usepackage{multirow}
+
+% ----------------------------------------------------------
+% Pacotes de citações
+% ----------------------------------------------------------
+\usepackage[brazilian,hyperpageref]{backref}    % Paginas com as citações na bibl
+
+%marieli
+%\usepackage[alf, abnt-etal-text=emph]{abntex2cite}                  % Citações padrão ABNT
+
+%\usepackage[alf]{abntex2cite}	                % Citações padrão ABNT
+
+\setcitestyle{round,aysep={,},yysep={;}}
+
+% ----------------------------------------------------------
+% Outros
+% ----------------------------------------------------------
+\usepackage[brazil]{babel}	% coloca as coisas em portugues no sumário.
+\usepackage[normalem]{ulem}	% provê sublinhados para textos (\ul)
+
+%\usepackage{remreset}		% reinicia contadores
+\usepackage{setspace}       % pacote para espaçamentos
+\usepackage{textcomp}       % pacote para simbolos REGISTERED e ESPECIAL
+%\usepackage{pgfplots}      % pacote para uso do pgfplots
+
+% ----------------------------------------------------------
+% Meus pacotes
+% ----------------------------------------------------------
+\usepackage[binary-units=true]{siunitx}        % http://tug.ctan.org/macros/latex/exptl/siunitx/siunitx.pdf
+\sisetup{locale = DE}
+
+\usepackage{mathrsfs}
+%\usepackage[pdftex]{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\setlength{\mathindent}{0pt}                % remover margem antes das equações
+
+%% --- Remover conflito com ABNTex ---
+\let\su@ExpandTwoArgs\relax
+\let\IfSubStringInString\relax
+\let\su@IfSubStringInString\relax
+%% -----------------------------------
+
+\usepackage{datatool}       % Ordenar a lista de abrev. e simbolos
+\usepackage{mfirstuc}       % Usada para deixar a primeira letra maiúscula
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% main.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{abntex2}}
+\ProcessOptions
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	oneside,			% para impressão em verso e anverso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	french,				% idioma adicional para hifenização
+	spanish,			% idioma adicional para hifenização
+	brazil				% o último idioma é o principal do documento
+	]{abntex2}
+
+%sudo apt update
+%sudo apt install texlive-latex-extra (instalar pacote abntex2)
+
+\usepackage{abntex2}
+
+\usepackage{setspace}
+\usepackage{conf-ifsc}	
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{trivfloat}
+\trivfloat{quadro}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{float}
+\floatstyle{plaintop}
+\restylefloat{quadro}
+\usepackage{chngcntr}
+\usepackage{lipsum}
+\usepackage{tocloft}
+\usepackage{tocvsec2}
+\usepackage{boxhandler}
+\usepackage[font={bf,small},labelfont=small]{caption}
+
+
+\newcommand{\source}[1]{\caption*{\normalfont Fonte: {#1}}}
+
+\counterwithout{equation}{chapter}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+
+\newcommand\ChangeRT[1]{\noalign{\hrule height #1}}
+
+\newcommand{\ingles}[1]{{\textit{#1}}}
+\newcommand{\latim}[1]{{\textit{#1}}}
+% \renewcommand{\coorientadorb}{coorientador:}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+%--- PACOTE E LISTA DE ACRÔNIMOS--------------------------------------%
+\usepackage{glossaries}
+\makeglossaries
+%\newacronym{}{}{} Anvisa/Dive/Gezoo/DATASUS, TABNET, VIGILANTOS 
+\newacronym{GFS}{GFS}{Global Forecast System}
+\newacronym{MERRA2}{MERRA2}{Modern-Era Retrospective analysis for Research and Applications, Version 2}
+\newacronym{MERGE}{MERGE}{Merging Technique}
+\newacronym{SAMeT}{SAMeT}{South American Mapping of Temperature}
+\newacronym{IBGE}{IBGE}{Instituto Brasileiro de Geografia e Estatística}
+\newacronym{TRMM}{TRMM}{Tropical Rainfall Measuring Mission }
+\newacronym{ERA5}{ERA5}{ECMWF Reanalysis 5th Generation}
+\newacronym{ECMWF}{ECMWF}{European Centre for Medium-Range Weather Forecasts}
+\newacronym{GTOPO30}{GTOPO30}{Global Digital Elevation}
+\newacronym{PTT}{PTT}{Produto Técnico-Tecnológico}
+\newacronym{FF}{FF}{Frentes Frias}
+\newacronym{LI}{LI}{Linhas de Instabilidade}
+\newacronym{CCM}{CCM}{Complexos Convectivos de Mesoescala}
+\newacronym{ZCAS}{ZCAS}{Zona de Convergência do Atlântico Sul}
+\newacronym{CDO}{CDO}{Climate Data Operators}
+\newacronym{GrADS}{GrADS}{Grid Analysis and Display System}
+\newacronym{GTS}{GTS}{[Global Telecommunications System}
+\newacronym{CPTEC}{CPTEC}{Centro de Previsãoo de Tempo e Estudos Climáticos}
+\newacronym{INPE}{INPE}{Instituto Nacional de Pesquisas Espaciais}
+\newacronym{ASOS}{ASOS}{Automatic Surface Observation Station}
+\newacronym{OMS}{OMS}{Organização Mundial de Saúde}
+\newacronym{ONU}{ONU}{Organização das Nações Unidas}
+\newacronym{FAO}{FAO}{Organização das Nações Unidas para a Alimentação e a Agricultura}
+\newacronym{CFMV}{CFMV}{Conselho Federal de Medicina Veterinária}
+\newacronym{CRMV}{CRMV}{Conselho Regional de Medicina Veterinária}
+\newacronym{SC}{SC}{Santa Catarina}
+\newacronym{PR}{PR}{Paraná}
+\newacronym{CEGRADE}{CEGRADE}{Comissão Estadual de Gestão de Riscos de Animais em Desastres}
+\newacronym{DF}{DF}{Distrito Federal}
+\newacronym{PNCD}{PNCD}{Programa Nacional de Controle da Dengue}
+\newacronym{DENV}{DENV}{vírus Dengue}
+\newacronym{Funasa}{Funasa}{Fundação Nacional de Saúde}
+\newacronym{ESRI}{ESRI}{Environmental Systems Research Institute}
+\newacronym{DataSUS}{DataSUS}{Departamento de Informática do Sistema Único de Saúde}
+\newacronym{Dive}{Dive}{Diretoria de Vigilância Epidemiológica}
+\newacronym{LACEN}{LACEN}{Laboratório Central de Saúde Pública}
+\newacronym{IFSC}{IFSC}{Instituto Federal de Ensino, Ciência e Tecnologia de Santa Catarina}
+\newacronym{UFSM}{UFSM}{Universidade Federal de Santa Maria}
+\newacronym{ESBMet}{ESBMet}{Encontro Sul Brasileiro de Meteorologia}
+\newacronym{PCAM}{PCAM}{Programa de Pós-graduação em Clima e Ambiente}
+\newacronym{DEE}{DEE}{Dados Entomo-Epidemiológicos}
+\newacronym{DEC}{DEC}{Dados de Elementos Climáticos}
+\newacronym{DSG}{DSG}{Dados Socioeconômicos e Geográficos}
+\newacronym{DGR}{DGR}{Dados Georreferenciados}
+\newacronym{ICOb}{ICOb}{Índice Combinado por Observação}
+\newacronym{ICRe}{ICRe}{Índices Corrigidos por Região}
+\newacronym{LACOb}{LACOb}{Limiar de Alta Correlação Observado}
+\newacronym{LACRe}{LACRe}{Limiares de Alta Correlação Regionalizados}
+\newacronym{SBP}{SBP}{Sociedade Brasileira Técnico-Científica de Parasitologia}
+\newacronym{JBN}{JBN}{Jatos de Baixos Níveis}
+\newacronym{Bdmep/Inmet}{Bdmep/Inmet}{Banco de Dados Meteorológicos do Instituto Nacional de Meteorologia}
+\newacronym{Inmet}{Inmet}{Instituto Nacional de Meteorologia}
+\newacronym{MAPA}{MAPA}{Ministério da Agricultura, Pecuária e Abastecimento}
+\newacronym{Sinan}{Sinan}{Sistema de Informação de Agravos de Notificação}
+\newacronym{Cenepi}{Cenepi}{Centro Nacional de Epidemiologia}
+\newacronym{SVS}{SVS}{Secretaria de Vigilância em Saúde}
+%----------------------------------------------------------------------%
+
+
+%---------------------------------------------------------------------%
+%---------------------------------------------------------------------%
+% Informações de dados para CAPA e FOLHA DE ROSTO
+%---------------------------------------------------------------------%
+%---------------------------------------------------------------------%
+
+% \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
+% Papel dos elementos meteorológicos na reprodução do \latim{Aedes aegypti}\\
+% no Estado de Santa Catarina}
+\titulo{Utilização de Reanálise e Produtos de Reanálise\\para previsão de focos de  \latim{Aedes}\  sp. e casos de dengue\\no Estado de Santa Catarina}
+
+\autor{MATHEUS FERREIRA DE SOUZA}
+
+\local{FLORIANÓPOLIS}
+
+\data{2024.}
+
+\orientador[Orientador:\\]{Mário Francisco Leal de Quadro, Doutor em Meteorologia.}
+\coorientador[Coorientadores:\\]{Adriano Vitor, Doutor em Métodos Numéricos em Engenharia.\\João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental. }
+% \renewcommand{\coorientador}{Coorientadores}
+% \coorientadorb[Coorientador:\\]{João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental.}
+% \coorientadores[Coorientadores:\\]{}{Adriano Vitor, Doutor em Matemática.}{João Augusto Brancher Fuck, Doutor em Planejamento Territorial e Desenvolvimento Socioambiental.}
+
+\tipotrabalho{Dissertação (Mestrado)}
+
+% O preambulo deve conter o tipo do trabalho, o objetivo, o nome da instituição e a área de concentração 
+\preambulo{Dissertação submetida ao Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina como parte dos requisitos para obtenção do título de Mestre Profissional em Clima e Ambiente.}
+
+% \textoaprovacao{Este Trabalho foi julgado adequado para obtenção do Título de Engenheira Eletrônica em abril de 2021 e aprovado na sua forma final pela banca examinadora do Curso de Engenharia Eletrônica do instituto Federal de Educação Ciência, e Tecnologia de Santa Catarina.}
+
+
+%---------------------------------------------------------------------%
+% Início do documento
+%---------------------------------------------------------------------%
+
+\begin{document}
+
+
+
+\selectlanguage{brazil}
+\frenchspacing 
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+\imprimircapa
+
+\imprimirfolhaderosto* %(o * indica que haverá a ficha bibliográfica)
+
+%---------------------------------------------------------------------%
+% ATENÇÃO - Pergunte para a Biblioteca do IFSC
+% Inserir a ficha bibliografica - 
+%
+% Para gerar a ficha catalográfica acesse:
+% http://ficha.florianopolis.ifsc.edu.br/
+% Precisa ser feito pelo navegador Mozilla Firefox
+%---------------------------------------------------------------------%
+
+\imprimirficha{pdf/fichacatalografica.pdf}
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% Inserir folha de aprovação
+%---------------------------------------------------------------------%
+
+
+%\imprimiraprovacao
+\includepdf[pages=-]{pdf/tcc-aprovado.pdf}
+
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% Dedicatória
+%---------------------------------------------------------------------%
+\begin{dedicatoria}
+    \vspace*{\fill}
+	\begin{flushright}
+
+Ao avanço e\\ persistência\\ da ciência,\\ principal-\\mente nos\\ períodos \\mais \\contur-\\bados. 
+
+A todos \\que \\tiveram\\ a vida \\cessada
+
+\vspace{50}
+
+por falsa\\ informação,\\ desinformação\\ ou negação\\ da mesma.
+      
+      
+	\end{flushright}
+\end{dedicatoria}
+
+
+
+
+%---------------------------------------------------------------------%
+% Agradecimentos
+%---------------------------------------------------------------------%
+\begin{agradecimentos}
+    Elemento opcional que não pode ultrapassar o limite de uma página.
+\end{agradecimentos}
+% ---
+
+%---------------------------------------------------------------------%
+% Epígrafe
+%---------------------------------------------------------------------%
+\begin{epigrafe}
+    \vspace*{\fill}
+	\begin{flushright}
+        		"If I have seen further, it is by standing on the shoulders of giants"\\(Sir Isaac Newton).
+	\end{flushright}
+\end{epigrafe}
+
+%---------------------------------------------------------------------%
+% RESUMOS
+%---------------------------------------------------------------------%
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\renewcommand{\baselinestretch}{1} 
+\begin{resumo}
+    % O resumo deve mostrar a natureza e o objetivo do trabalho, o método que foi empregado, os resultados e as conclusões. O resumo deve conter entre 150 e 500 palavras e constitui-se de um único parágrafo, sem recuo.
+A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Atualmente é um dos principais problemas de saúde coletiva no mundo. Está presente nas regiões tropicais e subtropicais do planeta, sendo estimado que 390 milhões de pessoas sejam infectadas anualmente pelos quatro sorotipos. Há tendência de resposta à sazonalidade em relação ao número de focos de dengue, na qual os meses com temperaturas mais elevadas se observa crescimento, principalmente quando retroagidos por um período de 30 dias; e tem diminuição nos meses mais frios, logo, temperatura é um elemento crítico para o desenvolvimento do mosquito. A geomedicina porporciona base para o próprio estudo espacializado de doenças, sendo assim, a seguinte proposta tem o objetivo direto de observar a relação entre o histórico e a distribuição de focos do vetor biológico \latim{Aedes aegypti}, transmissor das principais arboviroses no Estado de Santa Catarina (dengue, febre amarela, zika e chikungunya), e o comportamento de elementos climáticos. Foram utilizados dados de temperatura do \ingles{\acrfull{GFS}}, após isso, foi sintetizado o \acrfull{ICOb}, utilizando-se o \acrfull{LACOb}. Dessa forma, pode-se modelar e visualizar cartograficamente esses resultados, como previsão de aumento regionalizado de focos de \latim{Aedes aegypti} no Estado de Santa Catarina. Ademais, pretende-se alcançar outros objetivos, tais como: mapeamento das ocorrências dentro do Estado, análise de dados entomológicos e epidemiológico; além de relacionar aos dados socioeconômicos da população catarinense. Investigar esses múltiplos aspectos e compreender essas informações auxiliam no processo de tomada de decisões, buscando, assim, uma melhor resposta frente a zoonoses emergentes e re-emergentes.
+ 
+   \noindent 
+    \textbf{Palavras-chave}: Variabilidade Climática. Geomedicina. Saúde Única. Zoonose. 
+\end{resumo}
+
+% resumo em inglês
+\renewcommand{\baselinestretch}{1} 
+\begin{resumo}[Abstract]
+ \begin{otherlanguage*}{english}
+   % The abstract should show the nature and scope of work, the method that was used, the results and conclusions. The abstract may contain between 150 and 500 words, and it must be only one paragraph. 
+ Dengue is an viral infectious disease transmitted by the female mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Nowadays, it is one of the main public health problems in the world. It is present in the tropical and subtropical regions of the planet, with an estimated 390 million people are infected annually with all four serotypes. There is a tendency to respond to seasonality in relation to the number of dengue outbreaks, in which the months with higher temperatures are observed growth, mainly when retroacted for a period of 30 days; and observe decrease in the colder months, therefore, temperature is a critical element for the growth of the mosquito. Geomedicine provides a basis for the spatialized study of diseases, thus, this project has the direct objective of observing the relationship between the history and the distribution of outbreaks of the biological vector \latim{Aedes aegypti}, transmitter of the main arboviruses in the State of Santa Catarina (dengue, yellow fever, zika and chikungunya), and the observation of climate elements. The temperature data were used from the \acrfull{GFS}, after which the Combined Index by Observation [\acrfull{ICOb}] was synthesized, using the Observed High Correlation Limit [\acrfull{LACOb}]. In this way, it is possible to model and visualize these results cartographically, as forecast of a regionalized increase in outbreaks of \latim{Aedes aegypti} in the State of Santa Catarina. Furthermore, it is intended to achieve other objectives, such as: mapping of occurrences within the State, analysis of entomological and epidemiological data; in addition to relating to socioeconomic data of the Santa Catarina population. Investigate these multiple aspects and understand this information assist in the decision-making process, thus seeking a better response to emerging and reemerging  zoonotic diseases. 
+
+   %\vspace{-0.8cm}
+ 
+   \noindent 
+   \textbf{Keywords}: Climate Variability. Geomedicine. One Health. Zoonosis.  
+ \end{otherlanguage*}
+\end{resumo}
+
+
+%---------------------------------------------------------------------%
+% inserir lista de ilustrações
+%---------------------------------------------------------------------%
+\renewcommand{\listfigurename}{Lista de Figuras}
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de quadros
+%---------------------------------------------------------------------%
+
+\renewcommand{\listquadroname}{Lista de quadros}
+\newfloat{quadro}{\quadroname}{loq}[chapter]
+\setfloatlocations{quadro}{hbtp}
+\newlistof{listofquadros}{loq}{\listquadroname}
+\newlistentry{quadro}{loq}{0}
+\renewcommand{\cftquadroname}{\quadroname\space}
+\renewcommand*{\cftquadroaftersnum}{\hfill\textendash\hfill}
+\counterwithout{quadro}{chapter}
+\listofquadros* 
+\cleardoublepage
+
+
+
+%---------------------------------------------------------------------%
+% inserir lista de tabelas
+%---------------------------------------------------------------------%
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de listings
+%---------------------------------------------------------------------%
+%\pdfbookmark[0]{\lstlistlistingname}{lol}
+%\listoflistings
+%\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir lista de abreviaturas e simbolos
+%---------------------------------------------------------------------%
+%\listofabrev{tex/00-Abreviaturas}
+% \imprimirlistadeabreviaturas
+%ESTOU USANDO \usepackage{glossaries}---------------------------------%
+\printglossary[title = Lista de Abreviaturas e Siglas, type = \acronymtype]
+%---------------------------------------------------------------------%
+
+% \imprimirlistadesimbolos
+\cleardoublepage
+
+%---------------------------------------------------------------------%
+% inserir o sumario
+
+%---------------------------------------------------------------------%
+
+
+\setlength{\cftbeforechapterskip}{4pt plus 0pt}
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+\pagestyle{parpage}%
+\aliaspagestyle{chapter}{parpage}
+% ----------------------------------------------------------
+% Inclusão dos capítulos que estão em outros arquivos .tex
+% ----------------------------------------------------------
+
+\include{tex/1-intro} % Introdução + Justificativa + Objetivos
+\include{tex/2-fundamenteo} % Fundamentação Teórica
+\include{tex/3-meto} % Metodologia + Métodos Aplicados
+\include{tex/4-resultados} % Resultados + Análises + Discussões
+\include{tex/5-consfinais} % Considerações Finais
+\include{tex/6-futura} % Futuros Trabalhos + Sugestões Futuras
+
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+% ----------------------------------------------------------
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\bibliography{bibliografia}
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+ % \begin{apendicesenv}         
+ %     \partapendices
+ %     \include{tex/Apendices}
+ % \end{apendicesenv}
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+ % \begin{anexosenv}
+ %     \partanexos
+ %     \include{tex/Anexos}
+ % \end{anexosenv}
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+%\phantompart
+%\printindex
+%---------------------------------------------------------------------
+
+\end{document}
+
