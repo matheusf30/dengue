@@ -458,6 +458,9 @@ br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Focos",  legend = True,
                                                                         label = "Focos", cmap = "YlOrRd", markersize = 50)
+zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,
+                                             label = "Focos", cmap = "Greens")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -546,9 +549,15 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
-conta_focos = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio]["Focos"].values[0]
-previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos",  legend = True,
-                                                                        label = "Focos", cmap = "YlOrRd") #"GnBu" if conta_focos <= 10 else 
+previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = True,
+                                                                       label = "Focos", cmap = "YlOrRd")
+zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,
+                                             label = "Focos", cmap = "Greens")
+print(zero)
+print(previsao_melt_geo)
+
+#"GnBu" if conta_focos <= 10 else 
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -568,8 +577,13 @@ ax.text(-52.5, -28.25, """LEGENDA
 
 ❏ Sem registro*
 
-*Não há registro oficial ou
-modelagem inexistente.""",
+*(tom de cinza)
+Não há registro oficial ou
+modelagem inexistente.
+
+
+(Municípios em tons claros
+são previsões zeradas)""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")

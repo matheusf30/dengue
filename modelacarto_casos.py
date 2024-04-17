@@ -45,10 +45,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos # TENTAR GFS
 casos = "casos_dive_pivot_total.csv"
 focos = "focos_pivot.csv"
-prec = "merge_se.csv"
-tmin = "tmin_se.csv"
-tmed = "tmed_se.csv"
-tmax = "tmax_se.csv"
+prec = "prec_semana_ate_2023.csv"
+tmin = "tmin_semana_ate_2023.csv"
+tmed = "tmed_semana_ate_2023.csv"
+tmax = "tmax_semana_ate_2023.csv"
 unicos = "casos_primeiros.csv"
 municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 br = "BR_UF_2022.shp"
@@ -61,6 +61,8 @@ if _automatiza == False:
     cidade = cidade.upper()
 
 SEED = np.random.seed(0)
+
+
 
 value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
 key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
@@ -83,11 +85,9 @@ troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-
-focos = focos.iloc[:573] # Desconsiderando 2023
-casos = casos.iloc[:467]      # Desconsiderando 2023
-unicos = unicos.iloc[:151]    # Desconsiderando 2023
 cidades = unicos["Município"].copy()
+
+not_found = list(cidades.iloc[151:])  # Desconsiderando 2023, pois ainda não há modelagem
 
 # modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
@@ -176,6 +176,9 @@ red = "\033[91m"
 green = "\033[92m"
 yellow = "\033[33m"
 blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
 reset = "\033[0m"
 
 def abre_modelo(cidade):
@@ -398,9 +401,12 @@ previsao_total.drop(1, axis = 0, inplace = True)
 if _automatiza == True:
     for cidade in cidades:
         if cidade in value_error:
-            print(f"\n{red}Modelo para {cidade} não está no diretório!\nValueError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}\n")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}ValueError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
         elif cidade in key_error:
-            print(f"\n{red}Modelo para {cidade} não está no diretório!\nKeyError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}\n")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}KeyError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
+        elif cidade in not_found:
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}NotFound\n{cyan}Por favor, entre em contato para resolver o problema!{reset}")
+            print(f"{magenta}FileNotFoundError: [Errno 2] No such file or directory: '/home/sifapsc/scripts/matheus/dados_dengue/modelos/'{reset}\n")
         else:
             modelo = abre_modelo(cidade)
             dataset, x, y = monta_dataset(cidade)
@@ -434,7 +440,7 @@ print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{ci
 
 ### Cartografia
 # Semana Epidemiológica
-semana_epidemio = "2022-04-17"
+semana_epidemio = "2023-04-16" # "2022-04-17"
 
 print(previsao_melt_geo.columns)
 print(previsao_melt_geo)
@@ -464,6 +470,9 @@ br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgreen", edgecolor = "black")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax, column = "Casos",  legend = True,
                                                                         label = "Casos", cmap = "YlOrRd", markersize = 50)
+zero = previsao_melt_geo[previsao_melt_geo["Casos"] == 0]
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos", legend = False,
+                                             label = "Focos", cmap = "Greens")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -555,6 +564,9 @@ br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
 previsao_melt_poligeo[previsao_melt_poligeo["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos",  legend = True,
                                                                                label = "Casos", cmap = "YlOrRd")
+zero = previsao_melt_poligeo[previsao_melt_poligeo["Casos"] == 0]
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos", legend = False,
+                                             label = "Focos", cmap = "Greens")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -574,8 +586,13 @@ ax.text(-52.5, -28.25, """LEGENDA
 
 ❏ Sem registro*
 
-*Não há registro oficial ou
-modelagem inexistente.""",
+*(tom de cinza)
+Não há registro oficial ou
+modelagem inexistente.
+
+
+(Municípios em tons claros
+são previsões zeradas)""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
