@@ -1,0 +1,117 @@
+/home/sifapsc/miniconda3/envs/dados_nc/lib/python3.9/site-packages/xarray/coding/times.py:144: SerializationWarning: Ambiguous reference date string: 1-1-1 00:00:00. The first value is assumed to be the year hence will be padded with zeros to remove the ambiguity (the padded reference date string is: 0001-1-1 00:00:00). To remove this message, remove the ambiguity by padding your reference date strings with zeros.
+  warnings.warn(warning_msg, SerializationWarning)
+
+OS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:
+
+/home/sifapsc/scripts/matheus/dados_dengue/
+
+/dados/operacao/merge/CDO.MERGE/
+
+/dados/operacao/samet/clima/
+
+
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.IndexVariable 'time' (time: 8766)>
+array(['2000-01-01T00:00:00.000000000', '2000-01-02T00:00:00.000000000',
+       '2000-01-03T00:00:00.000000000', ..., '2023-12-29T00:00:00.000000000',
+       '2023-12-30T00:00:00.000000000', '2023-12-31T00:00:00.000000000'],
+      dtype='datetime64[ns]')
+Attributes:
+    standard_name:  time
+    long_name:      Time
+    axis:           T
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.Dataset>
+Dimensions:  (time: 8766, lon: 360, lat: 360)
+Coordinates:
+  * time     (time) datetime64[ns] 2000-01-01 2000-01-02 ... 2023-12-31
+  * lon      (lon) float64 -63.0 -62.95 -62.9 -62.85 ... -45.15 -45.1 -45.05
+  * lat      (lat) float64 -37.0 -36.95 -36.9 -36.85 ... -19.15 -19.1 -19.05
+Data variables:
+    tmin     (time, lat, lon) float64 ...
+    nobs     (time, lat, lon) float64 ...
+Attributes:
+    CDI:          Climate Data Interface version 1.9.9rc1 (https://mpimet.mpg...
+    Conventions:  CF-1.6
+    history:      Wed Apr 10 17:46:19 2024: cdo sellonlatbox,-63.0,-45.0,-37....
+    CDO:          Climate Data Operators version 1.9.9rc1 (https://mpimet.mpg...
+/home/sifapsc/miniconda3/envs/dados_nc/lib/python3.9/site-packages/xarray/coding/times.py:144: SerializationWarning: Ambiguous reference date string: 1-1-1 00:00:00. The first value is assumed to be the year hence will be padded with zeros to remove the ambiguity (the padded reference date string is: 0001-1-1 00:00:00). To remove this message, remove the ambiguity by padding your reference date strings with zeros.
+  warnings.warn(warning_msg, SerializationWarning)
+
+OS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:
+
+/home/sifapsc/scripts/matheus/dados_dengue/
+
+/dados/operacao/merge/CDO.MERGE/
+
+/dados/operacao/samet/clima/
+
+
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.IndexVariable 'time' (time: 8766)>
+array(['2000-01-01T00:00:00.000000000', '2000-01-02T00:00:00.000000000',
+       '2000-01-03T00:00:00.000000000', ..., '2023-12-29T00:00:00.000000000',
+       '2023-12-30T00:00:00.000000000', '2023-12-31T00:00:00.000000000'],
+      dtype='datetime64[ns]')
+Attributes:
+    standard_name:  time
+    long_name:      Time
+    axis:           T
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.Dataset>
+Dimensions:  (time: 8766, lon: 360, lat: 360)
+Coordinates:
+  * time     (time) datetime64[ns] 2000-01-01 2000-01-02 ... 2023-12-31
+  * lon      (lon) float64 -63.0 -62.95 -62.9 -62.85 ... -45.15 -45.1 -45.05
+  * lat      (lat) float64 -37.0 -36.95 -36.9 -36.85 ... -19.15 -19.1 -19.05
+Data variables:
+    tmin     (time, lat, lon) float64 ...
+    nobs     (time, lat, lon) float64 ...
+Attributes:
+    CDI:          Climate Data Interface version 1.9.9rc1 (https://mpimet.mpg...
+    Conventions:  CF-1.6
+    history:      Wed Apr 10 17:46:19 2024: cdo sellonlatbox,-63.0,-45.0,-37....
+    CDO:          Climate Data Operators version 1.9.9rc1 (https://mpimet.mpg...
+/home/sifapsc/miniconda3/envs/dados_nc/lib/python3.9/site-packages/xarray/coding/times.py:144: SerializationWarning: Ambiguous reference date string: 1-1-1 00:00:00. The first value is assumed to be the year hence will be padded with zeros to remove the ambiguity (the padded reference date string is: 0001-1-1 00:00:00). To remove this message, remove the ambiguity by padding your reference date strings with zeros.
+  warnings.warn(warning_msg, SerializationWarning)
+
+OS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:
+
+/home/sifapsc/scripts/matheus/dados_dengue/
+
+/dados/operacao/merge/CDO.MERGE/
+
+/dados/operacao/samet/clima/
+
+
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.IndexVariable 'time' (time: 8766)>
+array(['2000-01-01T00:00:00.000000000', '2000-01-02T00:00:00.000000000',
+       '2000-01-03T00:00:00.000000000', ..., '2023-12-29T00:00:00.000000000',
+       '2023-12-30T00:00:00.000000000', '2023-12-31T00:00:00.000000000'],
+      dtype='datetime64[ns]')
+Attributes:
+    standard_name:  time
+    long_name:      Time
+    axis:           T
+<xarray.Variable (time: 8766, lat: 360, lon: 360)>
+[1136073600 values with dtype=float64]
+<xarray.Dataset>
+Dimensions:  (time: 8766, lon: 360, lat: 360)
+Coordinates:
+  * time     (time) datetime64[ns] 2000-01-01 2000-01-02 ... 2023-12-31
+  * lon      (lon) float64 -63.0 -62.95 -62.9 -62.85 ... -45.15 -45.1 -45.05
+  * lat      (lat) float64 -37.0 -36.95 -36.9 -36.85 ... -19.15 -19.1 -19.05
+Data variables:
+    tmin     (time, lat, lon) float64 ...
+    nobs     (time, lat, lon) float64 ...
+Attributes:
+    CDI:          Climate Data Interface version 1.9.9rc1 (https://mpimet.mpg...
+    Conventions:  CF-1.6
+    history:      Wed Apr 10 17:46:19 2024: cdo sellonlatbox,-63.0,-45.0,-37....
+    CDO:          Climate Data Operators version 1.9.9rc1 (https://mpimet.mpg...
