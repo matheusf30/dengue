@@ -88,10 +88,37 @@ def verifica_nan(valores_centroides):
 		print(f"{valores_centroides[valores_centroides['FLORIANÓPOLIS'].isna()]['Data']}\n")
 	print("="*80)
 
+def semana_epidemiologica(csv, str_var):
+	"""
+	Função relativa ao agrupamento de dados em semanas epidemiológicas.
+	Os arquivos.csv são provenientes deo roteiro 'extrai_clima.py': colunas com datas e municípios + todas as linhas são dados diários.
+	Estes Arquivos estão alocados no SifapSC ou GitHub.
+	Argumento:
+	- Variável com arquivo.csv;
+	- String da variável referente ao arquivo.csv.
+	Retorno:
+	- Retorno próprio de DataFrame com Municípios (centróides) em Colunas e Tempo (semanas epidemiológicas) em Linhas, preenchidos com valores climáticos.
+	- Salvando Arquivo.csv
+	"""
+	csv.drop(columns = str_var, inplace = True)
+	csv["Data"] = pd.to_datetime(csv["Data"])
+	csv = csv.sort_values(by = ["Data"])
+	csv_se = csv.copy()
+	csv_se["Semana"] = csv_se["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+	if str_var == "prec":
+		csv_se = csv_se.groupby(["Semana"]).sum(numeric_only = True)
+	else:
+		csv_se = csv_se.groupby(["Semana"]).mean(numeric_only = True)
+	csv_se.reset_index(inplace = True)
+	csv_se.to_csv(f"{caminho_dados}{str_var}_semana_ate_2023.csv", index = False)
+	print(f"\n{green}ARQUIVO SALVO COM SUCESSO!\n\nSemana Epidemiológica - {str_var.upper()}{reset}\n\n{csv_se}\n")
+	print(f"\n{red}As variáveis do arquivo ({str_var.upper()}), em semanas epidemiológicas, são:{reset}\n{csv_se.dtypes}\n")
+	return csv_se
+
 def extrair_centroides(shapefile, netcdf4, str_var):
 	"""
 	Função relativa a extração de valores dos arquivos NetCDF4 utilizando os centróides de arquivos shapefile como filtro.
-	Os arquivos NetCDF4 são provenientes de Rozante et.al. e apresentam 2 variáveis: 1 climática + 1 nest (estações de observação).
+	Os arquivos NetCDF4 são provenientes de Rozante et.al. e apresentam 2 variáveis: 1 climática + 1 nest ou 1 Nobs (estações de observação).
 	Os arquivos Shapefile são provenientes do IBGE (2022) e apresentam CRS = (epsg = 4674)
 	Estes Arquivos estão alocados no SifapSC, dois diretórios antes do /home.
 	Argumento:
@@ -100,7 +127,9 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	- String da variável referente ao NetCDF4.
 	Retorno:
 	- Retorno próprio de DataFrame com Municípios (centróides) em Colunas e Tempo (dias) em Linhas, preenchidos com valores climáticos.
-	- Salvando Arquivo.csv
+	- Salvando Arquivo.csv (dados diários)
+	- Retorno próprio de DataFrame com Municípios (centróides) em Colunas e Tempo (semanas epidemiológicas) em Linhas, preenchidos com valores climáticos.
+	- Salvando Arquivo.csv (dados semanais)
 	"""
 	shapefile["centroide"] = shapefile["geometry"].centroid
 	shapefile["centroide"] = shapefile["centroide"].to_crs(epsg = 4674)
@@ -156,7 +185,8 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	print(valores_centroides.dtypes)
 	print("="*80)
 	verifica_nan(valores_centroides)
-	return valores_centroides
+	semana_epidemiologica(valores_centroides, str_var)
+	return valores_centroides, csv_se
 
 
 tmin = extrair_centroides(municipios, tmin, "tmin")
