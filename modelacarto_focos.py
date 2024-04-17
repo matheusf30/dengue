@@ -44,10 +44,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 
 ### Renomeação das Variáveis pelos Arquivos # TENTAR GFS
 focos = "focos_pivot.csv"
-prec = "merge_se.csv"
-tmin = "tmin_se.csv"
-tmed = "tmed_se.csv"
-tmax = "tmax_se.csv"
+prec = "prec_semana_ate_2023.csv"
+tmin = "tmin_semana_ate_2023.csv"
+tmed = "tmed_semana_ate_2023.csv"
+tmax = "tmax_semana_ate_2023.csv"
 unicos = "focos_primeiros.csv"
 municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 br = "BR_UF_2022.shp"
@@ -63,6 +63,7 @@ else:
 """
 value_error = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"]
 key_error = ["ABELARDO LUZ", "ÁGUA DOCE", "AGROLÂNDIA", "AGRONÔMICA"]
+not_found = ["SANTA TEREZINHA", "ANITÁPOLIS", "SANTA CECÍLIA", "ABDON BATISTA", "PEDRAS GRANDES"]
 
 ###############################################################
 
@@ -81,12 +82,12 @@ troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-
+cidades = unicos["Município"].copy()
+"""
 #casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
 focos = focos.iloc[:573] # Desconsiderando 2023
 unicos = unicos.iloc[:151] # Desconsiderando 2023
-cidades = unicos["Município"].copy()
-
+"""
 # modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 
 """
@@ -174,6 +175,9 @@ red = "\033[91m"
 green = "\033[92m"
 yellow = "\033[33m"
 blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
 reset = "\033[0m"
 
 def abre_modelo(cidade):
@@ -390,9 +394,12 @@ previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = Tr
 if _automatiza == True:
     for cidade in cidades:
         if cidade in value_error:
-            print(f"{red}Modelo para {cidade} não está no diretório!\nValueError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}ValueError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
         elif cidade in key_error:
-            print(f"{red}Modelo para {cidade} não está no diretório!\nKeyError\n{yellow}Por favor, entre em contato para resolver o problema!{reset}")
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}KeyError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
+        elif cidade in not_found:
+            print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}NotFound\n{cyan}Por favor, entre em contato para resolver o problema!{reset}")
+            print(f"{magenta}FileNotFoundError: [Errno 2] No such file or directory: '/home/sifapsc/scripts/matheus/dados_dengue/modelos/'{reset}\n")
         else:
             modelo = abre_modelo(cidade)
             dataset, x, y = monta_dataset(cidade)
@@ -429,7 +436,7 @@ print(previsao_melt_geo)
 
 ### Cartografia
 # Semana Epidemiológica
-semana_epidemio = "2022-04-17"
+semana_epidemio = "2023-04-16" #"2023-12-03" #"2023-12-17"error #"2023-12-24"error #"2023-04-16" #"2022-04-17"
 
 # SC_Pontos
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
@@ -539,8 +546,9 @@ argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
 municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
+conta_focos = previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio]["Focos"].values[0]
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos",  legend = True,
-                                                                        label = "Focos", cmap = "YlOrRd")
+                                                                        label = "Focos", cmap = "YlOrRd") #"GnBu" if conta_focos <= 10 else 
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
