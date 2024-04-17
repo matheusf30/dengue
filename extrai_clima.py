@@ -71,6 +71,11 @@ print(tmin)
 bold = "\033[1m"
 red = "\033[91m"
 green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
 reset = "\033[0m"
 
 def verifica_nan(valores_centroides):
@@ -187,7 +192,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	print("="*80)
 	verifica_nan(valores_centroides)
 	semana_epidemiologica(valores_centroides, str_var)
-	return valores_centroides, csv_se
+	return valores_centroides
 
 
 tmin = extrair_centroides(municipios, tmin, "tmin")

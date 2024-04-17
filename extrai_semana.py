@@ -29,9 +29,16 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
 
 ### Recorte Temporal e Transformação em datetime64[ns]
+bold = "\033[1m"
 red = "\033[91m"
 green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
 reset = "\033[0m"
+
 def semana_epidemiologica(csv, str_var):
 	"""
 	Função relativa ao agrupamento de dados em semanas epidemiológicas.
@@ -64,4 +71,4 @@ semana_epidemiologica(prec, "prec")
 semana_epidemiologica(tmin, "tmin")
 semana_epidemiologica(tmed, "tmed")
 semana_epidemiologica(tmax, "tmax")
-sys.exit()
+
