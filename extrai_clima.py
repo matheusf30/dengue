@@ -65,7 +65,7 @@ print(tmin.variables["tmin"][:])
 print(tmin.variables["time"][:])
 print(tmin.variables["nobs"][:])
 print(tmin)
-sys.exit()
+
 
 ### Pré-processamento e Definição de Função
 bold = "\033[1m"
