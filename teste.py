@@ -1,5 +1,6 @@
 ### Bibliotecas Correlatas
 import pandas as pd
+import sys
 
 ### Encaminhamento aos Diretórios
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
@@ -21,11 +22,26 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 
 _TEMPO = "semana" # "diario"
 _ANO = "2023" # Até a última compilação de dados
+
+
+# ANSI escape codes
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
+reset = "\033[0m"
+
 """
 casos = "casos.csv"
 focos = "focos_se.csv"
 merge = "merge_se.csv"
 """
+if _TEMPO == "diario":
+	print(f"\n\n{red}!!!CUIDADO!!!\n\nOS DADOS ENTOMO-EPIDEMIOLÓGICOS NÃO SÃO REGISTROS DIÁRIOS\n\n!!!CUIDADO!!!\n\n{reset}")
 casos = "casos_dive_pivot_total.csv"
 focos = "focos_pivot.csv"
 prec = f"prec_{_TEMPO}_ate_{_ANO}.csv"
@@ -77,15 +93,6 @@ tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
 
 ### Visualizando Informações
-bold = "\033[1m"
-red = "\033[91m"
-green = "\033[92m"
-yellow = "\033[33m"
-blue = "\033[34m"
-magenta = "\033[35m"
-cyan = "\033[36m"
-white = "\033[37m"
-reset = "\033[0m"
 
 def visualiza_csv(csv, str_var = "None"):
 	"""
@@ -95,24 +102,42 @@ def visualiza_csv(csv, str_var = "None"):
 	- String da variável referente ao arquivo.csv. (pode não ser informado)
 	Retorno: Visualização de dados e Exibição de mensagens para casos de haver ou não valores NaN.
 	"""
-	print(f"\n \n {green}{bold}{str_var.upper()} (extrai_clima.py){reset} \n")
+	if str_var == "focos":
+		print(f"\n \n {green}{bold}{str_var.upper()} (Dados Oficiais Dive/SC){reset} \n")
+		print(f"{cyan}{str_var.upper()} - {red}Quantidade de {magenta}NaN{red}: {csv['FLORIANÓPOLIS'].isnull().sum()}{reset}")
+		print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}\n\n")
+		if _TEMPO == "diario":
+			print(f"{red}(APENAS SEMANAS EPIDEMIOLÓGICAS PRESENTES) com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
+		elif _TEMPO == "semana":
+			print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
+	elif str_var == "casos":
+		print(f"\n \n {green}{bold}{str_var.upper()} (Dados Disponíveis em TABNET.Sinan){reset} \n")
+		print(f"{cyan}{str_var.upper()} - {red}Quantidade de {magenta}NaN{red}: {csv['FLORIANÓPOLIS'].isnull().sum()}{reset}\n\n")
+		print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}\n\n")
+		if _TEMPO == "diario":
+			print(f"{red}(APENAS SEMANAS EPIDEMIOLÓGICAS PRESENTES) com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
+		elif _TEMPO == "semana":
+			print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
+	else:
+		print(f"\n \n {green}{bold}{str_var.upper()} (Dados obtidos através do roteiro: extrai_clima.py){reset} \n")
+		print(f"{cyan}{str_var.upper()} - {red}Quantidade de {magenta}NaN{red}: {csv['FLORIANÓPOLIS'].isnull().sum()}{reset}")
+		if _TEMPO == "diario":
+			print(f"{red}Os dias com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Data']}{reset}")
+		elif _TEMPO == "semana":
+			print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{csv[csv['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
 	print(csv.info())
 	print("~"*80)
 	print(csv.dtypes)
 	print("~"*80)
 	print(csv)
-	print("~"*80)
-	print(f"{cyan}{str_var.upper()} - {red}Quantidade de {magenta}NaN{red}: {prec['FLORIANÓPOLIS'].isnull().sum()}{reset}")
-	if _TEMPO == "diario":
-		print(f"{red}Os dias com Valores {magenta}NaN{red} são:\n{prec[prec['FLORIANÓPOLIS'].isna()]['Data']}{reset}")
-	elif _TEMPO == "semana":
-		print(f"{red}As semanas com Valores {magenta}NaN{red} são:\n{prec[prec['FLORIANÓPOLIS'].isna()]['Semana']}{reset}")
 	print("="*80)
 
 visualiza_csv(prec, "prec")
 visualiza_csv(tmin, "tmin")
 visualiza_csv(tmed, "tmed")
 visualiza_csv(tmax, "tmax")
+visualiza_csv(casos, "casos")
+visualiza_csv(focos, "focos")
 """
 print("\n \n FOCOS DE _Aedes_ sp. \n")
 print(focos.info())
