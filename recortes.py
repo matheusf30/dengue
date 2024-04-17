@@ -1,6 +1,7 @@
 ### Bibliotecas Correlatas
 import pandas as pd
 import numpy as np
+import sys
 """
 import matplotlib.pyplot as plt               
 import seaborn as sns
@@ -8,7 +9,7 @@ import statsmodels as sm
 """
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 elif _local == "CASA":
@@ -20,6 +21,12 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação variáveis pelos arquivos
+# Extraídos do MERGE/SAMeT
+prec = "prec_diario_ate_2023.csv"
+tmax = "tmax_diario_ate_2023.csv"
+tmed = "tmed_diario_ate_2023.csv"
+tmin = "tmin_diario_ate_2023.csv"
+
 ## Bruto
 """
 casos = "casos.csv"
@@ -30,22 +37,27 @@ tmed = "tmed.csv"
 tmin = "tmin.csv"
 """
 ## Série Histórica / Semana Epidemiológica
+"""
 casos = "casos.csv"
 focos = "focos_se.csv"
 merge = "merge_se.csv"
 tmax = "tmax_se.csv"
 tmed = "tmed_se.csv"
 tmin = "tmin_se.csv"
-
+"""
 ### Abrindo Arquivos
+"""
 casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 merge = pd.read_csv(f"{caminho_dados}{merge}")
+"""
+prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmax = pd.read_csv(f"{caminho_dados}{tmax}")
 tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
-"""
+
 ### Recorte Temporal e Transformação em datetime64[ns]
+"""
 focos["data"] = pd.to_datetime(focos["data"])
 focos = focos.sort_values(by = ["data"])
 #focos21 = focos.iloc[3288:4018]
@@ -58,6 +70,16 @@ merge["Data"] = merge["data"]
 merge["data"] = pd.to_datetime(merge["data"])
 merge = merge.sort_values(by = ["data"])
 #merge21 = merge.iloc[7518:]
+"""
+prec.drop(columns = "prec", inplace = True)
+prec["Data"] = pd.to_datetime(prec["Data"])
+prec = prec.sort_values(by = ["Data"])
+prec_se = prec.copy()
+prec_se["Semana"] = prec_se["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+prec_se = prec_se.groupby(["Semana"]).sum(numeric_only = True)
+print(prec_se)
+print(prec_se.info())
+sys.exit()
 
 tmin["data"] = pd.to_datetime(tmin["data"])
 tmin = tmin.sort_values(by = ["data"])
@@ -71,7 +93,7 @@ tmax["data"] = pd.to_datetime(tmax["data"])
 tmax = tmax.sort_values(by = ["data"])
 #tmax21 = tmax.iloc[7671:]
 
-
+"""
 ### Semanas Epidemiológicas e Agrupamentos 2021
 focos21se = focos21.copy()
 focos21se["semanaE"] = focos21se["data"].dt.to_period("W-SAT").dt.to_timestamp()
@@ -96,7 +118,7 @@ tmed21se = tmed21se.groupby(["semanaE"]).mean(numeric_only = True)
 tmax21se = tmax21.copy()
 tmax21se["semanaE"] = tmax21se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmax21se = tmax21se.groupby(["semanaE"]).mean(numeric_only = True)
-"""
+
 ### Recortes 2022 (Série Histórica / Semana Epidemiológica) 
 focos22se = focos.copy()
 focos22se = focos22se.iloc[522:574, :]
@@ -120,7 +142,7 @@ tmax22se = tmax.copy()
 tmax22se = tmax22se.iloc[1149:, :]
 tmax22se = tmax22se.round(2)
 
-"""
+####################
 
 focos_se = focos.copy()
 focos_se["semanaE"] = focos_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
@@ -142,7 +164,7 @@ merge_se.reset_index(inplace = True)
 merge_seSH = merge_se.copy()
 merge_seSH = merge_seSH.iloc[710:, :]
 
-tmin_se = tmin.copy()
+tmin_se = tmin.copy()Underfull
 tmin_se["semanaE"] = tmin_se["data"].dt.to_period("W-SAT").dt.to_timestamp()
 tmin_se = tmin_se.groupby(["semanaE"]).mean(numeric_only = True)
 tmin_se.reset_index(inplace = True)
@@ -172,8 +194,8 @@ tmin21se = tmin21se.astype(np.float16)
 tmed21se = tmed21se.astype(np.float16)
 tmax21se = tmax21se.astype(np.float16)
 
-### Salvando, Printando Dados e Informações
-print("\n \n FOCOS DE _Aedes aegypti_ \n")
+### Salvando, Exibindo Dados e Informações
+print("\n \n FOCOS DE _Aedes aegypti_ \n")Underfull
 focos21.to_csv(f"{caminho_dados}focos21.csv", index = False)
 print(focos21.info())
 print("~"*80)
@@ -403,7 +425,7 @@ print("~"*80)
 print(tmax_se)
 print(""*80)
 
-"""
+
 ### Printando e Salvando Semanas Epidemiológicas de 2022
 print("\n \n FOCOS DE _Aedes aegypti_ / SEMANA EPIDEMIOLÓGICA em 2022 \n")
 focos22se.to_csv(f"{caminho_dados}focos22se.csv", index = False)
@@ -458,7 +480,7 @@ print(tmax22se.dtypes)
 print("~"*80)
 print(tmax22se)
 print("="*80)
-"""
+
 print("\n \n FOCOS DE _Aedes aegypti_ / SEMANA EPIDEMIOLÓGICA \n")
 focos_se.to_csv(f"{caminho_dados}focos_se.csv", index = False)
 print(focos_se.info())
