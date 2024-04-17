@@ -110,6 +110,7 @@ def semana_epidemiologica(csv, str_var):
 	else:
 		csv_se = csv_se.groupby(["Semana"]).mean(numeric_only = True)
 	csv_se.reset_index(inplace = True)
+	csv_se.drop([0], axis = 0, inplace = True)
 	csv_se.to_csv(f"{caminho_dados}{str_var}_semana_ate_2023.csv", index = False)
 	print(f"\n{green}ARQUIVO SALVO COM SUCESSO!\n\nSemana Epidemiológica - {str_var.upper()}{reset}\n\n{csv_se}\n")
 	print(f"\n{red}As variáveis do arquivo ({str_var.upper()}), em semanas epidemiológicas, são:{reset}\n{csv_se.dtypes}\n")
