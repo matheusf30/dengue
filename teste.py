@@ -32,7 +32,8 @@ tmin = "tmin.csv"
 casos = "casos.csv"
 focos = "focos_se.csv"
 merge = "merge_se.csv"
-prec = "prec.csv" # Dados Brutos
+#prec = "prec.csv" # Dados Brutos
+prec = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/prec_diario_ate_2023.csv" # Dados Brutos
 tmax = "tmax_se.csv"
 tmed = "tmed_se.csv"
 tmin = "tmin_se.csv"
@@ -52,7 +53,8 @@ casos = pd.read_csv(f"{caminho_dados}{casos}")
 focos = pd.read_csv(f"{caminho_dados}{focos}")
 """
 merge = pd.read_csv(f"{caminho_dados}{merge}")
-prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
+#prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
+prec = pd.read_csv(f"{prec}")
 tmax = pd.read_csv(f"{caminho_dados}{tmax}")
 tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
