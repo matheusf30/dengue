@@ -548,14 +548,14 @@ arg_poly = Polygon(coord_arg)
 argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
-municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
+municipios.plot(ax = ax, color = "lightgray", edgecolor = "whitesmoke", hatch = "--")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = True,
-                                                                       label = "Focos", cmap = "YlOrRd")
+                                                                       label = "Focos", cmap = "autumn_r")
 zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
-zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,
-                                             label = "Focos", cmap = "Greens")
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False, edgecolor = "lightgray",
+                                             label = "Focos", cmap = "Greens", hatch = "O.")
 print(zero)
-print(previsao_melt_geo)
+print(previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio])
 
 #"GnBu" if conta_focos <= 10 else 
 plt.xlim(-54, -48)
@@ -575,15 +575,16 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
 ax.text(-52.5, -28.25, """LEGENDA
 
-❏ Sem registro*
+≣           Sem registro*
 
-*(tom de cinza)
+*(tom escuro)
 Não há registro oficial ou
 modelagem inexistente.
 
+◉    Valores Zerados**
 
-(Municípios em tons claros
-são previsões zeradas)""",
+**(tom claro)
+Gerando previsões zeradas""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
@@ -592,8 +593,11 @@ plt.grid(True)
 plt.show()
 
 sys.exit()
-
-
+https://geopandas.org/en/stable/docs/user_guide/mapping.html
+https://matplotlib.org/stable/gallery/shapes_and_collections/hatch_style_reference.html
+https://coolsymbol.com/
+https://matplotlib.org/stable/gallery/color/named_colors.html
+https://matplotlib.org/stable/gallery/color/colormap_reference.html
 
 
 
