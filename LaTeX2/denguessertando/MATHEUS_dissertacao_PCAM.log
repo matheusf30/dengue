@@ -1,0 +1,255 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=latex 2024.4.7)  15 APR 2024 20:37
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**MATHEUS_dissertacao_PCAM.tex
+(./MATHEUS_dissertacao_PCAM.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+
+LaTeX Warning: You have requested package `',
+               but the package provides `conf-comandos'.
+
+Package: conf-comandos 
+! Undefined control sequence.
+l.104 \WithSuffix
+                 \newcommand\abreviatura*[2]{%
+? 
+
+! LaTeX Error: Command \abreviatura already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.104 \WithSuffix\newcommand\abreviatura*
+                                         [2]{%
+? 
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.104 \WithSuffix\newcommand\abreviatura*[
+                                          2]{%
+? 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no ] in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.105     #
+           1 (#2)%
+? 
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no ( in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.105     #1 (#
+               2)%
+? 
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no ) in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 104--108
+[]
+ []
+
+! Undefined control sequence.
+l.111 \WithSuffix
+                 \newcommand\abreviatura.[2]{%
+? 
+
+! LaTeX Error: Command \abreviatura already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.111 \WithSuffix\newcommand\abreviatura.
+                                         [2]{%
+? 
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.111 \WithSuffix\newcommand\abreviatura.[
+                                          2]{%
+? 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no ] in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.112     #
+           2 (#1)%
+? 
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no ( in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.112     #2 (#
+               1)%
+? 
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no ) in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 111--115
+[]
+ []
+
+! Undefined control sequence.
+l.118 \WithSuffix
+                 \newcommand\abreviatura'[3]{%
+? 
+
+! LaTeX Error: Command \abreviatura already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.118 \WithSuffix\newcommand\abreviatura'
+                                         [3]{%
+? 
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.118 \WithSuffix\newcommand\abreviatura'[
+                                          3]{%
+? 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no 3 in font nullfont!
+Missing character: There is no ] in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 118--121
+[][] 
+ []
+
+! Undefined control sequence.
+l.124 \WithSuffix
+                 \newcommand\abreviatura&[3]{%
+? 
+
+! LaTeX Error: Command \abreviatura already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.124 \WithSuffix\newcommand\abreviatura&
+                                         [3]{%
+? 
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.124 \WithSuffix\newcommand\abreviatura&[
+                                          3]{%
+? 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no 3 in font nullfont!
+Missing character: There is no ] in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.125     #
+           3 (\textit{#2} - #1)%
+? 
+Missing character: There is no 3 in font nullfont!
+Missing character: There is no ( in font nullfont!
+! Illegal parameter number in definition of \reserved@b.
+<to be read again> 
+                   }
+l.125     #3 (\textit{#2}
+                          - #1)%
+? 
+! You can't use `macro parameter character #' in horizontal mode.
+<recently read> ##
+                  
+l.125     #3 (\textit{#2}
+                          - #1)%
+? 
+Missing character: There is no - in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.125     #3 (\textit{#2} - #
+                             1)%
+? 
+Missing character: There is no 1 in font nullfont!
+Missing character: There is no ) in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 124--128
+[]
+ []
+
+
+Overfull \hbox (5.11108pt too wide) in paragraph at lines 124--128
+\OT1/cmr/m/it/10 2
+ []
+
+! Undefined control sequence.
+l.158 \WithSuffix
+                 \newcommand\simbolo*[2]{%
+? 
+
+! LaTeX Error: Command \simbolo already defined.
+               Or name \end... illegal, see p.192 of the manual.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.158 \WithSuffix\newcommand\simbolo*
+                                     [2]{%
+? 
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.158 \WithSuffix\newcommand\simbolo*[
+                                      2]{%
+? 
+Missing character: There is no [ in font nullfont!
+Missing character: There is no 2 in font nullfont!
+Missing character: There is no ] in font nullfont!
+! You can't use `macro parameter character #' in horizontal mode.
+l.159     #
+           1%
+? 
+Missing character: There is no 1 in font nullfont!
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 158--162
+[][] 
+ []
+
+! Undefined control sequence.
+l.221 \WithSuffix
+                 \newcommand\marcador*[3]{%
+? 
+! Interruption.
+l.221 \WithSuffix\newcommand
+                            \marcador*[3]{%
+? x
+ 
+Here is how much of TeX's memory you used:
+ 58 strings out of 480205
+ 922 string characters out of 5895037
+ 284105 words of memory out of 5000000
+ 18108 multiletter control sequences out of 15000+600000
+ 469605 words of font info for 29 fonts, out of 8000000 for 9000
+ 36 hyphenation exceptions out of 8191
+ 13i,1n,12p,135b,59s stack positions out of 5000i,500n,10000p,200000b,80000s
+No pages of output.
