@@ -5,31 +5,31 @@
 Para organização, os dados serão agrupados em três divisões distintas: 
 
 \begin{alineas}
-    \item \acrfull{DEE}: Informações referentes a questões sanitárias (tanto ao vetor, quanto ao hospedeiro) e provenientes de banco de dados oficiais.  Os casos de focos de \latim{Aedes} sp. foram obtidos diretamente da \acrshort{Dive}. Em relação aos casos de dengue, foram obtidos de plataformas \ingles{on-line}: TabNet-\acrshort{Sinan}-\acrshort{DataSUS} e TabNet-\acrshort{Sinan}-\acrshort{Dive}; 
+    \item \acrfull{DEE}: Elementos sanitários relacionados tanto ao vetor (dados entomológicos) quanto ao hospedeiro (dados epidemiológicos) e provenientes de bancos de dados oficiais. Os valores são relativos à quantidade de focos de \latim{Aedes} sp., disponibilizados oficialmente pela \acrshort{Dive}. Em relação à quantidade de casos de dengue, esses dados foram obtidos de plataformas \ingles{on-line}: TABNET-\acrshort{Sinan}-\acrshort{DataSUS} (base nacional) e TABNET-\acrshort{Sinan}-\acrshort{Dive} (base estadual); 
     
     \item \acrfull{DEC}: Informações referentes a variáveis meteorológicas/climatológicas (temperatura - mínima, máxima e média - e precipitação) e provenientes de banco de dados oficiais (reanálise e produtos de reanálise):  \ingles{\acrshort{GFS}}, \ingles{\acrshort{MERGE}} e \ingles{\acrshort{SAMeT}};
 
-    \item \acrfull{DGR}: Informações referentes a aspectos geográficos atualizados para o momento atual, provenientes do \acrshort{IBGE}. 
+    \item \acrfull{DGR}: Informações relacionadas aos aspectos geográficos atualizados para o momento atual, provenientes do \acrshort{IBGE}. 
 \end{alineas}
 
-\indent O \acrshort{MERGE} são dados de precipitação acumulada a superfície (mm), sendo dados diários e tendo início da série histórica em junho de 2000. Os dados do \acrshort{SAMeT} são coletados a dois metros (2m) da superfície e agrupados em médias diárias, sendo as temperaturas dadas em celsius (C), e a série histórica tem início em janeiro de 2000. \textcolor{red}{FALTA CITAR GFS/CFS!}.\\
+\indent Os dados de precipitação acumulada a superfície (mm), são armazenados no produto \ingles{\acrshort{MERGE}},  sendo adquiridos dados diários a partir de junho de 2000.\\
+\indent Os dados do \ingles{\acrshort{SAMeT}} são aferidos a dois metros (2m) da superfície em escala de temperaturas dadas em celsius (C), agrupados em médias diárias e com série histórica iniciando em janeiro de 2000.\\
+\indent \textcolor{red}{FALTA CITAR GFS/CFS!}.\\
 \indent ...\\
-\indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012. A série histórica dos casos de dengue começa em 2014, sendo previamente agrupado e disponilizado em semanas epidemiológicas.\\
+\indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012.\\
+\indent A série histórica dos casos de dengue começa em 2014, sendo previamente agrupados e disponilizados em semanas epidemiológicas.\\
+\indent Os \acrshort{DEE} e \acrshort{DEC} foram estruturados a ponto de compartilhar a mesma escala espaço-temporal. Os dados diários foram agrupados em semanas epidemiológicas, assim como o recorte espacial englobou área de estudo (figura N), o próprio Estado catarinense.
 
 
 \section{Métodos}
 
-\indent Para isso, pretende-se dividir o estudo em etapas, relativas ao percurso de execução do próprio projeto, sendo: pré-processamento, análise estatística descritiva, modelagem (treinamento e predição), espacialização dos dados preditos e Síntese do \acrfull{PTT}.\\
+\indent Para isso, pretende-se dividir o estudo em etapas, relativas ao percurso de execução do próprio projeto, sendo: pré-processamento, análise estatística descritiva, modelagem preditiva, espacialização dos dados preditos e síntese do \acrfull{PTT}.\\
 
 
 \subsection{Pré-processamento}
 
-Em relação aos \acrshort{DEE}, as planilhas 
-
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import geopandas as gpd
+Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser concatenados, adicionados, uma planilha após a outra. Para tal, utilizou-se a linguagem \ingles{Python} (versão 3) \cite{python3_2009_van}  e a biblioteca \ingles{pandas} \cite{pandas_2010_scipy, pandas_2020_reback}, como pacote principal para estruturação dos dados . Outras também foram utilizadas, como: \ingles{numpy} \cite{numpy_2020_harrisarray}, para tratar dados faltantes e tipagem de variáveis; \ingles{datetime} \cite{python2_1995_van}, para padronização de todas as datas e variáveis desse tipo; e \ingles{geopandas} \cite{geopandas_2020_kelseyjordahl}, para manipular arquivos georreferenciados, extrair deles a nomenclatura padrão dos municípios do \acrshort{IBGE} e aplicar aos próprios dados.\\
+\indent Os \acrshort{DEC} foram previamente tratados utilizando o \acrfull{CDO} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial, para o sul do Brasil, diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{netCDF4}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}. Após isso, foram extraídos os valores dos elementos climáticos de cada município e armazenados em um novo formato de arquivo, \ingles{\acrfull{csv}} (valores separados por vírgulas), utilizando as bibliotecas \ingles{pandas}, \ingles{numpy}, \ingles{geopandas} e \ingles{shapely} \cite{shapely_2007_gillies}.\\
 
 
 \subsection{Análise Estatística Descritiva}
@@ -46,8 +46,7 @@ import geopandas as gpd
 \end{equation}
 %ESCREVER COMO SE CHEGOU NO 'idenguen' >> 'define idenguen=10*at1*idengue/'_nvmax\\
 
-
-\subsection{Modelagem}
+\subsection{Modelagem Preditiva}
 
 \indent Na terceira etapa do estudo, serão definidos os  \acrfull{LACRe} entre os elementos climáticos e os resultados observados em relação aos focos de \latim{Aedes aegypti} distribuídos no Estado catarinense. Como resultado preliminar, foi utilizado o \acrshort{LACOb} desenvolvido por \citeonline{Matiola2020Dissertação}.
 
@@ -77,12 +76,3 @@ import geopandas as gpd
 
 
 %A princípio, os dados de regionalização espacial encontram-se em processo de definição.
-
-
-
-
-\subsection{Pré-processamento dos Dados}
-\indent Para desenvolvimento do trabalho, os dados foram ajustados em mesma escala temporal, deixando-os em semanas epidemiológicas. Dessa forma, fez-se o somatório dos registros de focos de \latim{Aedes} sp. por semana epidemiológica. Mesmo tratamento foi realizado com a precipitação, retornando o acumulado de precipitação por semana epidemiológica. As temperaturas foram agrupadas de forma diferente, porém também ajustando a dados semanais. Ao final, teríamos a média das temperaturas (mínima, média e máxima) por semana epidemiológica.\\
-
-
-
