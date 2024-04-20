@@ -29,7 +29,9 @@ Para organização, os dados serão agrupados em três divisões distintas:
 \subsection{Pré-processamento}
 
 Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser concatenados, adicionados, uma planilha após a outra. Para tal, utilizou-se a linguagem \ingles{Python} (versão 3) \cite{python3_2009_van}  e a biblioteca \ingles{pandas} \cite{pandas_2010_scipy, pandas_2020_reback}, como pacote principal para estruturação dos dados . Outras também foram utilizadas, como: \ingles{numpy} \cite{numpy_2020_harrisarray}, para tratar dados faltantes e tipagem de variáveis; \ingles{datetime} \cite{python2_1995_van}, para padronização de todas as datas e variáveis desse tipo; e \ingles{geopandas} \cite{geopandas_2020_kelseyjordahl}, para manipular arquivos georreferenciados, extrair deles a nomenclatura padrão dos municípios do \acrshort{IBGE} e aplicar aos próprios dados.\\
-\indent Os \acrshort{DEC} foram previamente tratados utilizando o \acrfull{CDO} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial, para o sul do Brasil, diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{netCDF4}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}. Após isso, foram extraídos os valores dos elementos climáticos de cada município e armazenados em um novo formato de arquivo, \ingles{\acrfull{csv}} (valores separados por vírgulas), utilizando as bibliotecas \ingles{pandas}, \ingles{numpy}, \ingles{geopandas} e \ingles{shapely} \cite{shapely_2007_gillies}.\\
+\indent Os \acrshort{DEC} foram previamente tratados utilizando o \ingles{\acrfull{CDO}} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial, para o sul do Brasil, diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{netCDF4}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}.\\
+\indent Após isso, foram extraídos os valores dos elementos climáticos de cada município e armazenados em um novo formato de arquivo, \ingles{\acrfull{csv}} (valores separados por vírgulas), utilizando as bibliotecas \ingles{pandas}, \ingles{numpy}, \ingles{geopandas} e \ingles{shapely} \cite{shapely_2007_gillies}.\\
+\indent Finalmente,  os principais conjuntos de dados (temperatura mínima, temperatura média, temperatura máxima, precipitação, focos de \latim{Aedes} sp. e casos de dengue) eram próprios arquivos estruturados em tabela dinâmica, onde as colunas eram cada município catarinense e as linhas, a serié histórica dada em semanas epidemiológicas no formato \ingles{datetime64[ns](YYYY-mm-dd)}. Logo, a equiparação entre essas variáveis era possível.
 
 
 \subsection{Análise Estatística Descritiva}
@@ -76,3 +78,11 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 
 %A princípio, os dados de regionalização espacial encontram-se em processo de definição.
+
+
+
+
+\subsection{Pré-processamento dos Dados}
+\indent Para desenvolvimento do trabalho, os dados foram ajustados em mesma escala temporal, deixando-os em semanas epidemiológicas. Dessa forma, fez-se o somatório dos registros de focos de \latim{Aedes} sp. por semana epidemiológica. Mesmo tratamento foi realizado com a precipitação, retornando o acumulado de precipitação por semana epidemiológica. As temperaturas foram agrupadas de forma diferente, porém também ajustando a dados semanais. Ao final, teríamos a média das temperaturas (mínima, média e máxima) por semana epidemiológica.\\
+
+
