@@ -30,6 +30,7 @@ elif _local == "CASA":
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -37,11 +38,11 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos
 casos = "casos_dive_pivot_total.csv"
 focos = "focos_pivot.csv"
-prec = "merge_se.csv"
-tmin = "tmin_se.csv"
-tmed = "tmed_se.csv"
-tmax = "tmax_se.csv"
-municipios = "unicos_xy.csv"
+prec = "prec_semana_ate_2023.csv"
+tmin = "tmin_semana_ate_2023.csv"
+tmed = "tmed_semana_ate_2023.csv"
+tmax = "tmax_semana_ate_2023.csv"
+municipios = "casos_primeiros.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}")
@@ -51,8 +52,10 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 municipios = pd.read_csv(f"{caminho_dados}{municipios}")
+"""
 casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
 focos = focos.iloc[:573] # Desconsiderando 2023
+"""
 municipios = municipios.iloc[:151]
 cidades = municipios["Município"].copy()
 
@@ -308,7 +311,7 @@ def lista_previsao(previsao, n, string_modelo):
     print("\n".join(lista_op))
     print("="*80)
 
-def grafico_previsao(previsao, teste, string_modelo):
+def grafico_previsao(previsao, teste, string_modelo, cidade):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
         print("\n   MODELO NÃO RECONHECIDO\n   TENTE 'RF' PARA RANDOM FOREST\n   OU 'NN' PARA REDE NEURAL\n")
@@ -338,7 +341,17 @@ def grafico_previsao(previsao, teste, string_modelo):
     plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
+    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+    for velho, novo in troca.items():
+        cidade = cidade.replace(velho, novo)
+    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
     plt.show()
+
     # Gráfico de Validação do Modelo Rede Neural
     if string_modelo == "NN":  
         plt.plot(valida.history["accuracy"])
@@ -349,6 +362,15 @@ def grafico_previsao(previsao, teste, string_modelo):
         plt.xlabel("Ciclos de Treino (epochs)")
         plt.ylabel("Perda e Acurácia")
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
+        troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+        for velho, novo in troca.items():
+            cidade = cidade.replace(velho, novo)
+        plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
         plt.show()
 
 def metricas(string_modelo, modeloNN = None):
@@ -411,7 +433,7 @@ previsoesRF = [int(p) for p in previsoesRF]
 
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
-grafico_previsao(previsoesRF, testesRF, "RF")
+grafico_previsao(previsoesRF, testesRF, "RF", cidade)
 metricas("RF")
 """
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
@@ -427,7 +449,7 @@ salva_modelo("RF", modeloRF)
 """
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
-
+"""
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
@@ -463,7 +485,7 @@ lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
-
+"""
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
     for cidade in cidades:
