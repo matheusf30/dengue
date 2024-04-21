@@ -12,7 +12,7 @@ import joblib
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
+from sklearn.metrics import mean_squared_error, accuracy_score, r2_score, mean_tweedie_deviance
 # Modelos
 from sklearn.ensemble import RandomForestRegressor
 import tensorflow
@@ -65,7 +65,7 @@ cidades = municipios["Município"].copy()
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis"
+cidade = "Joinville"
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -339,7 +339,8 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
                  color = "darkblue", linewidth = 1, label = "Observado")
     sns.lineplot(x = final["Semana"], y = final["Previstos"],
                  color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+    plt.title(f"""MODELO {nome_modelo.upper()}, MUNICÍPIO DE {cidade}, SANTA CATARINA: OBSERVAÇÃO E PREVISÃO.
+(R²: {R_2}; RQEQM: {RQ_EQM_RF})""")
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
     troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -395,6 +396,8 @@ def metricas(string_modelo, modeloNN = None):
              \n Erro Quadrático Médio: {EQM_RF}
              \n Coeficiente de Determinação (R²): {R_2}
              \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
+             \n Variância da Raiz Quadrada do Erro Quadrático Médio: {VAR_RQ_EQM_RF}
+             \n Variação Média de Tweedie: {MTD}
               """)
 
 def salva_modelo(string_modelo, modeloNN = None):
@@ -421,8 +424,10 @@ modeloRF.fit(treino_x_explicado, treino_y)
 ### Testando e Avaliando
 y_previstoRF = modeloRF.predict(teste_x)
 EQM_RF = mean_squared_error(teste_y, y_previstoRF)
-RQ_EQM_RF = np.sqrt(EQM_RF)
-R_2 = r2_score(teste_y, y_previstoRF).round(2) 
+RQ_EQM_RF = np.sqrt(EQM_RF).round(3)
+VAR_RQ_EQM_RF = np.var(RQ_EQM_RF).round(3)
+R_2 = r2_score(teste_y, y_previstoRF).round(3)
+MTD = mean_tweedie_deviance(teste_y, y_previstoRF, power = 0).round(3)
 #acuraciaRF = accuracy_score(teste_y, y_previstoRF)
 #print(f"A acurácia foi {acuraciaRF.round(2)}%. (Random Forest)")
 
