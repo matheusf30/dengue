@@ -126,7 +126,9 @@ def teste_normal(cidade, csv, str_var):
 	for velho, novo in troca.items():
 		cidade = cidade.replace(velho, novo)
 	plt.savefig(f"{caminho_estatistica}distribuicao_{str_var}_{cidade}.pdf", format = "pdf", dpi = 1200)
-	plt.show()
+	print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var}_{cidade}.pdf\n\n")
+	#plt.show()
+	#plt.close(fig = None)
 	
 
 ### Visualização
@@ -139,11 +141,11 @@ for i in lista_cidades:
 """
 for i in lista_cidades:
 	teste_normal(i, focos, "focos")
-	#teste_normal(i, casos)
-	#teste_normal(i, prec)
-	#teste_normal(i, tmin)
-	#teste_normal(i, tmed)
-	#teste_normal(i, tmax)
+	teste_normal(i, casos, "casos")
+	teste_normal(i, prec, "prec")
+	teste_normal(i, tmin, "tmin")
+	teste_normal(i, tmed, "tmed")
+	teste_normal(i, tmax, "tmax")
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
