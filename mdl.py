@@ -334,6 +334,8 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
     final["Semana"] = pd.to_datetime(final["Semana"])
     print(final)
     print("="*80)
+    plt.figure(figsize = (10, 6))
+    plt.subplots_adjust(left = 0.1, right = 0.9, top = 0.9, bottom = 0.1)
     sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
                  color = "darkblue", linewidth = 1, label = "Observado")
     sns.lineplot(x = final["Semana"], y = final["Previstos"],
