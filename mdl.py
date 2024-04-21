@@ -20,7 +20,7 @@ from tensorflow import keras
 #from keras.models import load_model
 
 ### Encaminhamento aos Diretórios
-_local = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
@@ -35,7 +35,7 @@ else:
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "casos_se.csv"
+casos = "casos_dive_pivot_total.csv"
 focos = "focos_pivot.csv"
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
@@ -51,6 +51,9 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 municipios = pd.read_csv(f"{caminho_dados}{municipios}")
+casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
+focos = focos.iloc[:573] # Desconsiderando 2023
+municipios = municipios.iloc[:151]
 cidades = municipios["Município"].copy()
 
 ### Condições para Variar
@@ -405,12 +408,12 @@ R_2 = r2_score(teste_y, y_previstoRF).round(2)
 testesRF = modeloRF.predict(teste_x)
 previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
-"""
+
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
-
+"""
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
@@ -424,7 +427,7 @@ salva_modelo("RF", modeloRF)
 """
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
-"""
+
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
@@ -460,7 +463,7 @@ lista_previsao(previsoesNN, 5, "NN")
 grafico_previsao(previsoesNN, testesNN, "NN")
 metricas("NN", modeloNN)
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
-"""
+
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
     for cidade in cidades:
