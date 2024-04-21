@@ -16,6 +16,7 @@ elif _local == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+    caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 
@@ -80,7 +81,7 @@ def tendencia(cidade, csv):
 	mannkendall = mk.original_test(csv[cidade])
 	print(f"\nMANN KENDALL DE {cidade} = {mannkendall}.\n")
 
-def teste_normal(cidade, csv):
+def teste_normal(cidade, csv, str_var):
 	decomposicao = sm.tsa.seasonal_decompose(csv[cidade], model = "additive", period = 52)
 	tendencia = decomposicao.trend
 	sazonalidade = decomposicao.seasonal
@@ -100,16 +101,31 @@ def teste_normal(cidade, csv):
 	plt.subplot(411)
 	plt.plot(csv[cidade], label = "Original")
 	plt.legend(loc = "upper left")
+	plt.title(f"{cidade} - {str_var.upper()}")
+	plt.grid(True)
 	plt.subplot(412)
 	plt.plot(tendencia, label = "Tendência")
 	plt.legend(loc = "upper left")
+	plt.grid(True)
 	plt.subplot(413)
 	plt.plot(sazonalidade, label = "Sazonalidade")
 	plt.legend(loc = "upper left")
+	plt.grid(True)
 	plt.subplot(414)
 	plt.plot(residuo, label = "Residual")
 	plt.legend(loc = "upper left")
+	plt.grid(True)
+	plt.xlabel("Semanas Epidemiológicas")
 	plt.tight_layout()
+	troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+             'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+             'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+             'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+             'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+             'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+	for velho, novo in troca.items():
+		cidade = cidade.replace(velho, novo)
+	plt.savefig(f"{caminho_estatistica}distribuicao_{str_var}_{cidade}.pdf", format = "pdf", dpi = 1200)
 	plt.show()
 	
 
@@ -117,12 +133,12 @@ def teste_normal(cidade, csv):
 """
 for i in lista_cidades:
 	visualiza_focos(i, focos)
-"""
-for i in lista_cidades:
-	tendencia(i, focos)
 
 for i in lista_cidades:
-	teste_normal(i, focos)
+	tendencia(i, focos)
+"""
+for i in lista_cidades:
+	teste_normal(i, focos, "focos")
 	#teste_normal(i, casos)
 	#teste_normal(i, prec)
 	#teste_normal(i, tmin)
