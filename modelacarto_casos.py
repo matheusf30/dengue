@@ -441,15 +441,8 @@ print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{ci
 
 ### Cartografia
 # Semana Epidemiológica
-semana_epidemio = "2023-04-16" # "2022-04-17"
-
-print(previsao_melt_geo.columns)
-print(previsao_melt_geo)
-print(previsao_melt_geo.info())
-print("~"*80)
-print(previsao_melt_xy.columns)
-print(previsao_melt_xy)
-print(previsao_melt_xy.info())
+semana_epidemio = "2023-04-16"
+# "2020-04-19" "2021-04-18" "2022-04-17" "2023-04-16"
 
 # SC_Pontos
 #previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
@@ -487,14 +480,15 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}CASOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
 # SC_MapaCalor
 fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
@@ -531,16 +525,17 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 plt.colorbar(cbar, ax = plt.gca(), label="Casos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"""Mapa de Densidade de Kernel dos Casos de Dengue Previstos.
-Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""")
+Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""", fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}CASOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
 # SC_Coroplético
 xy = municipios.copy()
@@ -583,27 +578,23 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 ax.text(-52.5, -28.25, """LEGENDA
 
 ≣           Sem registro*
 
 *Não há registro oficial ou
 modelagem inexistente.""",
-        color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
+        color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = 14)
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}CASOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
-print(previsao_melt_poligeo.columns)
-print(previsao_melt_poligeo)
-print(previsao_melt_poligeo.info())
-
-sys.exit()
 
 
 

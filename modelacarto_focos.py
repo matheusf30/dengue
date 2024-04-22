@@ -437,7 +437,11 @@ print(previsao_melt_geo)
 
 ### Cartografia
 # Semana Epidemiológica
-semana_epidemio = "2023-04-16" #"2023-12-03" #"2023-12-17"error #"2023-12-24"error #"2023-04-16" #"2022-04-17"
+semana_epidemio = "2023-04-16"
+# "2020-04-19" "2021-04-18" "2022-04-17" "2023-04-16"
+#"2023-12-03" #"2023-12-17"error #"2023-12-24"error #"2023-04-16" #"2022-04-17"
+#plt.rcParams["text.usetex"] = True
+#Aedes = r"\textit{Aedes}"
 
 # SC_Pontos
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
@@ -475,18 +479,20 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Focos de _Aedes_ sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.",
+          fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}FOCOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
 # SC_MapaCalor
 fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
-coord_atlantico = [(-54, -30),(- 48, -30),
+coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
 atlantico_poly = Polygon(coord_atlantico)
@@ -519,15 +525,16 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")#, fontsize = "small")
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 plt.colorbar(cbar, ax = plt.gca(), label="Focos")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Mapa de Densidade de Kernel dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Mapa de Densidade de Kernel dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}FOCOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
 # SC_Coroplético
 xy = municipios.copy()
@@ -536,7 +543,7 @@ xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper()
 previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
-fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+fig, ax = plt.subplots(figsize = (19, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -557,10 +564,6 @@ previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, 
 zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
 zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,# hatch = "O.", edgecolor = "lightgray",
                                              label = "Focos", cmap = "YlOrBr")
-print(zero)
-print(previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio])
-
-#"GnBu" if conta_focos <= 10 else 
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -574,23 +577,23 @@ mid_x = (x_tail + x_head) / 2
 mid_y = (y_tail + y_head) / 2
 ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
         fontsize = "large", fontweight = "bold")
-ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
-        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
-ax.text(-52.5, -28.25, """LEGENDA
+ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+        color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
+ax.text(-52.5, -28.5, """LEGENDA
 
 ≣           Sem registro*
 
 *Não há registro oficial ou
 modelagem inexistente.""",
-        color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
+        color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = 14)
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
-plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
+plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
 plt.savefig(f"{caminho_resultados}FOCOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-plt.show()
+print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+#plt.show()
 
-sys.exit()
 """
 https://geopandas.org/en/stable/docs/user_guide/mapping.html
 https://matplotlib.org/stable/gallery/shapes_and_collections/hatch_style_reference.html
