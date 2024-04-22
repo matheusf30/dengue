@@ -38,6 +38,7 @@ elif _local == "CASA":
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -452,7 +453,7 @@ print(previsao_melt_xy.info())
 
 # SC_Pontos
 #previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -492,10 +493,11 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}CASOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 # SC_MapaCalor
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(- 48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -537,6 +539,7 @@ plt.ylabel("Latitude")
 plt.title(f"""Mapa de Densidade de Kernel dos Casos de Dengue Previstos.
 Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}CASOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 # SC_Coroplético
@@ -546,7 +549,7 @@ xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper() 
 previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 previsao_melt_poligeo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -598,6 +601,7 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}CASOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 print(previsao_melt_poligeo.columns)
@@ -606,8 +610,6 @@ print(previsao_melt_poligeo.info())
 
 sys.exit()
 
-# Salvar a figura com o título correspondente ao VCM
-plt.savefig(f'{output}/{os.path.splitext(vcm_file)[0]}_map.png')
 
 
 
