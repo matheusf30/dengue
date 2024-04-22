@@ -38,6 +38,7 @@ elif _local == "CASA":
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -440,7 +441,7 @@ semana_epidemio = "2023-04-16" #"2023-12-03" #"2023-12-17"error #"2023-12-24"err
 
 # SC_Pontos
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_geo)#, geometry = municipios.geometry)
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -460,7 +461,7 @@ previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax,
                                                                         label = "Focos", cmap = "YlOrRd", markersize = 50)
 zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
 zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,
-                                             label = "Focos", cmap = "Greens")
+                                             label = "Focos", cmap = "YlOrBr")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -480,10 +481,11 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}FOCOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 # SC_MapaCalor
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(- 48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -524,6 +526,7 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Mapa de Densidade de Kernel dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}FOCOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 # SC_Coroplético
@@ -533,7 +536,7 @@ xy = xy.rename(columns = {"NM_MUN" : "Município"})
 xy["Município"] = xy["Município"].str.upper()
 previsao_melt_poli = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_poli, geometry = "geometry", crs = "EPSG:4674")
-fig, ax = plt.subplots(figsize = (20, 12))
+fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
 coord_atlantico = [(-54, -30),(-48, -30),
                    (-48, -25),(-54, -25),
                    (-54, -30)]
@@ -548,12 +551,12 @@ arg_poly = Polygon(coord_arg)
 argentina = gpd.GeoDataFrame(geometry = [arg_poly])
 argentina.plot(ax = ax, color = "tan")
 br.plot(ax = ax, color = "tan", edgecolor = "black")
-municipios.plot(ax = ax, color = "lightgray", edgecolor = "whitesmoke", hatch = "--")
+municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")#edgecolor = "whitesmoke", hatch = "--")
 previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = True,
-                                                                       label = "Focos", cmap = "autumn_r")
+                                                                       label = "Focos", cmap = "YlOrRd")
 zero = previsao_melt_geo[previsao_melt_geo["Focos"] == 0]
-zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False, edgecolor = "lightgray",
-                                             label = "Focos", cmap = "Greens", hatch = "O.")
+zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Focos", legend = False,# hatch = "O.", edgecolor = "lightgray",
+                                             label = "Focos", cmap = "YlOrBr")
 print(zero)
 print(previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio])
 
@@ -577,27 +580,23 @@ ax.text(-52.5, -28.25, """LEGENDA
 
 ≣           Sem registro*
 
-*(tom escuro)
-Não há registro oficial ou
-modelagem inexistente.
-
-◉    Valores Zerados**
-
-**(tom claro)
-Gerando previsões zeradas""",
+*Não há registro oficial ou
+modelagem inexistente.""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.")
 plt.grid(True)
+plt.savefig(f"{caminho_resultados}FOCOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 plt.show()
 
 sys.exit()
+"""
 https://geopandas.org/en/stable/docs/user_guide/mapping.html
 https://matplotlib.org/stable/gallery/shapes_and_collections/hatch_style_reference.html
 https://coolsymbol.com/
 https://matplotlib.org/stable/gallery/color/named_colors.html
 https://matplotlib.org/stable/gallery/color/colormap_reference.html
-
+"""
 
 
