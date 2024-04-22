@@ -65,7 +65,7 @@ cidades = municipios["Município"].copy()
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Joinville"
+cidade = "Itajaí"
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -339,28 +339,17 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
                  color = "darkblue", linewidth = 1, label = "Observado")
     sns.lineplot(x = final["Semana"], y = final["Previstos"],
                  color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-    plt.title(f"""MODELO {nome_modelo.upper()}, MUNICÍPIO DE {cidade}, SANTA CATARINA: OBSERVAÇÃO E PREVISÃO.
-(R²: {R_2}; RQEQM: {RQ_EQM_RF})""")
+    plt.title(f"MODELO {nome_modelo.upper()}: OBSERVAÇÃO E PREVISÃO.\nMUNICÍPIO DE {cidade}, SANTA CATARINA.")
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
-    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-    for velho, novo in troca.items():
-        cidade = cidade.replace(velho, novo)
-    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
-    plt.show()
-
     # Gráfico de Validação do Modelo Rede Neural
-    if string_modelo == "NN":  
+    if string_modelo == "NN":
+        plt.figure(figsize = (5, 5), layout = "constrained", frameon = False)
         plt.plot(valida.history["accuracy"])
         plt.plot(valida.history["val_accuracy"])
         plt.plot(valida.history["loss"])
         plt.plot(valida.history["val_loss"])
-        plt.title("VALIDAÇÃO DO MODELO - TREINO (CICLOS x ACURÁCIA/PERDA)")
+        plt.title(f"VALIDAÇÃO DO MODELO - {cidade}\nTREINO (CICLOS x ACURÁCIA/PERDA)")
         plt.xlabel("Ciclos de Treino (epochs)")
         plt.ylabel("Perda e Acurácia")
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
@@ -372,8 +361,19 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
         for velho, novo in troca.items():
             cidade = cidade.replace(velho, novo)
-        plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
+        plt.savefig(f"{caminho_resultados}validacao_modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
         plt.show()
+    # Salvando Gráfico do Modelo
+    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+    for velho, novo in troca.items():
+        cidade = cidade.replace(velho, novo)
+    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
+    plt.show()
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -455,7 +455,7 @@ salva_modelo("RF", modeloRF)
 """
 ######################################################NEURAL_NETWORK############################################################
 # https://www.semanticscholar.org/paper/Recurrent-Neural-Networks-for-Time-Series-Petneh%C3%A1zi/ed4a2a2ed51cc7418c2d1ca8967cc7a383c0241a
-"""
+
 ### Instanciando e Compilando Modelo de Rede Neural
 modeloNN = keras.Sequential([
     #keras.layers.LSTM(64, input_shape = (1, 1), return_sequences = True), #entrada Memória de Longo Prazo
@@ -488,10 +488,10 @@ sumarioNN = modeloNN.summary()
 
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesNN, 5, "NN")
-grafico_previsao(previsoesNN, testesNN, "NN")
+grafico_previsao(previsoesNN, testesNN, "NN", cidade)
 metricas("NN", modeloNN)
 print(f"Caminho e Nome do arquivo:\n{caminho_modelos}NN_r{_retroagir}_{cidade}.h5")
-"""
+
 #########################################################AUTOMATIZANDO###############################################################
 if _automatiza == True:
     for cidade in cidades:
