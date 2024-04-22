@@ -473,7 +473,7 @@ previsao_melt_geo[previsao_melt_geo["Semana"] == semana_epidemio ].plot(ax = ax,
                                                                         label = "Casos", cmap = "YlOrRd", markersize = 50)
 zero = previsao_melt_geo[previsao_melt_geo["Casos"] == 0]
 zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos", legend = False,
-                                             label = "Focos", cmap = "Greens")
+                                             label = "Casos", cmap = "YlOrBr")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -569,7 +569,7 @@ previsao_melt_poligeo[previsao_melt_poligeo["Semana"] == semana_epidemio].plot(a
                                                                                label = "Casos", cmap = "YlOrRd")
 zero = previsao_melt_poligeo[previsao_melt_poligeo["Casos"] == 0]
 zero[zero["Semana"] == semana_epidemio].plot(ax = ax, column = "Casos", legend = False,
-                                             label = "Focos", cmap = "Greens")
+                                             label = "Casos", cmap = "YlOrBr")
 plt.xlim(-54, -48)
 plt.ylim(-29.5, -25.75)
 x_tail = -48.5
@@ -587,15 +587,10 @@ ax.text(-52.5, -29, "Sistema de referência de coordenadas\nDATUM: SIRGAS 2000/2
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center")
 ax.text(-52.5, -28.25, """LEGENDA
 
-❏ Sem registro*
+≣           Sem registro*
 
-*(tom de cinza)
-Não há registro oficial ou
-modelagem inexistente.
-
-
-(Municípios em tons claros
-são previsões zeradas)""",
+*Não há registro oficial ou
+modelagem inexistente.""",
         color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = "small")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
