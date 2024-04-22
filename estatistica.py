@@ -89,32 +89,36 @@ def teste_normal(cidade, csv, str_var):
 	#teste_normal = NormalityTest()
 	#shapiro_teste, shapiro_valor_p = teste_normal.shapiro(csv[cidade])
 	shapiro_teste, shapiro_valor_p = shapiro(csv[cidade])
-	print(f"\n{cidade}\nTeste Estatístico Shapiro-Wik: {shapiro_teste}\nValor $ p $: {round(shapiro_valor_p, 5)}\n")
+	print(f"""\n{cidade}- {str_var.upper()}
+Teste Estatístico Shapiro-Wik: {shapiro_teste}
+Valor $ p $: {round(shapiro_valor_p, 5)}\n""")
 	shapiro_teste, shapiro_valor_p = shapiro(residuo)
-	print(f"\n{cidade} - Sem Sazonal\nTeste Estatístico Shapiro-Wik: {shapiro_teste}\nValor $ p $: {round(shapiro_valor_p, 5)}\n")
+	print(f"""\n{cidade}- {str_var.upper()} - Sem Sazonal
+Teste Estatístico Shapiro-Wik: {shapiro_teste}
+Valor $ p $: {round(shapiro_valor_p, 5)}\n""")
 	#dagostino_teste, dagostino_valor_p = teste_normal.dagostino(csv[cidade])
 	dagostino_teste, dagostino_valor_p = normaltest(csv[cidade])
-	print(f"\n{cidade}\nTeste Estatístico Dagostino: {dagostino_teste}\nValor $ p $: {round(dagostino_valor_p, 5)}\n")
+	print(f"""\n{cidade}- {str_var.upper()}
+Teste Estatístico Dagostino: {dagostino_teste}
+Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	dagostino_teste, dagostino_valor_p = normaltest(residuo)
-	print(f"\n{cidade} - Sem Sazonal\nTeste Estatístico Dagostino: {dagostino_teste}\nValor $ p $: {round(dagostino_valor_p, 5)}\n")
-	plt.figure(figsize = (12, 8))
-	plt.subplot(411)
-	plt.plot(csv[cidade], label = "Original")
-	plt.legend(loc = "upper left")
-	plt.title(f"{cidade} - {str_var.upper()}")
-	plt.grid(True)
-	plt.subplot(412)
-	plt.plot(tendencia, label = "Tendência")
-	plt.legend(loc = "upper left")
-	plt.grid(True)
-	plt.subplot(413)
-	plt.plot(sazonalidade, label = "Sazonalidade")
-	plt.legend(loc = "upper left")
-	plt.grid(True)
-	plt.subplot(414)
-	plt.plot(residuo, label = "Residual")
-	plt.legend(loc = "upper left")
-	plt.grid(True)
+	print(f"""\n{cidade}- {str_var.upper()} - Sem Sazonal
+Teste Estatístico Dagostino: {dagostino_teste}
+Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
+	fig, axs = plt.subplots(4, 1, figsize = (12, 8), sharex = True)
+	axs[0].plot(csv[cidade], label = "Original")
+	axs[0].legend(loc = "upper left")
+	axs[0].grid(True)
+	axs[1].plot(tendencia, label = "Tendência")
+	axs[1].legend(loc = "upper left")
+	axs[1].grid(True)
+	axs[2].plot(sazonalidade, label = "Sazonalidade")
+	axs[2].legend(loc = "upper left")
+	axs[2].grid(True)
+	axs[3].plot(residuo, label = "Residual")
+	axs[3].legend(loc = "upper left")
+	axs[3].grid(True)
+	fig.suptitle(f"Decomposição Sazonal: {cidade} - {str_var.upper()}")
 	plt.xlabel("Semanas Epidemiológicas")
 	plt.tight_layout()
 	troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -125,8 +129,8 @@ def teste_normal(cidade, csv, str_var):
              'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
 	for velho, novo in troca.items():
 		cidade = cidade.replace(velho, novo)
-	plt.savefig(f"{caminho_estatistica}distribuicao_{str_var}_{cidade}.pdf", format = "pdf", dpi = 1200)
-	print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var}_{cidade}.pdf\n\n")
+	plt.savefig(f"{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf\n\n")
 	#plt.show()
 	#plt.close(fig = None)
 	
