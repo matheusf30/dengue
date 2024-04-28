@@ -165,6 +165,59 @@ class Modelo:
 		x_array = x_array.reshape(x_array.shape[0], -1)
 		return dataset, x, y, x_array, y_array
 
+	def monta_dataset_focos(self, cidade):
+		"""
+		Função para montar estrutura de dados para previsão.
+		"""
+		dataset = tmin[["Semana"]].copy()
+		dataset["TMIN"] = tmin[cidade].copy()
+		dataset["TMED"] = tmed[cidade].copy()
+		dataset["TMAX"] = tmax[cidade].copy()
+		dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset.dropna(axis = 0, inplace = True)
+		dataset = dataset.iloc[104:, :].copy()
+		troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
+		dataset = dataset.rename(columns = troca_nome)
+		dataset.fillna(0, inplace = True)
+		for r in range(_horizonte + 1, _retroagir + 1):
+			dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+			dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+			dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+			dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+			dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+		dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+		dataset.dropna(inplace = True)
+		dataset.set_index("Semana", inplace = True)
+		dataset.columns.name = f"{cidade}"
+		x = dataset.drop(columns = "FOCOS")
+		y = dataset["FOCOS"]
+		if x.empty or x.isnull().all().all():
+			print(f"'X' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		x = x.dropna()
+		if x.empty:
+			print(f"'X' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		if y.empty or y.isnull().all().all():
+			print(f"'Y' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		y = y.dropna()
+		if y.empty:
+			print(f"'Y' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		x_array = x.to_numpy()
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		x_array = x.to_numpy().astype(int)
+		y_array = y.to_numpy().astype(int)
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		return dataset, x, y, x_array, y_array
+
+
 	def treino_teste(self, x, x_array, y_array):
 		"""
 		Função para separar o conjunto de dados em	treino e teste padrão aleatório
@@ -177,16 +230,27 @@ class Modelo:
 		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
 		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
 
-	def treino23(self, dataset):
+	def treino_teste_23(self, x, y):
 		"""
 		Função para separar o conjunto de dados em	treino do ano de 2023
 		"""
-		dataset_ate_23 = dataset.iloc[:-50]
-		dataset23 = dataset.iloc[-50:]
-		treino = dataset_ate_23.copy()
-		teste = dataset23.copy()
-		
-		print(treino, teste)
+		x_ate_23 = x.iloc[:-50]
+		y_ate_23 = y.iloc[:-50]
+		x23 = x.iloc[-50:]
+		y23 = y.iloc[-50:]
+		treino_x = x_ate_23.copy()
+		teste_x = x23.copy()
+		treino_y = y_ate_23.copy()
+		teste_y = y23.copy()
+		explicativas = x.columns.tolist()
+		treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
+		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
+	
+		print(f"""Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x}\n
+Conjunto de Treino com as Variáveis Explicativas (>2023):\n{teste_x}\n 
+Conjunto de Teste com a Variável Dependente (>2023):\n{treino_y}\n 
+Conjunto de Teste com a Variável Dependente (>2023):\n{teste_y}\n
+Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x_explicado}\n""")
 		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
 
 		"""	
@@ -229,6 +293,7 @@ class Modelo:
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(3, 2)
 dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
+###
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
 y_previsto = random_forest.predict(treino_x_explicado)
@@ -237,5 +302,12 @@ previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
 EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
-modelo.treino23(dataset)
+###
+treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste_23(x,y)
+random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
+y_previsto = random_forest.predict(treino_x_explicado)
+previsoes = random_forest.predict(x)
+previsoes = [int(p) for p in previsoes]
+print(y_previsto)
+print(previsoes)
 sys.exit()
