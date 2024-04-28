@@ -181,8 +181,12 @@ class Modelo:
 		"""
 		Função para separar o conjunto de dados em	treino do ano de 2023
 		"""
+		dataset_ate_23 = dataset.iloc[:-50]
 		dataset23 = dataset.iloc[-50:]
-		print(dataset23)
+		treino = dataset_ate_23.copy()
+		teste = dataset23.copy()
+		
+		print(treino, teste)
 		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
 
 		"""	
