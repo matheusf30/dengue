@@ -310,4 +310,5 @@ previsoes = random_forest.predict(x)
 previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
+EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
 sys.exit()
