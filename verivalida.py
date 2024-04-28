@@ -287,7 +287,34 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 			 \n Erro Médio Absoluto: {EMA}
 			 """)
 		print("="*80)
-		return EQM, RQ_EQM, R_2
+		return R_2, EQM, RQ_EQM, EMA
+
+	def grafico_previsao_casos23(previsao, teste):
+		# Gráfico de Comparação entre Observação e Previsão dos Modelos
+		final = pd.DataFrame()
+		final["Semana"] = casos["Semana"].iloc[-50:]
+		final["Casos"] = casos[cidade].iloc[-50:]
+		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		previsoes = previsao
+		"""
+		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
+		final["Previstos"] = lista_previsao
+		"""
+		previsoes = previsoes[:len(final)]
+		final["Previstos"] = previsoes
+		final["Semana"] = pd.to_datetime(final["Semana"])
+		print(final)
+		print("="*80)
+		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		plt.title("MODELO RANDOM FOREST - OBSERVAÇÃO E PREVISÃO:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas na Série de Anos")
+		plt.ylabel("Número de Casos de Dengue")
+		plt.show()
+
 ####################################### Orientação a Objetos #######################################
 ## CASOS
 modelo = Modelo()
@@ -301,14 +328,15 @@ previsoes = random_forest.predict(x)
 previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
-EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
+EMA, EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
 ###
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste_23(x,y)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
 y_previsto = random_forest.predict(treino_x_explicado)
-previsoes = random_forest.predict(x)
-previsoes = [int(p) for p in previsoes]
+previsoes23 = random_forest.predict(teste_x)
+previsoes = [int(p) for p in previsoes23]
 print(y_previsto)
 print(previsoes)
-EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
+R_2, EQM, RQ_EQM, EMA = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
+grafico_previsao_casos23(previsoes, teste_y)
 sys.exit()
