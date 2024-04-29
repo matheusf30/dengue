@@ -33,7 +33,7 @@ elif _local == "CASA":
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
-    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
+    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
