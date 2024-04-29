@@ -323,8 +323,9 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
          'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+		_cidade = cidade
 		for velho, novo in troca.items():
-			_cidade = cidade.replace(velho, novo)
+			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
@@ -361,8 +362,9 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
          'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
          'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+		_cidade = cidade
 		for velho, novo in troca.items():
-			_cidade = cidade.replace(velho, novo)
+			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-23.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
