@@ -312,8 +312,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		#sns.lineplot(x = final["Semana"], y = final["Erro"],
-		#		     color = "yellow", alpha = 0.7, linewidth = 3, label = "Erro")
+		sns.lineplot(x = final["Semana"], y = final["Erro"],
+				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
 		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
@@ -327,6 +327,12 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.displot(data = final, x = "Semana", y = "Erro", bins = 500)#, element = "poly")
+		plt.title(f"MODELO RANDOM FOREST (2022) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
+		plt.ylabel("Erro")
 		plt.show()
 		print("="*80)
 
@@ -353,6 +359,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		sns.lineplot(x = final["Semana"], y = final["Erro"],
+				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
 		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Casos de Dengue")
@@ -370,7 +378,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		print("="*80)
 		
 ####################################### Orientação a Objetos #######################################
-## CASOS
+##### CASOS
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(3, 2)
 dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
@@ -384,6 +392,7 @@ print(y_previsto)
 print(previsoes)
 EMA, EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
 modelo.grafico_previsao_casos(previsoes, y)
+sys.exit()
 ### Apenas 2023
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste_23(x,y)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
@@ -394,4 +403,6 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
 modelo.grafico_previsao_casos23(previsoes, teste_y)
+
+##### FOCOS
 sys.exit()
