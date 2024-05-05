@@ -279,15 +279,17 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		EMA = mean_absolute_error(y, previsoes)
 		RQ_EQM = np.sqrt(EQM)
 		R_2 = r2_score(y, previsoes).round(2)
+		VIES = EMA - RQ_EQM
 		print(f"""
 			 \n MÉTRICAS RANDOM FOREST - {cidade}
 			 \n Coeficiente de Determinação (R²): {R_2}
 			 \n Erro Quadrático Médio: {EQM}
 			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
 			 \n Erro Médio Absoluto: {EMA}
+			 \n Viés: {VIES}
 			 """)
 		print("="*80)
-		return R_2, EQM, RQ_EQM, EMA
+		return R_2, EQM, RQ_EQM, EMA, VIES
 
 	def grafico_previsao_casos(self,previsao, teste):
 		# Gráfico de Comparação entre Observação e Previsão dos Modelos
@@ -312,8 +314,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		"""
 		sns.lineplot(x = final["Semana"], y = final["Erro"],
 				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
+		"""
 		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
@@ -329,10 +333,16 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
-		sns.displot(data = final, x = "Semana", y = "Erro", bins = 500)#, element = "poly")
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+                     color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
 		plt.title(f"MODELO RANDOM FOREST (2022) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
-		plt.ylabel("Erro")
+		plt.ylabel("Número de Casos de Dengue")
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
@@ -359,8 +369,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		sns.lineplot(x = final["Semana"], y = final["Erro"],
-				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+				     color = "yellow", alpha = 0.5, linewidth = 1, label = "Erro")
 		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Casos de Dengue")
@@ -390,7 +400,7 @@ previsoes = random_forest.predict(x)
 previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
-EMA, EQM, RQ_EQM, R_2 = modelo.metricas("casos", dataset, previsoes, 500, y)
+R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
 modelo.grafico_previsao_casos(previsoes, y)
 sys.exit()
 ### Apenas 2023
@@ -401,7 +411,7 @@ previsoes23 = random_forest.predict(teste_x)
 previsoes = [int(p) for p in previsoes23]
 print(y_previsto)
 print(previsoes)
-R_2, EQM, RQ_EQM, EMA = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
+R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
 modelo.grafico_previsao_casos23(previsoes, teste_y)
 
 ##### FOCOS
