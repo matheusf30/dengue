@@ -365,12 +365,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		print(final)
 		print("="*80)
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
-		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
+		sns.lineplot(x = final["Semana"], y = final["Casos"],
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
-				     color = "yellow", alpha = 0.5, linewidth = 1, label = "Erro")
 		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Casos de Dengue")
@@ -384,6 +382,18 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-23.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+                     color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		plt.title(f"MODELO RANDOM FOREST (2022) - DISTRIBUIÇÃO DO ERRO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas")
+		plt.ylabel("Número de Casos de Dengue")
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF-22_{_cidade}-23.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 		
@@ -402,7 +412,6 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
 modelo.grafico_previsao_casos(previsoes, y)
-sys.exit()
 ### Apenas 2023
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste_23(x,y)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
