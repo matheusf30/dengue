@@ -351,8 +351,6 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = casos["Semana"].iloc[-z:]
 		final["Casos"] = casos[cidade].iloc[-z:]
-		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-		#final.drop(final.index[-_retroagir:], axis=0, inplace = True)
 		previsoes = previsao
 		"""
 		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -402,13 +400,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = focos["Semana"]
 		final["Focos"] = focos[cidade]
-		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		final.drop([d for d in range(_retroagir + 1)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir - 1:], axis=0, inplace = True)
 		previsoes = previsao
-		"""
-		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
-		final["Previstos"] = lista_previsao
-		"""
+		print(len(final), len(previsoes), len(previsao), len(teste_x), len(treino_x_explicado), len(y))
 		previsoes = previsoes[:len(final)]
 		final["Previstos"] = previsoes
 		final["Semana"] = pd.to_datetime(final["Semana"])
@@ -420,10 +415,6 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		"""
-		sns.lineplot(x = final["Semana"], y = final["Erro"],
-				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
-		"""
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
@@ -457,8 +448,6 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = focos["Semana"].iloc[-z:]
 		final["Focos"] = focos[cidade].iloc[-z:]
-		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-		#final.drop(final.index[-_retroagir:], axis=0, inplace = True)
 		previsoes = previsao
 		"""
 		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -542,7 +531,7 @@ previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 500, y)
-modelo.grafico_previsao_casos(previsoes, y, "22")
+modelo.grafico_previsao_focos(previsoes, y, "22")
 ### Apenas 2023
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
 random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
