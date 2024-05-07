@@ -63,7 +63,7 @@ key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 not_found_c = list(cidades_c.iloc[151:])  # Desconsiderando 2023, pois ainda não há modelagem
 """
 #### Condições para Variar entre Modelos ############
-cidade = "Florianópolis"
+cidade = "Joinville"
 cidade = cidade.upper()
 SEED = np.random.seed(0)
 ####################################################
@@ -163,6 +163,7 @@ class Modelo:
 		x_array = x.to_numpy().astype(int)
 		y_array = y.to_numpy().astype(int)
 		x_array = x_array.reshape(x_array.shape[0], -1)
+		print(dataset)
 		return dataset, x, y, x_array, y_array
 
 	def monta_dataset_focos(self, cidade):
@@ -176,7 +177,6 @@ class Modelo:
 		dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
 		dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 		dataset.dropna(axis = 0, inplace = True)
-		dataset = dataset.iloc[104:, :].copy()
 		troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 		dataset = dataset.rename(columns = troca_nome)
 		dataset.fillna(0, inplace = True)
@@ -215,6 +215,7 @@ class Modelo:
 		x_array = x.to_numpy().astype(int)
 		y_array = y.to_numpy().astype(int)
 		x_array = x_array.reshape(x_array.shape[0], -1)
+		print(dataset)
 		return dataset, x, y, x_array, y_array
 
 
@@ -246,9 +247,9 @@ class Modelo:
 		treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
 	
-		print(f"""Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x}\n
+		print(f"""Conjunto de Treino com as Variáveis Explicativas (<2023):\n{treino_x}\n
 Conjunto de Treino com as Variáveis Explicativas (>2023):\n{teste_x}\n 
-Conjunto de Teste com a Variável Dependente (>2023):\n{treino_y}\n 
+Conjunto de Teste com a Variável Dependente (<2023):\n{treino_y}\n 
 Conjunto de Teste com a Variável Dependente (>2023):\n{teste_y}\n
 Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x_explicado}\n""")
 		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z
@@ -400,10 +401,9 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = focos["Semana"]
 		final["Focos"] = focos[cidade]
-		final.drop([d for d in range(_retroagir + 1)], axis=0, inplace = True)
-		final.drop(final.index[-_retroagir - 1:], axis=0, inplace = True)
+		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
 		previsoes = previsao
-		print(len(final), len(previsoes), len(previsao), len(teste_x), len(treino_x_explicado), len(y))
 		previsoes = previsoes[:len(final)]
 		final["Previstos"] = previsoes
 		final["Semana"] = pd.to_datetime(final["Semana"])
@@ -494,6 +494,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 
 		
 ####################################### Orientação a Objetos #######################################
+
 ##### CASOS
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(3, 2)
@@ -518,6 +519,7 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
 modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
+
 ##### FOCOS
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(8, 4)
@@ -542,4 +544,4 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
 modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
-sys.exit()
+
