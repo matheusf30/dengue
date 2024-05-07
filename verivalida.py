@@ -393,7 +393,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_resultados}erro_modelo_casos_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
