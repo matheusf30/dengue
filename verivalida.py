@@ -230,18 +230,18 @@ class Modelo:
 		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
 		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
 
-	def treino_teste_23(self, x, y):
+	def treino_teste_limite(self, x, y, z):
 		"""
 		Função para separar o conjunto de dados em	treino do ano de 2023
 		"""
-		x_ate_23 = x.iloc[:-50]
-		y_ate_23 = y.iloc[:-50]
-		x23 = x.iloc[-50:]
-		y23 = y.iloc[-50:]
-		treino_x = x_ate_23.copy()
-		teste_x = x23.copy()
-		treino_y = y_ate_23.copy()
-		teste_y = y23.copy()
+		x_ate_limite = x.iloc[:-z]
+		y_ate_limite = y.iloc[:-z]
+		xlimite = x.iloc[-z:]
+		ylimite = y.iloc[-z:]
+		treino_x = x_ate_limite.copy()
+		teste_x = xlimite.copy()
+		treino_y = y_ate_limite.copy()
+		teste_y = ylimite.copy()
 		explicativas = x.columns.tolist()
 		treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
@@ -251,7 +251,7 @@ Conjunto de Treino com as Variáveis Explicativas (>2023):\n{teste_x}\n
 Conjunto de Teste com a Variável Dependente (>2023):\n{treino_y}\n 
 Conjunto de Teste com a Variável Dependente (>2023):\n{teste_y}\n
 Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x_explicado}\n""")
-		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
+		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z
 
 		"""	
 	def preve(x, treino_x_explicado):
@@ -291,7 +291,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		print("="*80)
 		return R_2, EQM, RQ_EQM, EMA, VIES
 
-	def grafico_previsao_casos(self,previsao, teste):
+	def grafico_previsao_casos(self,previsao, teste, limite):
 		# Gráfico de Comparação entre Observação e Previsão dos Modelos
 		final = pd.DataFrame()
 		final["Semana"] = casos["Semana"]
@@ -318,7 +318,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		sns.lineplot(x = final["Semana"], y = final["Erro"],
 				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
 		"""
-		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
 		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -330,7 +330,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -339,18 +339,18 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
 		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
 				     color = "darkblue", linewidth = 1, label = "Observado")
-		plt.title(f"MODELO RANDOM FOREST (2022) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF-22_{_cidade}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
-	def grafico_previsao_casos23(self,previsao, teste):
+	def grafico_previsao_casos_limite(self, previsao, teste, z, limite, fim):
 		# Gráfico de Comparação entre Observação e Previsão dos Modelos
 		final = pd.DataFrame()
-		final["Semana"] = casos["Semana"].iloc[-50:]
-		final["Casos"] = casos[cidade].iloc[-50:]
+		final["Semana"] = casos["Semana"].iloc[-z:]
+		final["Casos"] = casos[cidade].iloc[-z:]
 		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
 		#final.drop(final.index[-_retroagir:], axis=0, inplace = True)
 		previsoes = previsao
@@ -369,7 +369,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "darkblue", linewidth = 1, label = "Observado")
 		sns.lineplot(x = final["Semana"], y = final["Previstos"],
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		plt.title(f"MODELO RANDOM FOREST (2022) - OBSERVAÇÃO E PREVISÃO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Casos de Dengue")
 		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -381,7 +381,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF-22_{_cidade}-23.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -390,12 +390,119 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
 		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
 				     color = "darkblue", linewidth = 1, label = "Observado")
-		plt.title(f"MODELO RANDOM FOREST (2022) - DISTRIBUIÇÃO DO ERRO (2023):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF-22_{_cidade}-23.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_resultados}erro_modelo_casos_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
+
+	def grafico_previsao_focos(self, previsao, teste, limite):
+		# Gráfico de Comparação entre Observação e Previsão dos Modelos
+		final = pd.DataFrame()
+		final["Semana"] = focos["Semana"]
+		final["Focos"] = focos[cidade]
+		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		previsoes = previsao
+		"""
+		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
+		final["Previstos"] = lista_previsao
+		"""
+		previsoes = previsoes[:len(final)]
+		final["Previstos"] = previsoes
+		final["Semana"] = pd.to_datetime(final["Semana"])
+		final["Erro"] = final["Focos"] - final["Previstos"]
+		print(final)
+		print("="*80)
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		"""
+		sns.lineplot(x = final["Semana"], y = final["Erro"],
+				     color = "yellow", alpha = 0.5, linewidth = 5, label = "Erro")
+		"""
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
+		plt.ylabel("Número de Focos de _Aedes_ sp.")
+		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+		_cidade = cidade
+		for velho, novo in troca.items():
+			_cidade = _cidade.replace(velho, novo)
+		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+                     color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
+		plt.ylabel("Número de Focos de _Aedes_ sp.")
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		print("="*80)
+
+	def grafico_previsao_focos_limite(self,previsao, teste, z, limite, fim):
+		# Gráfico de Comparação entre Observação e Previsão dos Modelos
+		final = pd.DataFrame()
+		final["Semana"] = focos["Semana"].iloc[-z:]
+		final["Focos"] = focos[cidade].iloc[-z:]
+		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		#final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		previsoes = previsao
+		"""
+		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
+		final["Previstos"] = lista_previsao
+		"""
+		previsoes = previsoes[:len(final)]
+		final["Previstos"] = previsoes
+		final["Semana"] = pd.to_datetime(final["Semana"])
+		final["Erro"] = final["Focos"] - final["Previstos"]
+		print(final)
+		print("="*80)
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Focos"],
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas em 2023")
+		plt.ylabel("Número de Focos de _Aedes_ sp.")
+		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+		_cidade = cidade
+		for velho, novo in troca.items():
+			_cidade = _cidade.replace(velho, novo)
+		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+                     color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas")
+		plt.ylabel("Número de Focos de _Aedes_ sp.")
+		plt.savefig(f'{caminho_resultados}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		print("="*80)
+
 		
 ####################################### Orientação a Objetos #######################################
 ##### CASOS
@@ -411,9 +518,9 @@ previsoes = [int(p) for p in previsoes]
 print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
-modelo.grafico_previsao_casos(previsoes, y)
+modelo.grafico_previsao_casos(previsoes, y, "22")
 ### Apenas 2023
-treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste_23(x,y)
+treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
 y_previsto = random_forest.predict(treino_x_explicado)
 previsoes23 = random_forest.predict(teste_x)
@@ -421,7 +528,29 @@ previsoes = [int(p) for p in previsoes23]
 print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
-modelo.grafico_previsao_casos23(previsoes, teste_y)
-
+modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
 ##### FOCOS
+modelo = Modelo()
+_retroagir, _horizonte = modelo.variar(8, 4)
+dataset, x, y, x_array, y_array = modelo.monta_dataset_focos(cidade)
+### Total
+treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
+random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+y_previsto = random_forest.predict(treino_x_explicado)
+previsoes = random_forest.predict(x)
+previsoes = [int(p) for p in previsoes]
+print(y_previsto)
+print(previsoes)
+R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 500, y)
+modelo.grafico_previsao_casos(previsoes, y, "22")
+### Apenas 2023
+treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
+random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+y_previsto = random_forest.predict(treino_x_explicado)
+previsoes23 = random_forest.predict(teste_x)
+previsoes = [int(p) for p in previsoes23]
+print(y_previsto)
+print(previsoes)
+R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
+modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
 sys.exit()
