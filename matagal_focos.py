@@ -19,6 +19,35 @@ from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
 from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
 
+### Condições para Variar #################################################
+_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+
+_retroagir = 8 # Semanas Epidemiológicas
+
+cidade = "Florianópolis"
+
+_automatiza = False
+
+z = 6
+limite = "out2023"
+fim = "nov2023"
+
+z = 19
+limite = "jul2023"
+fim = "ago2023"
+
+z = 32
+limite = "abr2023"
+fim = "mai2023"
+
+z = 50
+limite = "dez2022"
+fim = "jan2023"
+"""
+"""
+obs = f"(Treino até {limite}; Teste após {fim})"
+#########################################################################
+
 ### Encaminhamento aos Diretórios
 _local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _local == "GH": # _ = Variável Privada
@@ -30,17 +59,25 @@ elif _local == "CASA":
 elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
 focos = "focos_pivot.csv"
+"""
 prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
 unicos = "unicos_xy.csv"
+"""
+unicos = "casos_unicos.csv"
+prec = "prec_semana_ate_2023.csv"
+tmin = "tmin_semana_ate_2023.csv"
+tmed = "tmed_semana_ate_2023.csv"
+tmax = "tmax_semana_ate_2023.csv"
 
 ### Abrindo Arquivo
 focos = pd.read_csv(f"{caminho_dados}{focos}")
@@ -48,19 +85,13 @@ prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
-
-
+"""
 ### Recortes Temporais
 _ANO = "2022" # apenas ano de 2022
 casos = casos.iloc[:467] # Pois os casos estão até 2023 e o restante até 2022!
 focos = focos.iloc[:573] # Desconsiderando 2023
 unicos = unicos.iloc[:151] # Desconsiderando 2023
-
-### Condições para Variar
-_retroagir = 8 # Semanas Epidemiológicas
-cidade = "Florianópolis"
-_automatiza = True
-
+"""
 ### Sanando Erros
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
 cidades = unicos["Município"].copy()
@@ -129,14 +160,29 @@ y = dataset["FOCOS"]
 x_array = x.to_numpy().astype(int)
 y_array = y.to_numpy().astype(int)
 x_array = x_array.reshape(x_array.shape[0], -1)
-
+"""
 treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
                                                         random_state = SEED,
                                                         test_size = 0.2)
+"""
+x_ate_limite = x.iloc[:-z]
+y_ate_limite = y.iloc[:-z]
+xlimite = x.iloc[-z:]
+ylimite = y.iloc[-z:]
+treino_x = x_ate_limite.copy()
+teste_x = xlimite.copy()
+treino_y = y_ate_limite.copy()
+teste_y = ylimite.copy()
 explicativas = x.columns.tolist() # feature_names = explicativas
 treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-
+print(f"""Conjunto de Treino com as Variáveis Explicativas (<{limite}):\n{treino_x}\n
+Conjunto de Treino com as Variáveis Explicativas (>{fim}):\n{teste_x}\n 
+Conjunto de Teste com a Variável Dependente (<{limite}):\n{treino_y}\n 
+Conjunto de Teste com a Variável Dependente (>{fim}):\n{teste_y}\n
+Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<{limite}):\n{treino_x_explicado}\n""")
+#sys.exit()
+"""
 ### Normalizando/Escalonando Dataset_x (Se Necessário)
 escalonador = StandardScaler()
 escalonador.fit(treino_x)
@@ -178,7 +224,7 @@ escalonador = StandardScaler()
 escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
-
+"""
 ### Exibindo Informações
 print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
 print(dataset.info())
@@ -339,13 +385,24 @@ def grafico_previsao(previsao, teste, string_modelo):
     final["Semana"] = pd.to_datetime(final["Semana"])
     print(final)
     print("="*80)
+    plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
     sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
                  color = "darkblue", linewidth = 1, label = "Observado")
     sns.lineplot(x = final["Semana"], y = final["Previstos"],
                  color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+    plt.title(f"MODELO {nome_modelo.upper()} (R²: {R_2}): OBSERVAÇÃO E PREVISÃO.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.\n{obs}")
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
+    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+           'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U', 
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+    _cidade = cidade
+    for velho, novo in troca.items():
+        _cidade = _cidade.replace(velho, novo)
+    plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
     plt.show()
 
 def metricas(string_modelo, modeloNN = None):
