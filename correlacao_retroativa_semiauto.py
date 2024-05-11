@@ -6,7 +6,7 @@ import seaborn as sns
 import statsmodels as sm
 
 ### Encaminhamento ao Diretório "DADOS" e "RESULTADOS"
-caminho_dados = "/home/sifapsc/scripts/matheus/dados/"
+caminho_dados = "/dados3/pesquisa/dados_mateus/"
 caminho_imagens = "/home/sifapsc/scripts/matheus/resultado_imagens/"
 caminho_correlacao = "/home/sifapsc/scripts/matheus/resultado_correlacao/"
 
@@ -53,10 +53,10 @@ sns.heatmap(correlacao_fm0cm0, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; sem retroagir [TESTE])", weight = "bold", size = "medium") 
 plt.show()
-plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm0_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm0_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 #del fm0cm0
 del correlacao_fm0cm0
-
+"""
 #EPIDEMIOLOGIA
 ## 1 (Casos com 1 Semana Epidemiológica de diferença)
 fm0cm1 = fm0cm0.copy()
@@ -80,7 +80,7 @@ sns.heatmap(correlacao_fm0cm1, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Casos em 1 Semana Epidemiológica)", weight = "bold", size = "medium")
 plt.show()
-plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 del fm0cm1
 del correlacao_fm0cm1
 
@@ -108,7 +108,7 @@ for fococaso in retro_caso:
 	ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Casos em {fococaso} Semanas Epidemiológicas)", weight = "bold", size = "medium") 
 	plt.show()
-	plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm{fococaso}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+	#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm{fococaso}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 	del fm0cmx
 	del correlacao_fm0cmx
 
@@ -136,10 +136,10 @@ sns.heatmap(correlacao_fm1cm1, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Variáveis Climatológicas em 1 Semana Epidemiológica)", weight = "bold", size = "medium")
 plt.show()
-plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 del fm1cm1
 del correlacao_fm1cm1
-
+"""
 for fococlima in retro_clima:
 	## +1 (Variáveis Climáticas com 2 Semanas Epidemiológicas de diferença)
 	fmxcmx = fm0cm0.copy()
@@ -164,7 +164,7 @@ for fococlima in retro_clima:
 	ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Variáveis Climatológicas em {fococlima} Semana Epidemiológica)", weight = "bold", size = "medium")
 	plt.show()
-	plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_anofm{fococlima}cm{retro_clima}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
+	#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_anofm{fococlima}cm{retro_clima}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
 	del fmxcmx
 	del correlacao_fmxcmx
 
