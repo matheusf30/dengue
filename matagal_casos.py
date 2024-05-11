@@ -32,7 +32,7 @@ _automatiza = False
 z = 6
 limite = "out2023"
 fim = "nov2023"
-"""
+
 z = 19
 limite = "jul2023"
 fim = "ago2023"
@@ -44,7 +44,7 @@ fim = "mai2023"
 z = 50
 limite = "dez2022"
 fim = "jan2023"
-
+"""
 """
 obs = f"(Treino até {limite}; Teste após {fim})"
 
@@ -394,6 +394,23 @@ def grafico_previsao(previsao, teste, string_modelo):
     plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
     plt.show()
 
+def histograma_erro(previsao, teste):
+    final = pd.DataFrame()
+    final["Semana"] = casos["Semana"]
+    final["Casos"] = casos[cidade]
+    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    previsoes = previsao.copy()
+    previsoes = previsoes[:len(final)]
+    final["Previstos"] = previsoes
+    final["Semana"] = pd.to_datetime(final["Semana"])
+    final["Erro"] = final["Casos"] - final["Previstos"]
+    print(final)
+    print("="*80)   
+    plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+    plt.hist(final["Erro"], bins = 20)
+    plt.show()
+
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -450,8 +467,9 @@ previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
-grafico_previsao(previsoesRF, y_previstoRF, "RF")
+#grafico_previsao(previsoesRF, y_previstoRF, "RF")
 metricas("RF")
+histograma_erro(previsoesRF, y_previstoRF)
 #joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
 
 #########################################################AUTOMATIZANDO###############################################################
