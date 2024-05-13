@@ -1,5 +1,6 @@
 ## Arquivos Correlatos
-from verivalida import Modelo
+#from verivalida import Modelo
+from verivalida.Modelo import monta_dataset_casos, monta_dataset_focos
 
 ### Bibliotecas Correlatas
 import matplotlib.pyplot as plt               
@@ -54,7 +55,10 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 #cbar = https://matplotlib.org/3.1.0/tutorials/colors/colorbar_only.html
 
-modelo = Modelo()
+
+dados_casos = monta_dataset_casos("Florianópolis")
+print(dados_casos)
+#modelo = Modelo()
 sys.exit()
 
 ### Base e Clima (sem retroagir)
