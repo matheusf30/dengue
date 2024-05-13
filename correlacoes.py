@@ -12,7 +12,7 @@ import sys
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
-_ANO = "2023" # "2023" # "2022" # "2021" # "2020"
+_ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
 _CIDADE = "Florianópolis"
 _METODO = "pearson" # "pearson" # "spearman" # "kendall"
 
@@ -78,8 +78,8 @@ elif _ANO == "2021":
 elif _ANO == "2020":
 	dataset = dataset.iloc[-209:-157, :].copy()
 else:
-	print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n{ansi['reset']}")
-	sys.exit()
+	print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+	#sys.exit()
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{_CIDADE}"
@@ -115,6 +115,18 @@ fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = Fals
 filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
 sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-plt.savefig(f'{caminho_correlacao}matrix_correlacao_{_METODO}_{_CIDADE}_s{_RETROAGIR}_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+if _ANO == "total":
+	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
+else:
+	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
+_cidade = _CIDADE
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+for velho, novo in troca.items():
+	_cidade = _cidade.replace(velho, novo)
+plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 plt.show()
