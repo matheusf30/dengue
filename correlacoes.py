@@ -1,5 +1,6 @@
 ### Bibliotecas Correlatas
-import matplotlib.pyplot as plt               
+import matplotlib.pyplot as plt 
+import matplotlib as mpl             
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -11,7 +12,7 @@ import sys
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _RETROAGIR = 12 # Semanas Epidemiológicas
-_ANO = "2023" # "2023" # "2022" # "2021" # "2020"
+_ANO = "2021" # "2023" # "2022" # "2021" # "2020"
 _CIDADE = "Florianópolis"
 _METODO = "pearson" # "pearson" # "spearman" # "kendall"
 
@@ -25,17 +26,18 @@ ansi = {"bold" : "\033[1m", "red" : "\033[91m",
 
 ### Encaminhamento aos Diretórios
 if _LOCAL == "GH": # _ = Variável Privada
-    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-    caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
+	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+	caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
 elif _LOCAL == "CASA":
-    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
-    caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
+	caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+	caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
 elif _LOCAL == "IFSC":
-    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-    caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
-    caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
+	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
+	caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/"
 else:
-    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+	print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
@@ -54,9 +56,7 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
-#cbar = https://matplotlib.org/3.1.0/tutorials/colors/colorbar_only.html
-
-
+### Montando dataset
 dataset = tmin[["Semana"]].copy()
 dataset["TMIN"] = tmin[_CIDADE].copy()
 dataset["TMED"] = tmed[_CIDADE].copy()
@@ -80,17 +80,11 @@ elif _ANO == "2020":
 else:
 	print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n{ansi['reset']}")
 	sys.exit()
-
-#dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{_CIDADE}"
-ordem_colunas = ["FOCOS", "CASOS", "TMIN", "TMED", "TMAX", "PREC"]  # Specify the desired order of columns
+ordem_colunas = ["FOCOS", "CASOS", "TMIN", "TMED", "TMAX", "PREC"]
 dataset = dataset.reindex(columns = ordem_colunas)
-
-
-### Base e Clima (sem retroagir)
-## 0 (testando arquivo.csv base)
 print(f"\n \n MATRIZ DE CORRELAÇÃO ({_METODO.title()}; Base e Clima; sem retroagir [TESTE]) \n")
 print(dataset.info())
 print("~"*80)
@@ -98,8 +92,8 @@ print(dataset.dtypes)
 print("~"*80)
 print(dataset)
 #sys.exit()
-#
 
+### Retroagindo dataset
 for r in range(1, _RETROAGIR + 1):
 	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
 	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
@@ -108,18 +102,19 @@ for r in range(1, _RETROAGIR + 1):
 	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 dataset.dropna(inplace = True)
-#dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{_CIDADE}"
+
+### Correlacionando
 correlacao_dataset = dataset.corr(method = f"{_METODO}")
+
 print("="*80)
 print(f"Método de {_METODO.title()} \n", correlacao_dataset)
 print("="*80)
+
 fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
-sns.heatmap(correlacao_dataset, annot = True, cmap = "tab20c", linewidth = 0.5)
+filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
+sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro) # "tab20c"
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas)", weight = "bold", size = "medium")
-#plt.savefig(f'{caminho_correlacao}correlacao_casos_{__CIDADE}_.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
+#plt.savefig(f'{caminho_correlacao}matrix_correlacao_{__CIDADE}_.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 plt.show()
-
-
-sys.exit()
