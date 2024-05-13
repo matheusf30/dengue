@@ -1,9 +1,14 @@
+## Arquivos Correlatos
+from verivalida import Modelo
+
 ### Bibliotecas Correlatas
 import matplotlib.pyplot as plt               
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import statsmodels as sm
+### Suporte
+import sys
 
 ### Condições para Variar #######################################################
 
@@ -49,6 +54,8 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
 #cbar = https://matplotlib.org/3.1.0/tutorials/colors/colorbar_only.html
 
+modelo = Modelo()
+sys.exit()
 
 ### Base e Clima (sem retroagir)
 ## 0 (testando arquivo.csv base)
