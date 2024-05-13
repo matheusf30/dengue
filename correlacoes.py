@@ -11,8 +11,8 @@ import sys
 ### Condições para Variar #######################################################
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_RETROAGIR = 12 # Semanas Epidemiológicas
-_ANO = "2021" # "2023" # "2022" # "2021" # "2020"
+_RETROAGIR = 16 # Semanas Epidemiológicas
+_ANO = "2023" # "2023" # "2022" # "2021" # "2020"
 _CIDADE = "Florianópolis"
 _METODO = "pearson" # "pearson" # "spearman" # "kendall"
 
@@ -113,8 +113,8 @@ print("="*80)
 
 fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
 filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
-sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro) # "tab20c"
+sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-#plt.savefig(f'{caminho_correlacao}matrix_correlacao_{__CIDADE}_.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+plt.savefig(f'{caminho_correlacao}matrix_correlacao_{_METODO}_{_CIDADE}_s{_RETROAGIR}_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 plt.show()
