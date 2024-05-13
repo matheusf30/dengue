@@ -218,6 +218,115 @@ class Modelo:
 		print(dataset)
 		return dataset, x, y, x_array, y_array
 
+	def testa_dataset_casos(self, cidade):
+		"""
+		Função para montar estrutura de dados para previsão.
+		"""
+		dataset = tmin[["Semana"]].copy()
+		dataset["TMIN"] = tmin[cidade].copy()
+		dataset["TMED"] = tmed[cidade].copy()
+		dataset["TMAX"] = tmax[cidade].copy()
+		dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset.dropna(axis = 0, inplace = True)
+		dataset = dataset.iloc[104:, :].copy()
+		dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").copy()
+		troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
+		dataset = dataset.rename(columns = troca_nome)
+		dataset.fillna(0, inplace = True)
+		for r in range(_horizonte + 1, _retroagir + 1):
+			dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+			dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+			dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+			dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+			dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+			dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+		dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
+		dataset.dropna(inplace = True)
+		dataset.set_index("Semana", inplace = True)
+		dataset.columns.name = f"{cidade}"
+		x = dataset.drop(columns = "CASOS")
+		y = dataset["CASOS"]
+		if x.empty or x.isnull().all().all():
+			print(f"'X' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		x = x.dropna()
+		if x.empty:
+			print(f"'X' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		if y.empty or y.isnull().all().all():
+			print(f"'Y' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		y = y.dropna()
+		if y.empty:
+			print(f"'Y' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		x_array = x.to_numpy()
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		x_array = x.to_numpy().astype(int)
+		y_array = y.to_numpy().astype(int)
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		print(dataset)
+		return dataset, x, y, x_array, y_array
+
+	def testa_dataset_focos(self, cidade):
+		"""
+		Função para montar estrutura de teste de dados para previsão.
+		"""
+		dataset = tmin[["Semana"]].copy()
+		dataset["TMIN"] = tmin[cidade].copy()
+		dataset["TMED"] = tmed[cidade].copy()
+		dataset["TMAX"] = tmax[cidade].copy()
+		dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
+		dataset.dropna(axis = 0, inplace = True)
+		troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
+		dataset = dataset.rename(columns = troca_nome)
+		dataset.fillna(0, inplace = True)
+		#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+		#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+		dataset["TMED_r8"] = dataset["TMED"].shift(-8)
+		dataset["TMED_r10"] = dataset["TMED"].shift(-10)
+		#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+		#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+		dataset["PREC_r1"] = dataset["PREC"].shift(-1)
+		dataset["PREC_r2"] = dataset["PREC"].shift(-2)
+		#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+		dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+		dataset.dropna(inplace = True)
+		dataset.set_index("Semana", inplace = True)
+		dataset.columns.name = f"{cidade}"
+		x = dataset.drop(columns = "FOCOS")
+		y = dataset["FOCOS"]
+		if x.empty or x.isnull().all().all():
+			print(f"'X' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		x = x.dropna()
+		if x.empty:
+			print(f"'X' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {x}")
+			return None, None, None, None, None
+		if y.empty or y.isnull().all().all():
+			print(f"'Y' está vazio ou contém apenas valores 'NaN! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		y = y.dropna()
+		if y.empty:
+			print(f"'Y' continua vazio, mesmo removendo valores 'NaN'! Confira o dataset do município {cidade}!")
+			print(f"{cidade} possui um conjunto com erro:\n {y}")
+			return None, None, None, None, None
+		x_array = x.to_numpy()
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		x_array = x.to_numpy().astype(int)
+		y_array = y.to_numpy().astype(int)
+		x_array = x_array.reshape(x_array.shape[0], -1)
+		print(dataset)
+		return dataset, x, y, x_array, y_array
 
 	def treino_teste(self, x, x_array, y_array):
 		"""
@@ -524,6 +633,7 @@ modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(8, 4)
 dataset, x, y, x_array, y_array = modelo.monta_dataset_focos(cidade)
+#dataset, x, y, x_array, y_array = modelo.testa_dataset_focos(cidade)
 ### Total
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
 random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
