@@ -1,6 +1,6 @@
 ## Arquivos Correlatos
 #from verivalida import Modelo
-from verivalida.Modelo import monta_dataset_casos, monta_dataset_focos
+#from verivalida.Modelo import monta_dataset_casos, monta_dataset_focos
 
 ### Bibliotecas Correlatas
 import matplotlib.pyplot as plt               
@@ -13,21 +13,29 @@ import sys
 
 ### Condições para Variar #######################################################
 
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_retroagir = 3 # Semanas Epidemiológicas
+_RETROAGIR = 12 # Semanas Epidemiológicas
+_ANO = "2023"
+_CIDADE = "Florianópolis"
+_CIDADE = _CIDADE.upper()
+_METODO = "pearson" # "spearman" # "kendall"
 
-cidade = "Florianópolis"
+##### Padrão ANSI ##################################
+ansi = {"bold" : "\033[1m", "red" : "\033[91m",
+        "green" : "\033[92m", "yellow" : "\033[33m",
+        "blue" : "\033[34m", "magenta" : "\033[35m",
+        "cyan" : "\033[36m", "white" : "\033[37m", "reset" : "\033[0m"}
 #################################################################################
 
 ### Encaminhamento aos Diretórios
-if _local == "GH": # _ = Variável Privada
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
@@ -56,143 +64,69 @@ tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 #cbar = https://matplotlib.org/3.1.0/tutorials/colors/colorbar_only.html
 
 
-dados_casos = monta_dataset_casos("Florianópolis")
-print(dados_casos)
-#modelo = Modelo()
-sys.exit()
+dataset = tmin[["Semana"]].copy()
+dataset["TMIN"] = tmin[_CIDADE].copy()
+dataset["TMED"] = tmed[_CIDADE].copy()
+dataset["TMAX"] = tmax[_CIDADE].copy()
+dataset = dataset.merge(prec[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+dataset.dropna(axis = 0, inplace = True)
+dataset = dataset.iloc[:, :].copy()
+dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+troca_nome = {f"{_CIDADE}_x" : "PREC", f"{_CIDADE}_y" : "FOCOS", f"{_CIDADE}" : "CASOS"}
+dataset = dataset.rename(columns = troca_nome)
+dataset.fillna(0, inplace = True)
+if _ANO == "2023":
+	dataset = dataset.iloc[-53:, :].copy()
+elif _ANO == "2022":
+	dataset = dataset.iloc[-105:-53, :].copy()
+elif _ANO == "2021":
+	dataset = dataset.iloc[-157:-105, :].copy()
+elif _ANO == "2020":
+	dataset = dataset.iloc[-209:-157, :].copy()
+else:
+	print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n{ansi['reset']}")
+	sys.exit()
+
+#dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
+dataset.dropna(inplace = True)
+dataset.set_index("Semana", inplace = True)
+dataset.columns.name = f"{_CIDADE}"
+ordem_colunas = ["FOCOS", "CASOS", "TMIN", "TMED", "TMAX", "PREC"]  # Specify the desired order of columns
+dataset = dataset.reindex(columns = ordem_colunas)
+
 
 ### Base e Clima (sem retroagir)
 ## 0 (testando arquivo.csv base)
-print(f"\n \n MATRIZ DE CORRELAÇÃO ({metodo.title()}; Base e Clima; sem retroagir [TESTE]) \n")
-print(fm0cm0.info())
+print(f"\n \n MATRIZ DE CORRELAÇÃO ({_METODO.title()}; Base e Clima; sem retroagir [TESTE]) \n")
+print(dataset.info())
 print("~"*80)
-print(fm0cm0.dtypes)
+print(dataset.dtypes)
 print("~"*80)
-print(fm0cm0)
+print(dataset)
+#sys.exit()
 #
-correlacao_fm0cm0 = fm0cm0.corr(method = f"{metodo}")#.round(4)
 
+for r in range(1, _RETROAGIR + 1):
+	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+dataset.dropna(inplace = True)
+#dataset.set_index("Semana", inplace = True)
+dataset.columns.name = f"{_CIDADE}"
+correlacao_dataset = dataset.corr(method = f"{_METODO}")
 print("="*80)
-print(f"Método de {metodo.title()} \n", correlacao_fm0cm0)
+print(f"Método de {_METODO.title()} \n", correlacao_dataset)
 print("="*80)
-#
-fig, ax = plt.subplots()
-sns.heatmap(correlacao_fm0cm0, annot = True, cmap = "tab20c", linewidth = 0.5)
+fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+sns.heatmap(correlacao_dataset, annot = True, cmap = "tab20c", linewidth = 0.5)
 ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; sem retroagir [TESTE])", weight = "bold", size = "medium") 
+fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas)", weight = "bold", size = "medium")
+#plt.savefig(f'{caminho_correlacao}correlacao_casos_{__CIDADE}_.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 plt.show()
-#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm0_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-#del fm0cm0
-del correlacao_fm0cm0
-"""
-#EPIDEMIOLOGIA
-## 1 (Casos com 1 Semana Epidemiológica de diferença)
-fm0cm1 = fm0cm0.copy()
-fm0cm1[casos] = fm0cm1[casos].shift(1)
-fm0cm1.dropna(axis = 0, inplace = True)
-print(f"\n \n MATRIZ DE CORRELAÇÃO ({metodo.title()}; Base e Clima; retroagindo Casos em 1 Semana Epidemiológica) \n")
-print(fm0cm1.info())
-print("~"*80)
-print(fm0cm1.dtypes)
-print("~"*80)
-print(fm0cm1)
 
-correlacao_fm0cm1 = fm0cm1.corr(method = f"{metodo}")#.round(4)
 
-print("="*80)
-print(f"Método de {metodo.title()} \n", correlacao_fm0cm1)
-print("="*80)
-
-fig, ax = plt.subplots()
-sns.heatmap(correlacao_fm0cm1, annot = True, cmap = "tab20c", linewidth = 0.5)
-ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Casos em 1 Semana Epidemiológica)", weight = "bold", size = "medium")
-plt.show()
-#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-del fm0cm1
-del correlacao_fm0cm1
-
-for fococaso in retro_caso:
-
-## +1 (Casos com 2 Semanas Epidemiológicas de diferença)
-	fm0cmx = fm0cm0.copy()
-	fm0cmx[casos] = fm0cmx[casos].shift(fococaso)
-	fm0cmx.dropna(axis = 0, inplace = True)
-	print(f"\n \n MATRIZ DE CORRELAÇÃO ({metodo.title()}; Base e Clima; retroagindo Casos em {fococaso} Semanas Epidemiológicas) \n")
-	print(fm0cmx.info())
-	print("~"*80)
-	print(fm0cmx.dtypes)
-	print("~"*80)
-	print(fm0cmx)
-	
-	correlacao_fm0cmx = fm0cmx.corr(method = f"{metodo}")#.round(4)
-	
-	print("="*80)
-	print(f"Método de {metodo.title()} \n", correlacao_fm0cmx)
-	print("="*80)
-	
-	fig, ax = plt.subplots()
-	sns.heatmap(correlacao_fm0cmx, annot = True, cmap = "tab20c", linewidth = 0.5)
-	ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Casos em {fococaso} Semanas Epidemiológicas)", weight = "bold", size = "medium") 
-	plt.show()
-	#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm0cm{fococaso}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-	del fm0cmx
-	del correlacao_fm0cmx
-
-### CLIMA
-## 1 (Variáveis Climáticas com 1 Semana Epidemiológica de diferença)
-fm1cm1 = fm0cm0.copy()
-fm1cm1[clima] = fm1cm1[clima].shift(1)
-fm1cm1.dropna(axis = 0, inplace = True)
-
-print(f"\n \n MATRIZ DE CORRELAÇÃO ({metodo.title()}; Base e Clima; retroagindo Variáveis Climatológicas em 1 Semana Epidemiológica) \n")
-print(fm1cm1.info())
-print("~"*80)
-print(fm1cm1.dtypes)
-print("~"*80)
-print(fm1cm1)
-
-correlacao_fm1cm1 = fm1cm1.corr(method = f"{metodo}")#.round(4)
-
-print("="*80)
-print(f"Método de {metodo.title()} \n", correlacao_fm1cm1)
-print("="*80)
-
-fig, ax = plt.subplots()
-sns.heatmap(correlacao_fm1cm1, annot = True, cmap = "tab20c", linewidth = 0.5)
-ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Variáveis Climatológicas em 1 Semana Epidemiológica)", weight = "bold", size = "medium")
-plt.show()
-#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_{ano}fm1cm1_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-del fm1cm1
-del correlacao_fm1cm1
-"""
-for fococlima in retro_clima:
-	## +1 (Variáveis Climáticas com 2 Semanas Epidemiológicas de diferença)
-	fmxcmx = fm0cm0.copy()
-	fmxcmx[clima] = fmxcmx[clima].shift(fococlima)
-	fmxcmx.dropna(axis = 0, inplace = True)
-
-	print(f"\n \n MATRIZ DE CORRELAÇÃO ({metodo.title()}; Base e Clima; retroagindo Variáveis Climatológicas em {fococlima} Semanas Epidemiológicas) \n")
-	print(fmxcmx.info())
-	print("~"*80)
-	print(fmxcmx.dtypes)
-	print("~"*80)
-	print(fmxcmx)
-	
-	correlacao_fmxcmx = fmxcmx.corr(method = f"{metodo}")#.round(4)
-
-	print("="*80)
-	print(f"Método de {metodo.title()} \n", correlacao_fmxcmx)
-	print("="*80)
-
-	fig, ax = plt.subplots()
-	sns.heatmap(correlacao_fmxcmx, annot = True, cmap = "tab20c", linewidth = 0.5)
-	ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre \n FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM FLORIANÓPOLIS \n *(Método de {metodo.title()}; durante {ano}; Retroagindo Variáveis Climatológicas em {fococlima} Semana Epidemiológica)", weight = "bold", size = "medium")
-	plt.show()
-	#plt.savefig(f"{caminho_correlacao}Correlação{metodo.title()}_anofm{fococlima}cm{retro_clima}_{cidade}.png", bbox_inches = "tight", pad_inches = 0.0)
-	del fmxcmx
-	del correlacao_fmxcmx
-
+sys.exit()
