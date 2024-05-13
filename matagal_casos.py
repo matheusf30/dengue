@@ -252,6 +252,31 @@ def monta_dataset(cidade):
     dataset.columns.name = f"{cidade}"
     return dataset
 
+def testa_dataset(cidade):
+	dataset = tmin[["Semana"]].copy()
+	dataset["TMIN"] = tmin[cidade].copy()
+	dataset["TMED"] = tmed[cidade].copy()
+	dataset["TMAX"] = tmax[cidade].copy()
+	dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").copy()
+	dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
+	dataset.dropna(axis = 0, inplace = True)
+	dataset = dataset.iloc[104:, :].copy()
+	dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").copy()
+	troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
+	dataset = dataset.rename(columns = troca_nome)
+	dataset.fillna(0, inplace = True)
+	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
+	dataset.dropna(inplace = True)
+	dataset.set_index("Semana", inplace = True)
+	dataset.columns.name = f"{cidade}"
+	return dataset
+
 def treino_teste(dataset, cidade):
     SEED = np.random.seed(0)
     x = dataset.drop(columns = "CASOS").copy()
