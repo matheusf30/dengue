@@ -431,9 +431,41 @@ def histograma_erro(previsao, teste):
     final["Semana"] = pd.to_datetime(final["Semana"])
     final["Erro"] = final["Casos"] - final["Previstos"]
     print(final)
-    print("="*80)   
+    print("="*80)
+    media = round(final["Erro"].mean(), 2)
+    desvp = round(final["Erro"].std(), 2)
     plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
-    plt.hist(final["Erro"], bins = 20)
+    sns.histplot(final["Casos"], bins = 50, kde = True, color = "blue")
+    sns.histplot(final["Previstos"], bins = 20, kde = True, color = "red")
+    sns.histplot(final["Erro"], bins = 50, kde = True, color = "black", label = "Erro")
+    plt.legend(title = "Distribuição", loc = "upper right", labels = ["Observado", "Previsto", "Erro"])
+    plt.title(f"MODELO RANDOM FOREST* (R²: {R_2}): HISTOGRAMA DO ERRO**.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.\n *{obs} **($\mu = {media}; \sigma = {desvp}$)")
+    plt.xlabel("Valor")
+    plt.ylabel("Quantidade")
+    plt.show()
+
+def boxplot_erro(previsao, teste):
+    final = pd.DataFrame()
+    final["Semana"] = casos["Semana"]
+    final["Casos"] = casos[cidade]
+    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    previsoes = previsao.copy()
+    previsoes = previsoes[:len(final)]
+    final["Previstos"] = previsoes
+    final["Semana"] = pd.to_datetime(final["Semana"])
+    final["Erro"] = final["Casos"] - final["Previstos"]
+    print(final)
+    print("="*80)
+    media = round(final["Erro"].mean(), 2)
+    desvp = round(final["Erro"].std(), 2)
+    plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+    posicao = [1, 2, 3]
+    plt.boxplot([final["Casos"], final["Previstos"], final["Erro"]], positions = posicao)
+    plt.xticks(posicao, ["Observado", "Previsto", "Erro"])
+    plt.title(f"MODELO RANDOM FOREST* (R²: {R_2}): BOXPLOT DO ERRO**.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.\n *{obs} **($\mu = {media}; \sigma = {desvp}$)")
+    plt.xlabel("Boxplot")
+    plt.ylabel("Valor")
     plt.show()
 
 def metricas(string_modelo, modeloNN = None):
@@ -495,6 +527,7 @@ lista_previsao(previsoesRF, 5, "RF")
 #grafico_previsao(previsoesRF, y_previstoRF, "RF")
 metricas("RF")
 histograma_erro(previsoesRF, y_previstoRF)
+boxplot_erro(previsoesRF, y_previstoRF)
 #joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
 
 #########################################################AUTOMATIZANDO###############################################################
