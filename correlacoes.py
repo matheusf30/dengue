@@ -140,6 +140,7 @@ if _AUTOMATIZA == True and _CLIMA == True:
 					'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
 			for velho, novo in troca.items():
 				_cidade = _cidade.replace(velho, novo)
+			caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/clima/"
 			plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 			print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 {ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
@@ -217,6 +218,7 @@ if _AUTOMATIZA == True and _ENTOMOEPIDEMIO == True:
 					'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
 			for velho, novo in troca.items():
 				_cidade = _cidade.replace(velho, novo)
+			caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/entomoepidemio/"
 			plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 			print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 {ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
