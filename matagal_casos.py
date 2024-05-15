@@ -21,49 +21,50 @@ from sklearn.ensemble import RandomForestRegressor
 
 ### Condições para Variar #######################################################
 
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_retroagir = 3 # Semanas Epidemiológicas
+_RETROAGIR = 3 # Semanas Epidemiológicas
+_HORIZONTE = 2
 
 cidade = "Florianópolis"
 
-_automatiza = False
+_AUTOMATIZA = False
 
 z = 6
-limite = "out2023"
-fim = "nov2023"
-
+_LIMITE = "out2023"
+_FIM = "nov2023"
+"""
 z = 19
-limite = "jul2023"
-fim = "ago2023"
+_LIMITE = "jul2023"
+_FIM = "ago2023"
 
 z = 32
-limite = "abr2023"
-fim = "mai2023"
+_LIMITE = "abr2023"
+_FIM = "mai2023"
 
 z = 50
-limite = "dez2022"
-fim = "jan2023"
+_LIMITE = "dez2022"
+_FIM = "jan2023"
+
 """
-"""
-obs = f"(Treino até {limite}; Teste após {fim})"
+obs = f"(Treino até {_LIMITE}; Teste após {_FIM})"
 
 ##################################################################################
 
 ### Encaminhamento aos Diretórios
-if _local == "GH": # _ = Variável Privada
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
+print(f"\nOS DADOS UTILIzADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
 #casos = "casos_pivot_total.csv"
@@ -118,7 +119,7 @@ for erro in value_error:
         print(f"\nNo sé qué se pasa! {erro} está no conjunto de dados!\n")
 
 # Key_error gerado ao montar o dataset automatizado
-key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
+key_error = ["ABELARDO LUz", "URUBICI", "RANCHO QUEIMADO"]
 for erro in key_error: 
     cidades = cidades[cidades != erro] 
     if erro not in unicos["Município"]:
@@ -135,7 +136,6 @@ tmin["Semana"] = pd.to_datetime(tmin["Semana"])
 tmed["Semana"] = pd.to_datetime(tmed["Semana"])
 tmax["Semana"] = pd.to_datetime(tmax["Semana"])
 
-
 ### Montando Dataset
 dataset = tmin[["Semana"]].copy()
 dataset["TMIN"] = tmin[cidade].copy()
@@ -149,23 +149,29 @@ dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
 dataset = dataset.rename(columns = troca_nome)
 dataset.fillna(0, inplace = True)
-
 """
-for r in range(1, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+_RETROAGIR = 12
+for r in range(10, _RETROAGIR + 1):
+    #dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+    #dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+    dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
+#_RETROAGIR = 2
+#dataset[f"TMED_r{_RETROAGIR}"] = dataset["TMED"].shift(-_RETROAGIR)
+#dataset[f"PREC_r{_RETROAGIR}"] = dataset["PREC"].shift(-_RETROAGIR)
+#dataset[f"FOCOS_r{_RETROAGIR}"] = dataset["FOCOS"].shift(-_RETROAGIR)
 
-for r in range(3, _retroagir + 1):
+for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
     dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+
 
 dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
 dataset.dropna(inplace = True)
@@ -180,27 +186,28 @@ y = dataset["CASOS"]
 x_array = x.to_numpy().astype(int)
 y_array = y.to_numpy().astype(int)
 x_array = x_array.reshape(x_array.shape[0], -1)
+
 """
 treino_x, teste_x, treino_y, teste_y = train_test_split(x_array, y_array,
                                                         random_state = SEED,
                                                         test_size = 0.2)
 """
-x_ate_limite = x.iloc[:-z]
-y_ate_limite = y.iloc[:-z]
-xlimite = x.iloc[-z:]
-ylimite = y.iloc[-z:]
-treino_x = x_ate_limite.copy()
-teste_x = xlimite.copy()
-treino_y = y_ate_limite.copy()
-teste_y = ylimite.copy()
+x_ate__LIMITE = x.iloc[:-z]
+y_ate__LIMITE = y.iloc[:-z]
+x_LIMITE = x.iloc[-z:]
+y_LIMITE = y.iloc[-z:]
+treino_x = x_ate__LIMITE.copy()
+teste_x = x_LIMITE.copy()
+treino_y = y_ate__LIMITE.copy()
+teste_y = y_LIMITE.copy()
 explicativas = x.columns.tolist() # feature_names = explicativas
 treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-print(f"""Conjunto de Treino com as Variáveis Explicativas (<{limite}):\n{treino_x}\n
-Conjunto de Treino com as Variáveis Explicativas (>{fim}):\n{teste_x}\n 
-Conjunto de Teste com a Variável Dependente (<{limite}):\n{treino_y}\n 
-Conjunto de Teste com a Variável Dependente (>{fim}):\n{teste_y}\n
-Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<{limite}):\n{treino_x_explicado}\n""")
+print(f"""Conjunto de Treino com as Variáveis Explicativas (<{_LIMITE}):\n{treino_x}\n
+Conjunto de Treino com as Variáveis Explicativas (>{_FIM}):\n{teste_x}\n 
+Conjunto de Teste com a Variável Dependente (<{_LIMITE}):\n{treino_y}\n 
+Conjunto de Teste com a Variável Dependente (>{_FIM}):\n{teste_y}\n
+Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<{_LIMITE}):\n{treino_x_explicado}\n""")
 #sys.exit()
 """
 ### Normalizando/Escalonando Dataset_x (Se Necessário)
@@ -239,7 +246,7 @@ def monta_dataset(cidade):
     troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
     dataset = dataset.rename(columns = troca_nome)
     dataset.fillna(0, inplace = True)
-    for r in range(3, _retroagir + 1):
+    for r in range(3, _RETROAGIR + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -250,6 +257,7 @@ def monta_dataset(cidade):
     dataset.dropna(inplace = True)
     dataset.set_index("Semana", inplace = True)
     dataset.columns.name = f"{cidade}"
+    print(dataset)
     return dataset
 
 def testa_dataset(cidade):
@@ -265,16 +273,22 @@ def testa_dataset(cidade):
 	troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
 	dataset = dataset.rename(columns = troca_nome)
 	dataset.fillna(0, inplace = True)
+	"""
 	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
 	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	dataset[f"TMED_r12"] = dataset["TMED"].shift(-12)
+	dataset[f"PREC_r12"] = dataset["PREC"].shift(-12)
+	dataset[f"FOCOS_r12"] = dataset["FOCOS"].shift(-12)
+	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	"""
 	dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
 	dataset.dropna(inplace = True)
 	dataset.set_index("Semana", inplace = True)
 	dataset.columns.name = f"{cidade}"
+	print(dataset)
 	return dataset
 
 def treino_teste(dataset, cidade):
@@ -358,8 +372,8 @@ def salva_modeloRF(modelo, cidade):
         cidade = cidade.replace(velho, novo)
     if not os.path.exists(caminho_modelos):
         os.makedirs(caminho_modelos)
-    joblib.dump(modelo, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
+    joblib.dump(modelo, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5")
     print("\n" + "="*80 + "\n")
 
 def lista_previsao(previsao, n, string_modelo):
@@ -387,8 +401,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -416,15 +430,15 @@ def grafico_previsao(previsao, teste, string_modelo):
     _cidade = cidade
     for velho, novo in troca.items():
         _cidade = _cidade.replace(velho, novo)
-    plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+    #plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_casos_{_cidade}_{_LIMITE}-{_FIM}.pdf', format = "pdf", dpi = 1200)
     plt.show()
 
 def histograma_erro(previsao, teste):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao.copy()
     previsoes = previsoes[:len(final)]
     final["Previstos"] = previsoes
@@ -448,8 +462,8 @@ def boxplot_erro(previsao, teste):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao.copy()
     previsoes = previsoes[:len(final)]
     final["Previstos"] = previsoes
@@ -466,6 +480,7 @@ def boxplot_erro(previsao, teste):
     plt.title(f"MODELO RANDOM FOREST* (R²: {R_2}): BOXPLOT DO ERRO**.\n MUNICÍPIO DE {cidade}, SANTA CATARINA.\n *{obs} **($\mu = {media}; \sigma = {desvp}$)")
     plt.xlabel("Boxplot")
     plt.ylabel("Valor")
+    plt.grid(axis = "y")
     plt.show()
 
 def metricas(string_modelo, modeloNN = None):
@@ -502,9 +517,9 @@ def salva_modelo(string_modelo, modeloNN = None):
             print("!!"*80)
             raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
         else:
-            modeloNN.save(modeloNN, f"{caminho_modelos}NN_casos_r{_retroagir}_{cidade}.h5")
+            modeloNN.save(modeloNN, f"{caminho_modelos}NN_casos_r{_RETROAGIR}_{cidade}.h5")
     else:
-        joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5")
 
 ######################################################RANDOM_FOREST############################################################
 
@@ -524,17 +539,16 @@ previsoesRF = modeloRF.predict(x)
 previsoesRF = [int(p) for p in previsoesRF]
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoesRF, 5, "RF")
-#grafico_previsao(previsoesRF, y_previstoRF, "RF")
+grafico_previsao(previsoesRF, y_previstoRF, "RF")
 metricas("RF")
-histograma_erro(previsoesRF, y_previstoRF)
-boxplot_erro(previsoesRF, y_previstoRF)
-#joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
+#histograma_erro(previsoesRF, y_previstoRF)
+#boxplot_erro(previsoesRF, y_previstoRF)
+#joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5")
 
-#########################################################AUTOMATIZANDO###############################################################
-if _automatiza == True:
+#########################################################AUTOMATIzANDO###############################################################
+if _AUTOMATIZA == True:
     for cidade in cidades:
         dataset = monta_dataset(cidade)
-        print(dataset)
         treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
         modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
         EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
