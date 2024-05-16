@@ -24,7 +24,8 @@ from sklearn.ensemble import RandomForestRegressor
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _RETROAGIR = 3 # Semanas Epidemiológicas
-_HORIZONTE = 2
+_HORIZONTE = 2 # Tempo de Previsão
+_JANELA_MM = 25 # Média Móvel
 
 cidade = "Florianópolis"
 
@@ -149,9 +150,14 @@ dataset = dataset.merge(casos[["Semana", cidade]], how = "left", on = "Semana").
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
 dataset = dataset.rename(columns = troca_nome)
 dataset.fillna(0, inplace = True)
-"""
-_RETROAGIR = 12
-for r in range(10, _RETROAGIR + 1):
+
+dataset["TMED"] = dataset["TMED"].rolling(_JANELA_MM).mean()
+dataset["PREC"] = dataset["PREC"].rolling(_JANELA_MM).mean()
+dataset["FOCOS"] = dataset["FOCOS"].rolling(_JANELA_MM).mean()
+#dataset["CASOS"] = dataset["CASOS"].rolling(_JANELA_MM).mean()
+
+#_RETROAGIR = 12
+for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     #dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     #dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -171,7 +177,7 @@ for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
     dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
-
+"""
 
 dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
 dataset.dropna(inplace = True)
@@ -401,8 +407,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[cidade]
-    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
-    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
