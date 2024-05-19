@@ -26,6 +26,7 @@ _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
 _JANELA_MM = 25 # Média Móvel
+_K = 5 # constante para form
 
 cidade = "Florianópolis"
 
@@ -151,14 +152,16 @@ troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CA
 dataset = dataset.rename(columns = troca_nome)
 dataset.fillna(0, inplace = True)
 
-dataset["TMED"] = dataset["TMED"].rolling(_JANELA_MM).mean()
-dataset["PREC"] = dataset["PREC"].rolling(_JANELA_MM).mean()
-dataset["FOCOS"] = dataset["FOCOS"].rolling(_JANELA_MM).mean()
+#dataset["TMED"] = dataset["TMED"]#.rolling(_JANELA_MM).mean()
+#dataset["PREC"] = dataset["PREC"]#.rolling(_JANELA_MM).mean()
+dataset["FOCOS"] = dataset["FOCOS"]#.rolling(_JANELA_MM).mean()
 #dataset["CASOS"] = dataset["CASOS"].rolling(_JANELA_MM).mean()
+dataset["iCLIMA"] =  (tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K)
 
 #_RETROAGIR = 12
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     #dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+	dataset["iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     #dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
