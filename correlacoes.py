@@ -309,7 +309,7 @@ if _AUTOMATIZA == True and _iCLIMA == True:
 				plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_iclima_{_cidade}_k{_K}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 				print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
-	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n""")
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_iclima_{_cidade}_k{_K}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n""")
 				#plt.show()
 """
 ######################### Correlacionando (VARIÁVEIS CLIMATOLÓGICAS)
