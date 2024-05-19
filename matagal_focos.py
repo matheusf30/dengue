@@ -20,13 +20,18 @@ from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
 
 ### Condições para Variar #################################################
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_retroagir = 8 # Semanas Epidemiológicas
+
+_RETROAGIR = 3 # Semanas Epidemiológicas
+_HORIZONTE = 2 # Tempo de Previsão
+_JANELA_MM = 25 # Média Móvel
+_K = 3 # constante para form
 
 cidade = "Florianópolis"
 
-_automatiza = False
+_AUTOMATIZA = False
+
 
 z = 6
 limite = "out2023"
@@ -39,24 +44,24 @@ fim = "ago2023"
 z = 32
 limite = "abr2023"
 fim = "mai2023"
-
+"""
 z = 50
 limite = "dez2022"
 fim = "jan2023"
-"""
+
 """
 obs = f"(Treino até {limite}; Teste após {fim})"
 #########################################################################
 
 ### Encaminhamento aos Diretórios
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _local == "GH": # _ = Variável Privada
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
@@ -135,20 +140,24 @@ dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
 """
-for r in range(1, _retroagir + 1):
+for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 """
-for r in range(5, _retroagir + 1):
-    dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-    dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-    dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-    dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-    dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+
+dataset["iCLIMA"] =  (dataset["TMIN"].rolling(_K).mean() ** _K) * (dataset["PREC"].rolling(_K).mean() / _K)
+
+for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
+	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
+dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "iCLIMA"], inplace = True)
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
@@ -251,7 +260,7 @@ def monta_dataset(cidade):
     dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
     troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
     dataset = dataset.rename(columns = troca_nome)
-    for r in range(5, _retroagir + 1):
+    for r in range(5, _RETROAGIR + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -344,8 +353,8 @@ def salva_modeloRF(modelo, cidade):
         cidade = cidade.replace(velho, novo)
     if not os.path.exists(caminho_modelos):
         os.makedirs(caminho_modelos)
-    joblib.dump(modelo, f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
-    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
+    joblib.dump(modelo, f"{caminho_modelos}RF_focos_r{_RETROAGIR}_{cidade}.h5")
+    print(f"\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_RETROAGIR}_{cidade}.h5")
     print("\n" + "="*80 + "\n")
 
 def lista_previsao(previsao, n, string_modelo):
@@ -373,8 +382,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Focos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -402,7 +411,7 @@ def grafico_previsao(previsao, teste, string_modelo):
     _cidade = cidade
     for velho, novo in troca.items():
         _cidade = _cidade.replace(velho, novo)
-    plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+    #plt.savefig(f'{caminho_resultados}verificatualizacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
     plt.show()
 
 def metricas(string_modelo, modeloNN = None):
@@ -439,9 +448,9 @@ def salva_modelo(string_modelo, modeloNN = None):
             print("!!"*80)
             raise ValueError("'modeloNN' não foi fornecido para a função metricas() do modelo de rede neural!")
         else:
-            modeloNN.save(modeloNN, f"{caminho_modelos}NN_focos_r{_retroagir}_{cidade}.h5")
+            modeloNN.save(modeloNN, f"{caminho_modelos}NN_focos_r{_RETROAGIR}_{cidade}.h5")
     else:
-        joblib.dump(modeloRF, f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_focos_r{_RETROAGIR}_{cidade}.h5")
 
 ######################################################RANDOM_FOREST############################################################
 
@@ -466,7 +475,7 @@ grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
 
 #########################################################AUTOMATIZANDO###############################################################
-if _automatiza == True:
+if _AUTOMATIZA == True:
     for cidade in cidades:
         dataset = monta_dataset(cidade)
         treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, cidade)
