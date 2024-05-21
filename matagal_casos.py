@@ -420,13 +420,13 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     final["Previstos"] = lista_previsao
     """
     #previsoes = previsoes[:len(final)]
-    """
+    
     print(f"Length of previsoes: {len(previsoes)}")
     print(previsoes, "\n")
     print(f"Length of final index: {len(final.index)}")
     print(final, "\n")
     sys.exit()
-    """
+    
     final["Previstos"] = previsoes
     final["Semana"] = pd.to_datetime(final["Semana"])
     print(final)
