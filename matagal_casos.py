@@ -257,7 +257,7 @@ def monta_dataset(_CIDADE):
     troca_nome = {f"{_CIDADE}_x" : "PREC", f"{_CIDADE}_y" : "FOCOS", f"{_CIDADE}" : "CASOS"}
     dataset = dataset.rename(columns = troca_nome)
     dataset.fillna(0, inplace = True)
-    for r in range(3, _RETROAGIR + 1):
+    for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -284,18 +284,16 @@ def testa_dataset(_CIDADE):
 	troca_nome = {f"{_CIDADE}_x" : "PREC", f"{_CIDADE}_y" : "FOCOS", f"{_CIDADE}" : "CASOS"}
 	dataset = dataset.rename(columns = troca_nome)
 	dataset.fillna(0, inplace = True)
-	"""
-	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	dataset[f"TMED_r12"] = dataset["TMED"].shift(-12)
-	dataset[f"PREC_r12"] = dataset["PREC"].shift(-12)
-	dataset[f"FOCOS_r12"] = dataset["FOCOS"].shift(-12)
-	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
-	"""
-	dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
+	dataset["iCLIMA"] =  (tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K)	
+	for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
+		#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+		#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+		#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+		#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+		dataset[f"iCLIMA_r{r}"] = dataset[f"iCLIMA"].shift(-r)
+		dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+		dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS", "iCLIMA"], inplace = True)
 	dataset.dropna(inplace = True)
 	dataset.set_index("Semana", inplace = True)
 	dataset.columns.name = f"{_CIDADE}"
@@ -412,21 +410,22 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[_CIDADE]
-    final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
-    final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
+    final.drop(10, axis=0, inplace = True)
+    #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
+    #final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
     final["Previstos"] = lista_previsao
     """
     #previsoes = previsoes[:len(final)]
-    
+    """
     print(f"Length of previsoes: {len(previsoes)}")
     print(previsoes, "\n")
     print(f"Length of final index: {len(final.index)}")
     print(final, "\n")
     sys.exit()
-    
+    """
     final["Previstos"] = previsoes
     final["Semana"] = pd.to_datetime(final["Semana"])
     print(final)
@@ -549,6 +548,7 @@ def salva_modelo(string_modelo, modeloNN = None):
 ######################################################RANDOM_FOREST############################################################
 ### Iniciando Dataset
 dataset = monta_dataset(_CIDADE)
+#dataset = testa_dataset(_CIDADE)
 x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
@@ -569,9 +569,9 @@ metricas("RF")
 lista_previsao(previsoes_modelo, 5, "RF")
 grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 
-#matriz_confusao = matriz_confusao(teste_y, y_previsto)
-#histograma_erro(teste_y, y_previsto)
-#boxplot_erro(teste_y, y_previsto)
+matriz_confusao = matriz_confusao(teste_y, y_previsto)
+histograma_erro(teste_y, y_previsto)
+boxplot_erro(teste_y, y_previsto)
 #joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{_CIDADE}.h5")
 
 #########################################################AUTOMATIzANDO###############################################################
