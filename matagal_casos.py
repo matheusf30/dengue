@@ -410,7 +410,10 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[_CIDADE]
-    final.drop([0,1], axis=0, inplace = True)
+    #excluir_linhas = list(range(0,_JANELA_MM))
+    #final.drop(excluir_linhas, axis=0, inplace = True)
+    #final.drop([0,1], axis=0, inplace = True)
+    final.drop([0,1,2,3,4], axis=0, inplace = True)
     #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
     #final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
@@ -548,7 +551,7 @@ def salva_modelo(string_modelo, modeloNN = None):
 ######################################################RANDOM_FOREST############################################################
 ### Iniciando Dataset
 #dataset = monta_dataset(_CIDADE)
-dataset = testa_dataset(_CIDADE)
+#dataset = testa_dataset(_CIDADE)
 x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
