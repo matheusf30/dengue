@@ -164,9 +164,9 @@ dataset["iCLIMA"] =  (tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].r
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
 	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
 	dataset["iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
-	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
 	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
 	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 	dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
@@ -561,14 +561,14 @@ previsoes_modelo = modeloRF.predict(x)
 previsoes_modelo = [int(p) for p in previsoes_modelo]
 EQM_RF = mean_squared_error(y, previsoes_modelo)
 RQ_EQM_RF = np.sqrt(EQM_RF)
-R_2 = r2_score(teste_y, y_previsto).round(2) 
-
+R_2 = r2_score(y, previsoes_modelo).round(2) 
+metricas("RF")
 ### Testando e Validando Modelo
 
 ### Exibindo Informações, Gráficos e Métricas
 lista_previsao(previsoes_modelo, 5, "RF")
 grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
-metricas("RF")
+
 #matriz_confusao = matriz_confusao(teste_y, y_previsto)
 #histograma_erro(teste_y, y_previsto)
 #boxplot_erro(teste_y, y_previsto)
