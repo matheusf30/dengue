@@ -12,7 +12,8 @@ import joblib
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, accuracy_score, r2_score, confusion_matrix#, RocCurveDisplay
+from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
+from sklearn.metrics import confusion_matrix, classification_report #, RocCurveDisplay
 # Modelos e Visualizações
 from sklearn.ensemble import RandomForestRegressor
 #from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
@@ -21,7 +22,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 ### Condições para Variar #######################################################
 
-_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GcleH" "CASA" "IFSC"
 
 _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
@@ -168,7 +169,7 @@ for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
 	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
 	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
 	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-	dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
 #_RETROAGIR = 2
 #dataset[f"TMED_r{_RETROAGIR}"] = dataset["TMED"].shift(-_RETROAGIR)
@@ -510,6 +511,11 @@ def matriz_confusao(teste, previsao):
 	sns.heatmap(matriz_confusao, annot = True)
 	return matriz_confusao
 
+def relatorio_metricas(teste, previsao):
+	relatorio = classification_report(teste, previsao)
+	print(relatorio)
+	return relatorio
+
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -552,7 +558,7 @@ def salva_modelo(string_modelo, modeloNN = None):
 ### Iniciando Dataset
 #dataset = monta_dataset(_CIDADE)
 #dataset = testa_dataset(_CIDADE)
-x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
+#x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
 modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
@@ -575,6 +581,8 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
 # matriz_confusao = matriz_confusao(y, previsoes_modelo)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
+
+relatorio = relatorio_metricas(y, previsoes_modelo)
 
 #histograma_erro(y, previsoes_modelo)
 #boxplot_erro(y, previsoes_modelo)
