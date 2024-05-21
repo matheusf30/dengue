@@ -20,16 +20,20 @@ from sklearn.ensemble import RandomForestRegressor
 #from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
 
-### Condições para Variar #######################################################
+### Condições para Variar ####################################
+
+
+
+###################
 
 _LOCAL = "IFSC" # OPÇÕES>>> "GcleH" "CASA" "IFSC"
 
 _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
 _JANELA_MM = 25 # Média Móvel
-_K = 5 # constante para form
+_K = 3 # constante para fórmulas de índices
 
-_CIDADE = "Florianópolis"
+_CIDADE = "Itajaí"
 _CIDADE = _CIDADE.upper()
 
 _AUTOMATIZA = False
@@ -37,7 +41,7 @@ _AUTOMATIZA = False
 z = 6
 _LIMITE = "out2023"
 _FIM = "nov2023"
-"""
+
 z = 19
 _LIMITE = "jul2023"
 _FIM = "ago2023"
@@ -49,9 +53,9 @@ _FIM = "mai2023"
 z = 50
 _LIMITE = "dez2022"
 _FIM = "jan2023"
-
 """
-obs = f"(Treino até {_LIMITE}; Teste após {_FIM})"
+"""
+obs = f"(Treino até {_LIMITE}; Teste após {_FIM}; k = {_K})"
 
 ##################################################################################
 
@@ -159,16 +163,18 @@ dataset.fillna(0, inplace = True)
 #dataset["PREC"] = dataset["PREC"]#.rolling(_JANELA_MM).mean()
 dataset["FOCOS"] = dataset["FOCOS"]#.rolling(_JANELA_MM).mean()
 #dataset["CASOS"] = dataset["CASOS"].rolling(_JANELA_MM).mean()
-dataset["iCLIMA"] =  (tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K)
+dataset["iCLIMA"] =  np.cbrt((tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K))
+dataset["iEPIDEMIO"] =  np.sqrt((dataset["FOCOS"].rolling(_K).mean() / _K) * dataset["CASOS"].rolling(_K).mean())
 
 #_RETROAGIR = 12
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
 	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	dataset["iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
+	dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
+	dataset[f"iEPIDEMIO_r{r}"] = dataset["iEPIDEMIO"].shift(-r)
 	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
 	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
 	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
 #_RETROAGIR = 2
@@ -185,7 +191,7 @@ for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
 
-dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS"], inplace = True)
+dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS", "iCLIMA", "iEPIDEMIO"], inplace = True)
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{_CIDADE}"
@@ -414,7 +420,7 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     #excluir_linhas = list(range(0,_JANELA_MM))
     #final.drop(excluir_linhas, axis=0, inplace = True)
     #final.drop([0,1], axis=0, inplace = True)
-    final.drop([0,1,2,3,4], axis=0, inplace = True)
+    final.drop([0], axis=0, inplace = True)
     #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
     #final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
