@@ -20,6 +20,7 @@ from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.metrics import confusion_matrix, classification_report #, RocCurveDisplay
 # Modelos e Visualizações
 from sklearn.ensemble import RandomForestRegressor
+from imblearn.ensemble import BalancedRandomForestClassifier
 #from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
 #from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
@@ -30,15 +31,15 @@ from sklearn.ensemble import RandomForestRegressor
 
 ###################
 
-_LOCAL = "IFSC" # OPÇÕES>>> "GcleH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
 _JANELA_MM = 25 # Média Móvel
 _K = 3 # constante para fórmulas de índices
-_AJUSTADO = "SMOTE" #True #False #SMOTE
+_AJUSTADO = True #True #False # SMOTE (NÃO FUNCIONAL) #"BRFC"
 
-_CIDADE = "Joinville"
+_CIDADE = "Itajaí"
 _CIDADE = _CIDADE.upper()
 
 _AUTOMATIZA = False
@@ -167,20 +168,20 @@ dataset.fillna(0, inplace = True)
 #dataset["TMED"] = dataset["TMED"]#.rolling(_JANELA_MM).mean()
 #dataset["PREC"] = dataset["PREC"]#.rolling(_JANELA_MM).mean()
 #dataset["FOCOS"] = dataset["FOCOS"]#.rolling(_JANELA_MM).mean()
-#dataset["CASOS"] = dataset["CASOS"].rolling(_JANELA_MM).mean()
+#dataset["CASOS"] = dataset["CASOS"]#.rolling(_JANELA_MM).mean()
 dataset["iCLIMA"] =  np.cbrt((tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K))
 dataset["iEPIDEMIO"] =  np.sqrt((dataset["FOCOS"].rolling(_K).mean() / _K) * dataset["CASOS"].rolling(_K).mean())
 
 #_RETROAGIR = 12
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
-	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
-	dataset[f"iEPIDEMIO_r{r}"] = dataset["iEPIDEMIO"].shift(-r)
-	#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-	#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+	#dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
+	#dataset[f"iEPIDEMIO_r{r}"] = dataset["iEPIDEMIO"].shift(-r)
+	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+	dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
+	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 """
 #_RETROAGIR = 2
 #dataset[f"TMED_r{_RETROAGIR}"] = dataset["TMED"].shift(-_RETROAGIR)
@@ -240,6 +241,8 @@ treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
 """
 ### Ajuste Ponderado
+
+"""
 # SMOTE
 contagem_classes = treino_y.value_counts()
 classe_minoritaria = contagem_classes.min()
@@ -247,14 +250,13 @@ k_neighbors = 2
 smote = SMOTE()
 smote_treino_x_explicado, smote_treino_y = smote.fit_resample(treino_x_explicado, treino_y)
 
-
 # Calcular os pesos das amostras
 sample_weights = compute_sample_weight(class_weight='balanced', y = y_train_balanced) 
+"""
 
-
-# Sobre/Sub
-sobreajuste = RandomOverSampler(sampling_strategy='minority')
-subajuste = RandomUnderSampler(sampling_strategy='majority')
+# Ajuste Sobre/Sub
+sobreajuste = RandomOverSampler(sampling_strategy = "not majority", random_state = SEED)
+subajuste = RandomUnderSampler(sampling_strategy = "not minority", random_state = SEED)
 # Primeiro oversampling para aumentar a classe minoritária
 ajuste1_treino_x, ajusto1_treino_y = sobreajuste.fit_resample(treino_x_explicado, treino_y)
 # Depois undersampling para reduzir a classe majoritária
@@ -608,6 +610,11 @@ if _AJUSTADO == True:
 	modeloRF.fit(ajustado_treino_x_explicado, ajustado_treino_y)
 elif _AJUSTADO == "SMOTE":
 	modeloRF.fit(smote_treino_x_explicado, smote_treino_y)
+elif _AJUSTADO == "BRFC":
+	modeloBRFC = RandomForestRegressor(n_estimators = 100, random_state = SEED)
+	modeloBRFC.fit(treino_x_explicado, treino_y)
+	y_previsto = modeloBRFC.predict(teste_x)
+	previsoes_modelo = modeloBRFC.predict(x)
 else:
 	modeloRF.fit(treino_x_explicado, treino_y)
 
