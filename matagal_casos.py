@@ -12,6 +12,10 @@ import joblib
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+#from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import SMOTE
 from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.metrics import confusion_matrix, classification_report #, RocCurveDisplay
 # Modelos e Visualizações
@@ -32,8 +36,9 @@ _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
 _JANELA_MM = 25 # Média Móvel
 _K = 3 # constante para fórmulas de índices
+_AJUSTADO = "SMOTE" #True #False #SMOTE
 
-_CIDADE = "Itajaí"
+_CIDADE = "Joinville"
 _CIDADE = _CIDADE.upper()
 
 _AUTOMATIZA = False
@@ -161,7 +166,7 @@ dataset.fillna(0, inplace = True)
 
 #dataset["TMED"] = dataset["TMED"]#.rolling(_JANELA_MM).mean()
 #dataset["PREC"] = dataset["PREC"]#.rolling(_JANELA_MM).mean()
-dataset["FOCOS"] = dataset["FOCOS"]#.rolling(_JANELA_MM).mean()
+#dataset["FOCOS"] = dataset["FOCOS"]#.rolling(_JANELA_MM).mean()
 #dataset["CASOS"] = dataset["CASOS"].rolling(_JANELA_MM).mean()
 dataset["iCLIMA"] =  np.cbrt((tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K))
 dataset["iEPIDEMIO"] =  np.sqrt((dataset["FOCOS"].rolling(_K).mean() / _K) * dataset["CASOS"].rolling(_K).mean())
@@ -234,6 +239,37 @@ escalonador.fit(treino_x)
 treino_normal_x = escalonador.transform(treino_x)
 teste_normal_x = escalonador.transform(teste_x)
 """
+### Ajuste Ponderado
+# SMOTE
+contagem_classes = treino_y.value_counts()
+classe_minoritaria = contagem_classes.min()
+k_neighbors = 2
+smote = SMOTE()
+smote_treino_x_explicado, smote_treino_y = smote.fit_resample(treino_x_explicado, treino_y)
+
+
+# Calcular os pesos das amostras
+sample_weights = compute_sample_weight(class_weight='balanced', y = y_train_balanced) 
+
+
+# Sobre/Sub
+sobreajuste = RandomOverSampler(sampling_strategy='minority')
+subajuste = RandomUnderSampler(sampling_strategy='majority')
+# Primeiro oversampling para aumentar a classe minoritária
+ajuste1_treino_x, ajusto1_treino_y = sobreajuste.fit_resample(treino_x_explicado, treino_y)
+# Depois undersampling para reduzir a classe majoritária
+ajustado_treino_x_explicado, ajustado_treino_y = subajuste.fit_resample(ajuste1_treino_x, ajusto1_treino_y)
+print("\nTreino X ajustado\n", ajustado_treino_x_explicado, "\nTreino Y ajustado\n", ajustado_treino_y)
+
+
+
+# Instanciar e treinar o modelo Random Forest:
+# model = RandomForestClassifier(n_estimators=100, random_state=42)  
+# model = RandomForestRegressor(n_estimators=100)#,random_state=42)
+# model.fit(X_train_balanced, y_train_balanced)
+# Treinar o modelo com os pesos das amostras
+
+
 ### Exibindo Informações
 print("\n \n CONJUNTO DE DADOS PARA TREINO E TESTE \n")
 print(dataset.info())
@@ -568,7 +604,12 @@ def salva_modelo(string_modelo, modeloNN = None):
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
 modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
-modeloRF.fit(treino_x_explicado, treino_y)
+if _AJUSTADO == True:
+	modeloRF.fit(ajustado_treino_x_explicado, ajustado_treino_y)
+elif _AJUSTADO == "SMOTE":
+	modeloRF.fit(smote_treino_x_explicado, smote_treino_y)
+else:
+	modeloRF.fit(treino_x_explicado, treino_y)
 
 ### Testando e Avaliando
 y_previsto = modeloRF.predict(teste_x)
