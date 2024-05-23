@@ -23,6 +23,7 @@ _iEPIDEMIO = False
 _LIMIAR_TMIN = True
 _LIMIAR_TMAX = True
 _LIMIAR_PREC = True
+_LIMIAR_RETRO = False
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
@@ -754,7 +755,8 @@ if _AUTOMATIZA == True and _LIMIAR_PREC == True:
 if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
-	limiares = [5, 10, 15, 20, 25, 30, 35]
+	limiares_prec = [5, 10, 15, 20, 25, 30, 35]
+	lista_retro = [1, 2, 3, 4, 5, 6, 7, 8]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
 		print(_CIDADE)
