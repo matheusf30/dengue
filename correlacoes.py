@@ -13,10 +13,16 @@ import os
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _AUTOMATIZA = True
+_SALVAR = True
+_VISUALIZAR = False
+
 _CLIMA = False
 _ENTOMOEPIDEMIO = False
 _iCLIMA = False
-_iEPIDEMIO = True
+_iEPIDEMIO = False
+_LIMIAR_TMIN = False
+_LIMIAR_TMAX = True
+_LIMIAR_PREC = True
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
@@ -71,7 +77,9 @@ if _AUTOMATIZA == True and _CLIMA == True:
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
 		for _ANO in lista_anos:
+			print(_ANO)
 			#Automatizando essas listas acima...
 			### Montando dataset
 			dataset = tmin[["Semana"]].copy()
@@ -134,22 +142,26 @@ if _AUTOMATIZA == True and _CLIMA == True:
 				fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
 			else:
 				fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-			_cidade = _CIDADE
-			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-					'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-					'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-					'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-					'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-					'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-			for velho, novo in troca.items():
-				_cidade = _cidade.replace(velho, novo)
-			caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/clima/"
-			os.makedirs(caminho_correlacao, exist_ok = True)
-			plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-			print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
-{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
-NOME DO ARQUIVO: matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n""")
-			#plt.show()
+			if _SALVAR == True:
+				_cidade = _CIDADE
+				troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+						'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+						'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+						'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+						'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+						'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				for velho, novo in troca.items():
+					_cidade = _cidade.replace(velho, novo)
+				caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/clima/"
+				os.makedirs(caminho_correlacao, exist_ok = True)
+				plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+				print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n""")
+			if _VISUALIZAR == True:
+				print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n")
+				plt.show()
+
 #################################################################################
 ### Correlacionando (VARIÁVEIS ENTOMO-EPIDEMIOLÓGICAS)
 #################################################################################
@@ -158,7 +170,9 @@ if _AUTOMATIZA == True and _ENTOMOEPIDEMIO == True:
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
 		for _ANO in lista_anos:
+			print(_ANO)
 			#Automatizando essas listas acima...
 			### Montando dataset
 			dataset = tmin[["Semana"]].copy()
@@ -213,22 +227,26 @@ if _AUTOMATIZA == True and _ENTOMOEPIDEMIO == True:
 				fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS e CASOS (VARIÁVEIS ENTOMO-EPIDEMIOLÓGICAS) EM {_CIDADE} \n *(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
 			else:
 				fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS e CASOS (VARIÁVEIS ENTOMO-EPIDEMIOLÓGICAS) EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-			_cidade = _CIDADE
-			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-					'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-					'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-					'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-					'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-					'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-			for velho, novo in troca.items():
-				_cidade = _cidade.replace(velho, novo)
-			caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/entomoepidemio/"
-			os.makedirs(caminho_correlacao, exist_ok = True)
-			plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-			print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+			if _SALVAR == True:
+				_cidade = _CIDADE
+				troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+						'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+						'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+						'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+						'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+						'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				for velho, novo in troca.items():
+					_cidade = _cidade.replace(velho, novo)
+				caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/entomoepidemio/"
+				os.makedirs(caminho_correlacao, exist_ok = True)
+				plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+				print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 {ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
 NOME DO ARQUIVO: matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n""")
-			#plt.show()
+			if _VISUALIZAR == True:
+				print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_fococaso_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf{ansi['reset']}\n")
+				plt.show()
+
 #################################################################################
 ### Correlacionando (Índice Clima e Focos)
 #################################################################################
@@ -239,8 +257,11 @@ if _AUTOMATIZA == True and _iCLIMA == True:
 	_K = 1
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
 		for _ANO in lista_anos:
+			print(_ANO)
 			for _K in lista_constante:
+				print(_K)
 				#Automatizando essas listas acima...
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
@@ -296,22 +317,26 @@ if _AUTOMATIZA == True and _iCLIMA == True:
 					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS e Índice Climatológico** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas; k = {_K})\n**np.cbrt((tmin.rolling(k).mean() ** k) * (prec.rolling(k).mean() / k))", weight = "bold", size = "medium")
 				else:
 					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS e Índice Climatológico** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas; k = {_K})\n**np.cbrt((tmin.rolling(k).mean() ** k) * (prec.rolling(k).mean() / k))", weight = "bold", size = "medium")
-				_cidade = _CIDADE
-				troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-						'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-						'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-						'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-						'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-						'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-				for velho, novo in troca.items():
-					_cidade = _cidade.replace(velho, novo)
-				caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/indiceclimato/"
-				os.makedirs(caminho_correlacao, exist_ok = True)
-				plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_iclima_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-				print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+				if _SALVAR == True:
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/indiceclimato/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_iclima_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
 	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_iclima_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf{ansi['reset']}\n""")
-				#plt.show()
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_iclima_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf{ansi['reset']}\n")
+					plt.show()
+
 #################################################################################
 ### Correlacionando (Índice Epidemio e Casos)
 #################################################################################
@@ -322,8 +347,11 @@ if _AUTOMATIZA == True and _iEPIDEMIO == True:
 	_K = 1
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
 		for _ANO in lista_anos:
+			print(_ANO)
 			for _K in lista_constante:
+				print(_K)
 				#Automatizando essas listas acima...
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
@@ -385,97 +413,298 @@ if _AUTOMATIZA == True and _iEPIDEMIO == True:
 					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre CASOS e Índice Epidemiológico** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas; k = {_K})\n**(a definir)", weight = "bold", size = "medium")
 				else:
 					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre CASOS e Índice Epidemiológico** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas; k = {_K})\n**(a definir)", weight = "bold", size = "medium")
-				_cidade = _CIDADE
-				troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-						'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-						'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-						'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-						'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-						'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-				for velho, novo in troca.items():
-					_cidade = _cidade.replace(velho, novo)
-				caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/indiceepidemio/"
-				os.makedirs(caminho_correlacao, exist_ok = True)
-				plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_iepidemio_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-				print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+				if _SALVAR == True:
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/indiceepidemio/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_iepidemio_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
 	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
 	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_iepidemio_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf{ansi['reset']}\n""")
-				#plt.show()
-"""
-######################### Correlacionando (VARIÁVEIS CLIMATOLÓGICAS)
-### Montando dataset
-dataset = tmin[["Semana"]].copy()
-dataset["TMIN"] = tmin[_CIDADE].copy()
-dataset["TMED"] = tmed[_CIDADE].copy()
-dataset["TMAX"] = tmax[_CIDADE].copy()
-dataset = dataset.merge(prec[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-dataset.dropna(axis = 0, inplace = True)
-dataset = dataset.iloc[:, :].copy()
-dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-troca_nome = {f"{_CIDADE}_x" : "PREC", f"{_CIDADE}_y" : "FOCOS", f"{_CIDADE}" : "CASOS"}
-dataset = dataset.rename(columns = troca_nome)
-dataset.fillna(0, inplace = True)
-if _ANO == "2023":
-	dataset = dataset.iloc[-53:, :].copy()
-elif _ANO == "2022":
-	dataset = dataset.iloc[-105:-53, :].copy()
-elif _ANO == "2021":
-	dataset = dataset.iloc[-157:-105, :].copy()
-elif _ANO == "2020":
-	dataset = dataset.iloc[-209:-157, :].copy()
-else:
-	print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
-	#sys.exit()
-dataset.dropna(inplace = True)
-dataset.set_index("Semana", inplace = True)
-dataset.columns.name = f"{_CIDADE}"
-ordem_colunas = ["FOCOS", "CASOS", "TMIN", "TMED", "TMAX", "PREC"]
-dataset = dataset.reindex(columns = ordem_colunas)
-print(f"\n \n MATRIZ DE CORRELAÇÃO ({_METODO.title()}; Base e Clima; sem retroagir [TESTE]) \n")
-print(dataset.info())
-print("~"*80)
-print(dataset.dtypes)
-print("~"*80)
-print(dataset)
-#sys.exit()
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_iepidemio_{_cidade}_r{_RETROAGIR}s_{_ANO}_k{_K}.pdf{ansi['reset']}\n")
+					plt.show()
 
-### Retroagindo dataset
-for r in range(1, _RETROAGIR + 1):
-	#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-	#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
-	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
-dataset.dropna(inplace = True)
-dataset.columns.name = f"{_CIDADE}"
+#################################################################################
+### Correlacionando (Focos, Casos E Limiares TMIN)
+#################################################################################
+if _AUTOMATIZA == True and _LIMIAR_TMIN == True:
+	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
+	lista_anos = ["2023", "2022", "2021", "2020", "total"]
+	limiares = [14, 16, 18, 20, 22, 24]
+	for _CIDADE in lista_cidades:
+		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
+		for _ANO in lista_anos:
+			print(_ANO)
+			for _LIMIAR in limiares:
+				print(_LIMIAR)
+				lim_tmin = tmin.copy()
+				lim_tmin.set_index("Semana", inplace = True)
+				lim_tmin = lim_tmin.applymap(lambda x: 1 if x < _LIMIAR else 0)
+				lim_tmin.reset_index(inplace = True)
+				### Montando dataset
+				dataset = tmin[["Semana"]].copy()
+				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(lim_tmin[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset.dropna(axis = 0, inplace = True)
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_TMIN"}
+				dataset = dataset.rename(columns = troca_nome)
+				dataset.dropna(axis = 0, inplace = True)
+				dataset = dataset.iloc[:, :].copy()
+				dataset.fillna(0, inplace = True)
+				if _ANO == "2023":
+					dataset = dataset.iloc[-53:, :].copy()
+				elif _ANO == "2022":
+					dataset = dataset.iloc[-105:-53, :].copy()
+				elif _ANO == "2021":
+					dataset = dataset.iloc[-157:-105, :].copy()
+				elif _ANO == "2020":
+					dataset = dataset.iloc[-209:-157, :].copy()
+				else:
+					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+				dataset.dropna(inplace = True)
+				dataset.set_index("Semana", inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
+				print(dataset.info())
+				print("~"*80)
+				print(dataset.dtypes)
+				print("~"*80)
+				print(dataset)
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+				for r in range(1, _RETROAGIR + 1):
+					dataset[f"L{_LIMIAR}_TMIN_r{r}"] = dataset[f"L{_LIMIAR}_TMIN"].shift(-r)
+				dataset.dropna(inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				### Matriz de Correlações
+				correlacao_dataset = dataset.corr(method = f"{_METODO}")
+				print("="*80)
+				print(f"Método de {_METODO.title()} \n", correlacao_dataset)
+				print("="*80)
+				#print(dataset)
+				#sys.exit()			
+				# Gerando Visualização (.pdf) da Matriz
+				fig, ax = plt.subplots(figsize = (18, 8), layout = "constrained", frameon = False)
+				filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
+				sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
+				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
+				if _ANO == "total":
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima < {_LIMIAR} C)\n", weight = "bold", size = "medium")
+				else:
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima < {_LIMIAR} C)", weight = "bold", size = "medium")
+				if _SALVAR == True:
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_tmin/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_tmin_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_tmin_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n""")
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_tmin_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n")
+					plt.show()
 
-### Matriz de Correlações
+#################################################################################
+### Correlacionando (Focos, Casos E Limiares TMAX)
+#################################################################################
+if _AUTOMATIZA == True and _LIMIAR_TMAX == True:
+	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
+	lista_anos = ["2023", "2022", "2021", "2020", "total"]
+	limiares = [20, 22, 24, 26, 28, 30]
+	for _CIDADE in lista_cidades:
+		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
+		for _ANO in lista_anos:
+			print(_ANO)
+			for _LIMIAR in limiares:
+				print(_LIMIAR)
+				limite = tmax.copy()
+				limite.set_index("Semana", inplace = True)
+				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
+				limite.reset_index(inplace = True)
+				### Montando dataset
+				dataset = tmin[["Semana"]].copy()
+				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset.dropna(axis = 0, inplace = True)
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_TMAX"}
+				dataset = dataset.rename(columns = troca_nome)
+				dataset.dropna(axis = 0, inplace = True)
+				dataset = dataset.iloc[:, :].copy()
+				dataset.fillna(0, inplace = True)
+				if _ANO == "2023":
+					dataset = dataset.iloc[-53:, :].copy()
+				elif _ANO == "2022":
+					dataset = dataset.iloc[-105:-53, :].copy()
+				elif _ANO == "2021":
+					dataset = dataset.iloc[-157:-105, :].copy()
+				elif _ANO == "2020":
+					dataset = dataset.iloc[-209:-157, :].copy()
+				else:
+					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+				dataset.dropna(inplace = True)
+				dataset.set_index("Semana", inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
+				print(dataset.info())
+				print("~"*80)
+				print(dataset.dtypes)
+				print("~"*80)
+				print(dataset)
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+				for r in range(1, _RETROAGIR + 1):
+					dataset[f"L{_LIMIAR}_TMAX_r{r}"] = dataset[f"L{_LIMIAR}_TMAX"].shift(-r)
+				dataset.dropna(inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				### Matriz de Correlações
+				correlacao_dataset = dataset.corr(method = f"{_METODO}")
+				print("="*80)
+				print(f"Método de {_METODO.title()} \n", correlacao_dataset)
+				print("="*80)
+				#print(dataset)
+				#sys.exit()			
+				# Gerando Visualização (.pdf) da Matriz
+				fig, ax = plt.subplots(figsize = (18, 8), layout = "constrained", frameon = False)
+				filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
+				sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
+				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
+				if _ANO == "total":
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)\n", weight = "bold", size = "medium")
+				else:
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)", weight = "bold", size = "medium")
+				if _SALVAR == True:
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_tmax/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_tmax_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_tmax_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n""")
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_tmax_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n")
+					plt.show()
 
-correlacao_dataset = dataset.corr(method = f"{_METODO}")
-
-print("="*80)
-print(f"Método de {_METODO.title()} \n", correlacao_dataset)
-print("="*80)
-
-fig, ax = plt.subplots(figsize = (16, 8), layout = "constrained", frameon = False)
-filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
-sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
-ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
-if _ANO == "total":
-	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-else:
-	fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS E VARIÁVEIS CLIMATOLÓGICAS EM {_CIDADE} \n *(Método de {_METODO.title()}; durante {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)", weight = "bold", size = "medium")
-_cidade = _CIDADE
-troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-		'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-		'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-		'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-		'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-		'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-for velho, novo in troca.items():
-	_cidade = _cidade.replace(velho, novo)
-plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_{_cidade}_r{_RETROAGIR}s_{_ANO}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-plt.show()
-"""
+#################################################################################
+### Correlacionando (Focos, Casos E Limiares PREC)
+#################################################################################
+if _AUTOMATIZA == True and _LIMIAR_PREC == True:
+	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
+	lista_anos = ["2023", "2022", "2021", "2020", "total"]
+	limiares = [10, 20, 30, 40, 50, 60]
+	for _CIDADE in lista_cidades:
+		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
+		for _ANO in lista_anos:
+			print(_ANO)
+			for _LIMIAR in limiares:
+				print(_LIMIAR)
+				limite = prec.copy()
+				limite.set_index("Semana", inplace = True)
+				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
+				limite.reset_index(inplace = True)
+				### Montando dataset
+				dataset = tmin[["Semana"]].copy()
+				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset.dropna(axis = 0, inplace = True)
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
+				dataset = dataset.rename(columns = troca_nome)
+				dataset.dropna(axis = 0, inplace = True)
+				dataset = dataset.iloc[:, :].copy()
+				dataset.fillna(0, inplace = True)
+				if _ANO == "2023":
+					dataset = dataset.iloc[-53:, :].copy()
+				elif _ANO == "2022":
+					dataset = dataset.iloc[-105:-53, :].copy()
+				elif _ANO == "2021":
+					dataset = dataset.iloc[-157:-105, :].copy()
+				elif _ANO == "2020":
+					dataset = dataset.iloc[-209:-157, :].copy()
+				else:
+					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+				dataset.dropna(inplace = True)
+				dataset.set_index("Semana", inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
+				print(dataset.info())
+				print("~"*80)
+				print(dataset.dtypes)
+				print("~"*80)
+				print(dataset)
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+				for r in range(1, _RETROAGIR + 1):
+					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
+				dataset.dropna(inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				### Matriz de Correlações
+				correlacao_dataset = dataset.corr(method = f"{_METODO}")
+				print("="*80)
+				print(f"Método de {_METODO.title()} \n", correlacao_dataset)
+				print("="*80)
+				#print(dataset)
+				#sys.exit()			
+				# Gerando Visualização (.pdf) da Matriz
+				fig, ax = plt.subplots(figsize = (18, 8), layout = "constrained", frameon = False)
+				filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
+				sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
+				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
+				if _ANO == "total":
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} mm)\n", weight = "bold", size = "medium")
+				else:
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} mm)", weight = "bold", size = "medium")
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				if _SALVAR == True:
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_prec/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n""")
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n")
+					plt.show()
