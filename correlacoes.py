@@ -21,7 +21,7 @@ _ENTOMOEPIDEMIO = False
 _iCLIMA = False
 _iEPIDEMIO = False
 _LIMIAR_TMIN = False
-_LIMIAR_TMAX = True
+_LIMIAR_TMAX = False
 _LIMIAR_PREC = True
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
