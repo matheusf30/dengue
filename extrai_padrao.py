@@ -35,12 +35,21 @@ tmax = "tmax_diario_ate_2023.csv"
 tmed = "tmed_diario_ate_2023.csv"
 tmin = "tmin_diario_ate_2023.csv"
 
+prec_sem = "prec_semana_ate_2023.csv"
+tmax_sem = "tmax_semana_ate_2023.csv"
+tmed_sem = "tmed_semana_ate_2023.csv"
+tmin_sem = "tmin_semana_ate_2023.csv"
 
 ### Abrindo Arquivos
 prec = pd.read_csv(f"{caminho_dados}{prec}")
 tmax = pd.read_csv(f"{caminho_dados}{tmax}")
 tmed = pd.read_csv(f"{caminho_dados}{tmed}")
 tmin = pd.read_csv(f"{caminho_dados}{tmin}")
+
+prec_sem = pd.read_csv(f"{caminho_dados}{prec_sem}")
+tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}")
+tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}")
+tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}")
 
 
 
@@ -110,15 +119,119 @@ def semana_epidemiologica(csv, str_var):
 	print(f"\n{ansi['red']}As variáveis do arquivo ({str_var.upper()}), em semanas epidemiológicas, são:{ansi['reset']}\n{csv_se.dtypes}\n")
 	return csv_se
 
+tmin.set_index("Data", inplace = True)
+tmin.drop(columns = "tmin", inplace = True)
+print(tmin)
+tmed.set_index("Data", inplace = True)
+tmed.drop(columns = "tmed", inplace = True)
+print(tmed)
+tmax.set_index("Data", inplace = True)
+tmax.drop(columns = "tmax", inplace = True)
+print(tmax)
+prec.set_index("Data", inplace = True)
+prec.drop(columns = "prec", inplace = True)
+print(prec)
+
+tmin_sem.set_index("Semana", inplace = True)
+print(tmin_sem)
+tmed_sem.set_index("Semana", inplace = True)
+print(tmed_sem)
+tmax_sem.set_index("Semana", inplace = True)
+print(tmax_sem)
+prec_sem.set_index("Semana", inplace = True)
+print(prec_sem)
+
+
+
+print(f"\n{ansi['green']}TMIN{ansi['reset']}\n", tmin[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}TMED{ansi['reset']}\n", tmed[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}TMAX{ansi['reset']}\n", tmax[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}PREC{ansi['reset']}\n", prec[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+
+print(f"""{ansi['green']}TMIN ESTADUAL{ansi['reset']}
+Mínima: {round(tmin.min().min(), 2)} C
+Média: {round(tmin.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmin.std().max(), 2)} C
+Máxima: {round(tmin.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}TMED ESTADUAL{ansi['reset']}
+Mínima: {round(tmed.min().min(), 2)} C
+Média: {round(tmed.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmed.std().max(), 2)} C
+Máxima: {round(tmed.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}TMAX ESTADUAL{ansi['reset']}
+Mínima: {round(tmax.min().min(), 2)} C
+Média: {round(tmax.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmax.std().max(), 2)} C
+Máxima: {round(tmax.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}PREC ESTADUAL{ansi['reset']}
+Mínima: {round(prec.min().min(), 2)} mm
+Média: {round(prec.mean().mean(), 2)} mm
+Desvio Padrão Máximo: {round(prec.std().max(), 2)} mm
+Máxima: {round(prec.max().max(), 2)} mm""")
+
+print(f"\n{ansi['green']}TMIN SEMANAL{ansi['reset']}\n", tmin_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}TMED SEMANAL{ansi['reset']}\n", tmed_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}TMAX SEMANAL{ansi['reset']}\n", tmax_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+print(f"\n{ansi['green']}PREC SEMANAL{ansi['reset']}\n", prec_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
+
+print(f"""{ansi['green']}TMIN ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {round(tmin_sem.min().min(), 2)} C
+Média: {round(tmin_sem.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmin_sem.std().max(), 2)} C
+Máxima: {round(tmin_sem.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}TMED ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {round(tmed_sem.min().min(), 2)} C
+Média: {round(tmed_sem.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmed_sem.std().max(), 2)} C
+Máxima: {round(tmed_sem.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}TMAX ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {round(tmax_sem.min().min(), 2)} C
+Média: {round(tmax_sem.mean().mean(), 2)} C
+Desvio Padrão Máximo: {round(tmax_sem.std().max(), 2)} C
+Máxima: {round(tmax_sem.max().max(), 2)} C""")
+
+print(f"""{ansi['green']}PREC ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {round(prec_sem.min().min(), 2)} mm
+Média: {round(prec_sem.mean().mean(), 2)} mm
+Desvio Padrão Máximo: {round(prec_sem.std().max(), 2)} mm
+Máxima: {round(prec_sem.max().max(), 2)} mm""")
+
+sys.exit()
+
+
+
 tmin = prepross_var(tmin, "tmin")
 tmed = prepross_var(tmed, "tmed")
 tmax = prepross_var(tmax, "tmax")
 prec = prepross_var(prec, "prec")
 
+limiares_tmin = [5, 10, 15, 20]
+for limiar_tmin in limiares_tmin:
+	lim_tmin = tmin.applymap(lambda x: 1 if x < limiar_tmin else 0)
+	print(f"\n{ansi['green']}LIMIAR TMIN ({limiar_tmin} C){ansi['reset']}\n", lim_tmin)
 
-lim_tmin = tmin.applymap(lambda x: limiar_tmin(x))
-lim_tmax = tmax.applymap(lambda x: limiar_tmax(x))
+
+limiares_tmax = [20, 25, 30, 35]
+for limiar_tmax in limiares_tmax:
+	#lim_tmax = tmax.applymap(lambda x: limiar_tmax(x))
+	lim_tmax = tmax.applymap(lambda x: 1 if x > limiar_tmin else 0)
+	print(f"\n{ansi['green']}LIMIAR TMAX ({limiar_tmax} C){ansi['reset']}\n", lim_tmin)
+
+limiares_prec = [5, 10, 25, 50]
+for limiar_prec in limiares_prec:
+	#lim_tmax = tmax.applymap(lambda x: limiar_tmax(x))
+	lim_prec = prec.applymap(lambda x: 1 if x > limiar_prec else 0)
+	print(f"\n{ansi['green']}LIMIAR PREC ({limiar_prec} mm){ansi['reset']}\n", lim_prec)
+
+sys.exit()
+
 lim_prec50 = prec.applymap(lambda x: limiar_prec50(x))
+
 
 print(f"\n{ansi['green']}LIMIAR TMIN{ansi['reset']}\n", lim_tmin)
 print(f"\n{ansi['green']}LIMIAR TMAX{ansi['reset']}\n", lim_tmax)
