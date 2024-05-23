@@ -142,7 +142,6 @@ prec_sem.set_index("Semana", inplace = True)
 print(prec_sem)
 
 
-
 print(f"\n{ansi['green']}TMIN{ansi['reset']}\n", tmin[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}TMED{ansi['reset']}\n", tmed[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}TMAX{ansi['reset']}\n", tmax[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
