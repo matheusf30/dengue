@@ -20,8 +20,8 @@ _CLIMA = False
 _ENTOMOEPIDEMIO = False
 _iCLIMA = False
 _iEPIDEMIO = False
-_LIMIAR_TMIN = False
-_LIMIAR_TMAX = False
+_LIMIAR_TMIN = True
+_LIMIAR_TMAX = True
 _LIMIAR_PREC = True
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
@@ -61,6 +61,11 @@ tmin = "tmin_semana_ate_2023.csv"
 tmed = "tmed_semana_ate_2023.csv"
 tmax = "tmax_semana_ate_2023.csv"
 
+prec_sem = "prec_diario_ate_2023.csv"
+tmax_sem = "tmax_diario_ate_2023.csv"
+tmed_sem = "tmed_diario_ate_2023.csv"
+tmin_sem = "tmin_diario_ate_2023.csv"
+
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
 focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
@@ -68,6 +73,11 @@ prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
+
+prec_sem = pd.read_csv(f"{caminho_dados}{prec_sem}", low_memory = False)
+tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}", low_memory = False)
+tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}", low_memory = False)
+tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 
 #################################################################################
 ### Correlacionando (VARIÁVEIS CLIMATOLÓGICAS)
@@ -447,15 +457,25 @@ if _AUTOMATIZA == True and _LIMIAR_TMIN == True:
 			print(_ANO)
 			for _LIMIAR in limiares:
 				print(_LIMIAR)
-				lim_tmin = tmin.copy()
-				lim_tmin.set_index("Semana", inplace = True)
-				lim_tmin = lim_tmin.applymap(lambda x: 1 if x < _LIMIAR else 0)
-				lim_tmin.reset_index(inplace = True)
+				limite = tmin_sem.copy()
+				limite.set_index("Data", inplace = True)
+				limite.drop(columns = "tmin", inplace = True)
+				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
+				limite.reset_index(inplace = True)
+				limite["Data"] = pd.to_datetime(limite["Data"])
+				limite = limite.sort_values(by = ["Data"])
+				limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+				limite = limite.groupby(["Semana"]).sum(numeric_only = True)
+				limite.reset_index(inplace = True)
+				limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
+				limite.drop([0], axis = 0, inplace = True)
+				print(limite.info())
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-				dataset = dataset.merge(lim_tmin[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				print(dataset.info())
+				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset.dropna(axis = 0, inplace = True)
 				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_TMIN"}
 				dataset = dataset.rename(columns = troca_nome)
@@ -502,10 +522,9 @@ if _AUTOMATIZA == True and _LIMIAR_TMIN == True:
 				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
 				if _ANO == "total":
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima < {_LIMIAR} C)\n", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)\n", weight = "bold", size = "medium")
 				else:
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima < {_LIMIAR} C)", weight = "bold", size = "medium")
-				if _SALVAR == True:
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Mínima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)", weight = "bold", size = "medium")
 					_cidade = _CIDADE
 					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
@@ -513,6 +532,7 @@ if _AUTOMATIZA == True and _LIMIAR_TMIN == True:
 							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
 							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
 							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				if _SALVAR == True:
 					for velho, novo in troca.items():
 						_cidade = _cidade.replace(velho, novo)
 					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_tmin/"
@@ -531,7 +551,7 @@ if _AUTOMATIZA == True and _LIMIAR_TMIN == True:
 if _AUTOMATIZA == True and _LIMIAR_TMAX == True:
 	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
-	limiares = [20, 22, 24, 26, 28, 30]
+	limiares = [22, 24, 26, 28, 30, 32]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
 		print(_CIDADE)
@@ -539,10 +559,19 @@ if _AUTOMATIZA == True and _LIMIAR_TMAX == True:
 			print(_ANO)
 			for _LIMIAR in limiares:
 				print(_LIMIAR)
-				limite = tmax.copy()
-				limite.set_index("Semana", inplace = True)
+				limite = tmax_sem.copy()
+				limite.set_index("Data", inplace = True)
+				limite.drop(columns = "tmax", inplace = True)
 				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
 				limite.reset_index(inplace = True)
+				limite["Data"] = pd.to_datetime(limite["Data"])
+				limite = limite.sort_values(by = ["Data"])
+				limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+				limite = limite.groupby(["Semana"]).sum(numeric_only = True)
+				limite.reset_index(inplace = True)
+				limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
+				limite.drop([0], axis = 0, inplace = True)
+				print(limite.info())
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
@@ -594,19 +623,19 @@ if _AUTOMATIZA == True and _LIMIAR_TMAX == True:
 				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
 				if _ANO == "total":
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)\n", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Máxima < {_LIMIAR} C)\n", weight = "bold", size = "medium")
 				else:
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} C)", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Temperatura Máxima** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Máxima < {_LIMIAR} C)", weight = "bold", size = "medium")
+				_cidade = _CIDADE
+				troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+						'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+						'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+						'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+						'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+						'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				for velho, novo in troca.items():
+					_cidade = _cidade.replace(velho, novo)
 				if _SALVAR == True:
-					_cidade = _CIDADE
-					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-					for velho, novo in troca.items():
-						_cidade = _cidade.replace(velho, novo)
 					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_tmax/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
 					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_tmax_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
@@ -623,7 +652,7 @@ if _AUTOMATIZA == True and _LIMIAR_TMAX == True:
 if _AUTOMATIZA == True and _LIMIAR_PREC == True:
 	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
-	limiares = [10, 20, 30, 40, 50, 60]
+	limiares = [5, 10, 15, 20, 25, 30, 35]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
 		print(_CIDADE)
@@ -631,10 +660,19 @@ if _AUTOMATIZA == True and _LIMIAR_PREC == True:
 			print(_ANO)
 			for _LIMIAR in limiares:
 				print(_LIMIAR)
-				limite = prec.copy()
-				limite.set_index("Semana", inplace = True)
+				limite = prec_sem.copy()
+				limite.set_index("Data", inplace = True)
+				limite.drop(columns = "prec", inplace = True)
 				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
 				limite.reset_index(inplace = True)
+				limite["Data"] = pd.to_datetime(limite["Data"])
+				limite = limite.sort_values(by = ["Data"])
+				limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+				limite = limite.groupby(["Semana"]).sum(numeric_only = True)
+				limite.reset_index(inplace = True)
+				limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
+				limite.drop([0], axis = 0, inplace = True)
+				print(limite.info())
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
@@ -686,9 +724,111 @@ if _AUTOMATIZA == True and _LIMIAR_PREC == True:
 				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
 				if _ANO == "total":
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} mm)\n", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Precipitação > {_LIMIAR} mm)\n", weight = "bold", size = "medium")
 				else:
-					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Temperatura Mínima > {_LIMIAR} mm)", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Precipitação > {_LIMIAR} mm)", weight = "bold", size = "medium")
+					_cidade = _CIDADE
+					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+				if _SALVAR == True:
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/limiares_prec/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n""")
+				if _VISUALIZAR == True:
+					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_prec_{_cidade}_r{_RETROAGIR}s_{_ANO}_LIMIAR{_LIMIAR}.pdf{ansi['reset']}\n")
+					plt.show()
+
+#################################################################################
+### Correlacionando (Focos, Casos E Limiares, Retroações)
+#################################################################################
+# DEVO FAZER AS VARIÁVES, OS LIMIARES E AS RETROAÇÕES SE CORRELACIONAREM
+if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
+	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
+	lista_anos = ["2023", "2022", "2021", "2020", "total"]
+	limiares = [5, 10, 15, 20, 25, 30, 35]
+	for _CIDADE in lista_cidades:
+		_CIDADE = _CIDADE.upper()
+		print(_CIDADE)
+		for _ANO in lista_anos:
+			print(_ANO)
+			for _LIMIAR in limiares:
+				print(_LIMIAR)
+				limite = prec_sem.copy()
+				limite.set_index("Data", inplace = True)
+				limite.drop(columns = "prec", inplace = True)
+				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
+				limite.reset_index(inplace = True)
+				limite["Data"] = pd.to_datetime(limite["Data"])
+				limite = limite.sort_values(by = ["Data"])
+				limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+				limite = limite.groupby(["Semana"]).sum(numeric_only = True)
+				limite.reset_index(inplace = True)
+				limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
+				limite.drop([0], axis = 0, inplace = True)
+				print(limite.info())
+				### Montando dataset
+				dataset = tmin[["Semana"]].copy()
+				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset.dropna(axis = 0, inplace = True)
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
+				dataset = dataset.rename(columns = troca_nome)
+				dataset.dropna(axis = 0, inplace = True)
+				dataset = dataset.iloc[:, :].copy()
+				dataset.fillna(0, inplace = True)
+				if _ANO == "2023":
+					dataset = dataset.iloc[-53:, :].copy()
+				elif _ANO == "2022":
+					dataset = dataset.iloc[-105:-53, :].copy()
+				elif _ANO == "2021":
+					dataset = dataset.iloc[-157:-105, :].copy()
+				elif _ANO == "2020":
+					dataset = dataset.iloc[-209:-157, :].copy()
+				else:
+					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+				dataset.dropna(inplace = True)
+				dataset.set_index("Semana", inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
+				print(dataset.info())
+				print("~"*80)
+				print(dataset.dtypes)
+				print("~"*80)
+				print(dataset)
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+				for r in range(1, _RETROAGIR + 1):
+					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
+				dataset.dropna(inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				### Matriz de Correlações
+				correlacao_dataset = dataset.corr(method = f"{_METODO}")
+				print("="*80)
+				print(f"Método de {_METODO.title()} \n", correlacao_dataset)
+				print("="*80)
+				#print(dataset)
+				#sys.exit()			
+				# Gerando Visualização (.pdf) da Matriz
+				fig, ax = plt.subplots(figsize = (18, 8), layout = "constrained", frameon = False)
+				filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
+				sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral", vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
+				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
+				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
+				if _ANO == "total":
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Precipitação > {_LIMIAR} mm)\n", weight = "bold", size = "medium")
+				else:
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e Limiar de Precipitação** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas) **(Limiar de Precipitação > {_LIMIAR} mm)", weight = "bold", size = "medium")
 					_cidade = _CIDADE
 					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
