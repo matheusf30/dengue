@@ -16,8 +16,8 @@ _AUTOMATIZA = True
 _SALVAR = True
 _VISUALIZAR = False
 
-_CLIMA = False
-_ENTOMOEPIDEMIO = False
+_CLIMA = True
+_ENTOMOEPIDEMIO = True
 _iCLIMA = False
 _iEPIDEMIO = False
 _LIMIAR_TMIN = True
@@ -28,7 +28,7 @@ _LIMIAR_RETRO = False
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
 _CIDADE = "Florianópolis" #"Florianópolis"#"Itajaí"#"Joinville"#"Chapecó"
-_METODO = "pearson" # "pearson" # "spearman" # "kendall"
+_METODO = "spearman" # "pearson" # "spearman" # "kendall"
 
 _CIDADE = _CIDADE.upper()
 ##### Padrão ANSI ##################################
