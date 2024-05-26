@@ -790,6 +790,8 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 				for _LIMIAR in limiares_prec:
 					_LIMIAR = int(_LIMIAR)
 					print(_LIMIAR)
+					limite = limite.applymap(lambda x: pd.to_numeric(x, errors='coerce'))
+					limite.dropna(inplace = True)
 					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
 					limite.reset_index(inplace = True)
 					limite["Data"] = pd.to_datetime(limite["Data"])
