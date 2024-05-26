@@ -13,17 +13,17 @@ import os
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _AUTOMATIZA = True
-_SALVAR = True
-_VISUALIZAR = False
+_SALVAR = False
+_VISUALIZAR = True
 
-_CLIMA = True
-_ENTOMOEPIDEMIO = True
+_CLIMA = False
+_ENTOMOEPIDEMIO = False
 _iCLIMA = False
 _iEPIDEMIO = False
-_LIMIAR_TMIN = True
-_LIMIAR_TMAX = True
-_LIMIAR_PREC = True
-_LIMIAR_RETRO = False
+_LIMIAR_TMIN = False
+_LIMIAR_TMAX = False
+_LIMIAR_PREC = False
+_LIMIAR_RETRO = True
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
@@ -762,29 +762,45 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 		print(_CIDADE)
 		for _ANO in lista_anos:
 			print(_ANO)
-			for _LIMIAR in limiares:
-				print(_LIMIAR)
-				limite = prec_sem.copy()
-				limite.set_index("Data", inplace = True)
-				limite.drop(columns = "prec", inplace = True)
-				limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
-				limite.reset_index(inplace = True)
-				limite["Data"] = pd.to_datetime(limite["Data"])
-				limite = limite.sort_values(by = ["Data"])
-				limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
-				limite = limite.groupby(["Semana"]).sum(numeric_only = True)
-				limite.reset_index(inplace = True)
-				limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
-				limite.drop([0], axis = 0, inplace = True)
-				print(limite.info())
+			for r in lista_retro:
+
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
+				limite = prec_sem.copy()
+				limite.set_index("Data", inplace = True)
+				#limite.rename(columns = {"prec" : "Semana"}, inplace = True)
+				limite.drop(columns = "prec", inplace = True)
+				print(limite)
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset.dropna(axis = 0, inplace = True)
 				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
 				dataset = dataset.rename(columns = troca_nome)
+				dataset.set_index("Semana", inplace = True)
+				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
+				print(dataset.info())
+				print("~"*80)
+				print(dataset.dtypes)
+				print("~"*80)
+				print(dataset)
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+				for _LIMIAR in limiares_prec:
+					print(_LIMIAR)
+					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
+					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
+					limite.reset_index(inplace = True)
+					limite["Data"] = pd.to_datetime(limite["Data"])
+					limite = limite.sort_values(by = ["Data"])
+					limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
+					limite = limite.groupby(["Semana"]).sum(numeric_only = True)
+					limite.reset_index(inplace = True)
+					limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
+					limite.drop([0], axis = 0, inplace = True)
+					print(limite.info())
 				dataset.dropna(axis = 0, inplace = True)
 				dataset = dataset.iloc[:, :].copy()
 				dataset.fillna(0, inplace = True)
@@ -799,19 +815,6 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 				else:
 					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
 				dataset.dropna(inplace = True)
-				dataset.set_index("Semana", inplace = True)
-				dataset.columns.name = f"{_CIDADE}"
-				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
-				print(dataset.info())
-				print("~"*80)
-				print(dataset.dtypes)
-				print("~"*80)
-				print(dataset)
-				#sys.exit()
-				### Retroagindo dataset
-				#_RETROAGIR = 20
-				for r in range(1, _RETROAGIR + 1):
-					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
 				dataset.dropna(inplace = True)
 				dataset.columns.name = f"{_CIDADE}"
 				### Matriz de Correlações
