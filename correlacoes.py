@@ -766,17 +766,11 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
-				limite = prec_sem.copy()
-				limite.set_index("Data", inplace = True)
-				#limite.rename(columns = {"prec" : "Semana"}, inplace = True)
-				limite.drop(columns = "prec", inplace = True)
-				print(limite)
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-				dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset.dropna(axis = 0, inplace = True)
-				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
-				dataset = dataset.rename(columns = troca_nome)
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS"}#,  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
+				dataset.rename(columns = troca_nome, inplace = True)
 				dataset.set_index("Semana", inplace = True)
 				dataset.columns.name = f"{_CIDADE}"
 				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
@@ -785,13 +779,18 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 				print(dataset.dtypes)
 				print("~"*80)
 				print(dataset)
-				#sys.exit()
-				### Retroagindo dataset
-				#_RETROAGIR = 20
+				### Incluindo limiares
+				limite = prec_sem.copy()
+				limite.set_index("Data", inplace = True)
+				#limite.rename(columns = {"prec" : "Semana"}, inplace = True)
+				limite.drop(columns = "prec", inplace = True)
+				limite.dropna(inplace = True)
+				print(limite)
+				print(limite.info())
 				for _LIMIAR in limiares_prec:
+					_LIMIAR = int(_LIMIAR)
 					print(_LIMIAR)
 					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
-					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
 					limite.reset_index(inplace = True)
 					limite["Data"] = pd.to_datetime(limite["Data"])
 					limite = limite.sort_values(by = ["Data"])
@@ -800,10 +799,29 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 					limite.reset_index(inplace = True)
 					limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
 					limite.drop([0], axis = 0, inplace = True)
+					#dataset[f"L{_LIMIAR}_PREC"] = limite[_CIDADE]
+					dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+					dataset.rename(columns = {f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}, inplace = True)
+					#dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
+					print(limite)
 					print(limite.info())
 				dataset.dropna(axis = 0, inplace = True)
 				dataset = dataset.iloc[:, :].copy()
 				dataset.fillna(0, inplace = True)
+				print(dataset)
+				print(dataset.info())
+
+					
+
+				#dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+
+
+
+				#sys.exit()
+				### Retroagindo dataset
+				#_RETROAGIR = 20
+
+
 				if _ANO == "2023":
 					dataset = dataset.iloc[-53:, :].copy()
 				elif _ANO == "2022":
