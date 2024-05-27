@@ -14,8 +14,8 @@ import os
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _AUTOMATIZA = True
-_SALVAR = False
-_VISUALIZAR = True
+_SALVAR = True
+_VISUALIZAR = False
 
 _LIMIAR_RETRO = True
 _CLIMA = False
