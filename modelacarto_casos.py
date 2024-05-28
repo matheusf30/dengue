@@ -486,9 +486,15 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}CASOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/pontual/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}CASOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _VISUALIZAR == True:
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
+	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
 
 # SC_MapaCalor
 fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
@@ -533,9 +539,15 @@ plt.ylabel("Latitude")
 plt.title(f"""Mapa de Densidade de Kernel dos Casos de Dengue Previstos.
 Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""", fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}CASOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/densidade/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}CASOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _VISUALIZAR == True:
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
+ 	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
 
 # SC_Coroplético
 xy = municipios.copy()
@@ -591,9 +603,15 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}CASOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/coropletico/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}CASOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _VISUALIZAR == True:	
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
+	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
 
 
 
