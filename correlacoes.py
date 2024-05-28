@@ -29,7 +29,7 @@ _LIMIAR_PREC = False
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
 _CIDADE = "Florianópolis" #"Florianópolis"#"Itajaí"#"Joinville"#"Chapecó"
-_METODO = "pearson" # "pearson" # "spearman" # "kendall"
+_METODO = "spearman" # "pearson" # "spearman" # "kendall"
 
 _CIDADE = _CIDADE.upper()
 ##### Padrão ANSI ##################################
@@ -90,7 +90,7 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
 	limiares_tmax = [22, 24, 26, 28, 30, 32]
 	limiares_tmin = [14, 16, 18, 20, 22, 24]
-	limiares_prec = [5, 20, 35, 50, 65, 80, 9matriz_correlacao_{_METODO}_retrolimiar_{_cidade}_{_ANO}_r{r}s.pdf5]
+	limiares_prec = [5, 20, 35, 50, 65, 80, 95]
 	lista_retro = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
