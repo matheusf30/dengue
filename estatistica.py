@@ -104,37 +104,66 @@ def tendencia(cidade, csv):
 def histograma(cidade, csv, str_var):
 	"""
 	"""
-	fig, axs = plt.subplots(2, 1, figsize=(12, 8), layout="constrained", frameon=False, gridspec_kw={'height_ratios': [3, 1]})
-
-	# Calculate quartiles
-	quartiles = np.percentile(csv[cidade], [25, 50, 75])
-
-	# Plot histogram
-	n, bins, patches = axs[0].hist(csv[cidade], bins='auto', color='blue', alpha=0.7, rwidth=0.85, label="Histograma")
-
-	# Assign colors to histogram bars based on quartiles
-	for patch, bin_value in zip(patches, bins):
-		if bin_value <= quartiles[0]:
-			patch.set_facecolor('green')  # Color for first quartile
-		elif bin_value <= quartiles[1]:
-			patch.set_facecolor('blue')   # Color for second quartile
-		elif bin_value <= quartiles[2]:
-			patch.set_facecolor('orange') # Color for third quartile
+	fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
+							 sharex = True, layout = "constrained", frameon = False)
+	Q1 = np.percentile(csv[cidade], [25])
+	mediana = csv[cidade].median()
+	Q3 = np.percentile(csv[cidade], [75])
+	anomalia = Q3 + 1.5 * (Q3 - Q1)
+	anomalia_negativa = Q1 - 1.5 * (Q3 - Q1)
+	media, desvio_padrao = csv[cidade].mean(), csv[cidade].std()
+	if str_var == "focos":
+		n, divisoes, patches = axs[0].hist(csv[cidade], bins = int((csv[cidade].max() // 3)))#, rwidth = 0.95)#,
+									#color = "blue", alpha = 0.9, rwidth = 1.1)#, label = "Histograma")
+		plt.xlabel("Número de Registros de Focos de _Aedes_ sp.")
+	elif str_var == "casos":
+		n, divisoes, patches = axs[0].hist(csv[cidade], bins = int((csv[cidade].max() // csv[cidade].mean())))
+		plt.xlabel("Número de Registros de Casos de Dengue")
+	elif str_var == "prec":
+		n, divisoes, patches = axs[0].hist(csv[cidade], bins = int((csv[cidade].max() // 6)))
+		plt.xlabel("Precipitação (mm), Acumulada em Semanas Epidemiológicas")
+	else:
+		n, divisoes, patches = axs[0].hist(csv[cidade], bins = int(csv[cidade].max() * 4))
+		plt.xlabel("Temperatura (C), Média em Semanas Epidemiológicas")
+		#sns.kdeplot(csv[cidade], color = "black", ax = axs[0])
+	for patch, bin_valor in zip(patches, divisoes):
+		if bin_valor <= anomalia_negativa:
+			patch.set_facecolor("red")
+		elif bin_valor <= Q1:
+			patch.set_facecolor("lime")
+		elif bin_valor <= mediana:
+			patch.set_facecolor("darkgreen")
+		elif bin_valor <= Q3:
+			patch.set_facecolor("seagreen")
+		elif bin_valor <= anomalia:
+			patch.set_facecolor("lime")
 		else:
-			patch.set_facecolor('red')    # Color for fourth quartile
+			patch.set_facecolor("red")
+	axs[0].axvline(x = media, linestyle = "--", color = "darkblue")
+	axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange")
+	if str_var == "tmin" or str_var == "tmed" or str_var == "tmax":
+		fig.text(0.8, 0.2, f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}", fontsize = 12)
+	else:
+		fig.text(0.8, 0.8, f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}", fontsize = 12)
+	#axs[0].annotate(f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}",
+              		#xy = (0.8, 0.8), fontsize = 12)
 
-	axs[0].legend(loc="upper right")
+	#axs[0].legend(loc="upper right")
+	plt.ylabel("Quantidade")
 	axs[0].grid(True)
 
 	# Plot boxplot
-	axs[1].boxplot(csv[cidade], vert = False)
+	outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
+	linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
+	ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
+	axs[1].boxplot(csv[cidade], vert = False, showmeans = True, notch = True,
+					flierprops = outliers, medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 
 	# Set grid for boxplot
 	axs[1].grid(True)
 
 	# Set title and labels
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
-	plt.xlabel("Valor")
 	if _SALVAR == True:
 		_cidade = cidade.copy()
 		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -237,6 +266,11 @@ for i in lista_cidades:
 """
 
 histograma("FLORIANÓPOLIS", focos, "focos")
+histograma("FLORIANÓPOLIS", casos, "casos")
+histograma("FLORIANÓPOLIS", prec, "prec")
+histograma("FLORIANÓPOLIS", tmin, "tmin")
+histograma("FLORIANÓPOLIS", tmed, "tmed")
+histograma("FLORIANÓPOLIS", tmax, "tmax")
 
 
 ### Exibindo Informações
