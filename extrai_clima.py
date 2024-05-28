@@ -29,7 +29,7 @@ try:
     elif _LOCAL == "CASA":
         caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     elif _LOCAL == "IFSC":
-        caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+        caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
         caminho_samet = "/dados/operacao/samet/clima/"
     else:
