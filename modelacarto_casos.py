@@ -37,6 +37,7 @@ elif _LOCAL == "CASA":
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
 elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+    caminho_shp = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
 else:
@@ -84,8 +85,8 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
-municipios = gpd.read_file(f"{caminho_dados}{municipios}")
-br = gpd.read_file(f"{caminho_dados}{br}")
+municipios = gpd.read_file(f"{caminho_shp}{municipios}")
+br = gpd.read_file(f"{caminho_shp}{br}")
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
          'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
@@ -552,7 +553,7 @@ if  _AUTOMATIZA == True and _SALVAR == True:
 	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
 if _AUTOMATIZA == True and _VISUALIZAR == True:
 	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
- 	plt.show()
+	plt.show()
 	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
 
 # SC_Coroplético
@@ -600,7 +601,7 @@ ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/2
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 ax.text(-52.5, -28.25, """LEGENDA
 
-≣           Sem registro*
+▢           Sem registro*
 
 *Não há registro oficial ou
 modelagem inexistente.""",
