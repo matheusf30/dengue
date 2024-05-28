@@ -34,6 +34,8 @@ elif _local == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
+    caminho_erro = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/erro/"
+    caminho_validacao = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/validacao/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -440,7 +442,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -452,7 +454,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
@@ -489,7 +491,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -501,7 +503,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
@@ -536,7 +538,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -548,7 +550,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
@@ -585,7 +587,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_resultados}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
@@ -597,7 +599,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		plt.savefig(f'{caminho_resultados}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
