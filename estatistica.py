@@ -127,26 +127,7 @@ def histograma(cidade, csv, str_var):
 	axs[0].grid(True)
 
 	# Plot boxplot
-	boxplot_parts = axs[1].boxplot(csv[cidade], vert=False, patch_artist=True)
-
-    # Set colors for boxplot components based on quartiles
-	for patch in boxplot_parts['boxes']:
-		median = np.median(patch.get_xdata())  # Get the median of the box
-		if median <= quartiles[0]:
-			patch.set_facecolor('green')   # Color for first quartile
-		elif median <= quartiles[1]:
-			patch.set_facecolor('blue')    # Color for second quartile
-		elif median <= quartiles[2]:
-			patch.set_facecolor('orange')  # Color for third quartile
-		else:
-			patch.set_facecolor('red')     # Color for fourth quartile
-
-	for whisker in boxplot_parts['whiskers']:
-		median = np.median(whisker.get_xdata())  # Get the median of the whisker
-		if median <= quartiles[0]:
-			whisker.set_color('green')   # Color for first quartile
-		elif median <= quartiles[1]:
-			whisker.set_color('blue')    # Color
+	axs[1].boxplot(csv[cidade], vert = False)
 
 	# Set grid for boxplot
 	axs[1].grid(True)
