@@ -28,15 +28,16 @@ import matplotlib.patches as mpatches
 #from keras.models import load_model
 
 ### Encaminhamento aos Diretórios
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _local == "GH": # _ = Variável Privada
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+    caminho_shp = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
 else:
@@ -54,11 +55,18 @@ municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 br = "BR_UF_2022.shp"
 
 #### Condições para Variar ####################################
-_automatiza = True
-_retroagir = 8
+
+_AUTOMATIZA = True
+
+_SALVAR = False
+
+_VISUALIZAR = True
+
+_RETROAGIR = 8
+
 SEED = np.random.seed(0)
 """
-if _automatiza == False:
+if _AUTOMATIZA == False:
     cidade = "FLORIANÓPOLIS"
 else:
 """
@@ -75,8 +83,8 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 unicos = pd.read_csv(f"{caminho_dados}{unicos}")
-municipios = gpd.read_file(f"{caminho_dados}{municipios}")
-br = gpd.read_file(f"{caminho_dados}{br}")
+municipios = gpd.read_file(f"{caminho_shp}{municipios}")
+br = gpd.read_file(f"{caminho_shp}{br}")
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A',
          'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E',
          'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I',
@@ -89,11 +97,11 @@ cidades = unicos["Município"].copy()
 focos = focos.iloc[:573] # Desconsiderando 2023
 unicos = unicos.iloc[:151] # Desconsiderando 2023
 """
-# modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+# modelo = joblib.load(f"{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5")
 
 """
 ### Pré-Processamento
-_retroagir = 8 # Semanas Epidemiológicas
+_RETROAGIR = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -120,14 +128,14 @@ troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
 
 
-for r in range(1, _retroagir + 1):
+for r in range(1, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 
-for r in range(5, _retroagir + 1):
+for r in range(5, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -190,8 +198,8 @@ def abre_modelo(cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    modelo = joblib.load(f"{caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5")
-    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_retroagir}_{cidade}.h5{reset}")
+    modelo = joblib.load(f"{caminho_modelos}RF_focos_r{_RETROAGIR}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_focos_r{_RETROAGIR}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
     return modelo
 
@@ -204,7 +212,7 @@ def monta_dataset(cidade):
     dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
     troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
     dataset = dataset.rename(columns = troca_nome)
-    for r in range(5, _retroagir + 1):
+    for r in range(5, _RETROAGIR + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -298,8 +306,8 @@ def grafico(previsoes, R_2):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Focos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir + 4:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR + 4:], axis=0, inplace = True)
     """
     previsoes = previsao
     previsoes = previsoes[:len(final)]
@@ -347,8 +355,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Focos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -377,8 +385,8 @@ def salva_modelo(modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
+    joblib.dump(modelo, f"{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
 
 ######################################################MODELAGEM############################################################
@@ -388,11 +396,11 @@ def salva_modelo(modelo, cidade):
 previsao_total = pd.DataFrame()
 previsao_total["Semana"] = focos["Semana"].copy()  #pd.date_range(start = "2012-01-01", end = "2022-12-25", freq = "W")
 previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
-previsao_total.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-previsao_total.drop(previsao_total.index[-_retroagir + 4:], axis=0, inplace = True)
+previsao_total.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+previsao_total.drop(previsao_total.index[-_RETROAGIR + 4:], axis=0, inplace = True)
 
 
-if _automatiza == True:
+if _AUTOMATIZA == True:
     for cidade in cidades:
         if cidade in value_error:
             print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}ValueError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
@@ -426,7 +434,7 @@ previsao_melt_xy = pd.merge(previsao_melt, xy, on = "Município", how = "left")
 geometry = [Point(xy) for xy in zip(previsao_melt_xy['longitude'], previsao_melt_xy['latitude'])]
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
 
-print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
+print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5{reset}")
 print(xy)
 print(dataset)
 print(municipios)
@@ -486,9 +494,15 @@ plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_ sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.",
           fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}FOCOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if _AUTOMATIZA == True and _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/pontual/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}FOCOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _AUTOMATIZA == True and _VISUALIZAR == True:
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nFOCOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
+	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nFOCOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
 
 # SC_MapaCalor
 fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
@@ -532,9 +546,15 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Mapa de Densidade de Kernel dos Focos de _Aedes_sp. Previstos.\n Santa Catarina, Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}FOCOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if  _AUTOMATIZA == True and _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/densidade/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}FOCOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _AUTOMATIZA == True and _VISUALIZAR == True:
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nFOCOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
+	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nFOCOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
 
 # SC_Coroplético
 xy = municipios.copy()
@@ -581,7 +601,7 @@ ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/2
         color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 ax.text(-52.5, -28.5, """LEGENDA
 
-≣           Sem registro*
+▢           Sem registro*
 
 *Não há registro oficial ou
 modelagem inexistente.""",
@@ -590,9 +610,15 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Focos de _Aedes_sp. Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-plt.savefig(f"{caminho_resultados}FOCOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
-print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-#plt.show()
+if _AUTOMATIZA == True and _SALVAR == True:
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/coropletico/"
+	os.makedirs(caminho_resultados, exist_ok = True)
+	plt.savefig(f"{caminho_resultados}FOCOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
+	print(f"\n\n{green}{caminho_resultados}\nFOCOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
+if _AUTOMATIZA == True and _VISUALIZAR == True:	
+	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nFOCOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
+	plt.show()
+	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nFOCOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
 
 """
 https://geopandas.org/en/stable/docs/user_guide/mapping.html
