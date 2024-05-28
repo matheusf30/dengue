@@ -49654,3 +49654,7 @@ dtype: object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 XIO:  fatal IO error 22 (Invalid argument) on X server "localhost:14.0"
       after 17857 requests (17857 known processed) with 300 events remaining.
+  File "/home/sifapsc/scripts/matheus/dengue/correlacoes.py", line 93
+    limiares_prec = [5, 20, 35, 50, 65, 80, 9matriz_correlacao_{_METODO}_retrolimiar_{_cidade}_{_ANO}_r{r}s.pdf5]
+                                             ^
+SyntaxError: invalid syntax
