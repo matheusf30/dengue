@@ -28,14 +28,14 @@ import matplotlib.patches as mpatches
 #from keras.models import load_model
 
 ### Encaminhamento aos Diretórios
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _local == "GH": # _ = Variável Privada
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _LOCAL == "GH": # _ = Variável Privada
     caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
+elif _LOCAL == "CASA":
     caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
-elif _local == "IFSC":
+elif _LOCAL == "IFSC":
     caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
     caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
@@ -55,14 +55,20 @@ municipios = "SC_Municipios_2022.shp" # Shapefile não está carregando do GH
 br = "BR_UF_2022.shp"
 
 #### Condições para Variar ####################################
-_automatiza = True
-_retroagir = 3
-if _automatiza == False:
+
+_AUTOMATIZA = True
+
+_SALVAR = False
+
+_VISUALIZAR = True
+
+_RETROAGIR = 3
+
+if _AUTOMATIZA == False:
     cidade = "Florianópolis"
     cidade = cidade.upper()
 
 SEED = np.random.seed(0)
-
 
 
 value_error = ["BOMBINHAS", "BALNEÁRIO CAMBORIÚ", "PORTO BELO"]
@@ -90,11 +96,11 @@ cidades = unicos["Município"].copy()
 
 not_found = list(cidades.iloc[151:])  # Desconsiderando 2023, pois ainda não há modelagem
 
-# modelo = joblib.load(f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
+# modelo = joblib.load(f"{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5")
 
 """
 ### Pré-Processamento
-_retroagir = 8 # Semanas Epidemiológicas
+_RETROAGIR = 8 # Semanas Epidemiológicas
 cidade = "Florianópolis" #"Itajaí" "Joinville" "Chapecó" "Florianópolis" "Lages"
 cidade = cidade.upper()
 focos["Semana"] = pd.to_datetime(focos["Semana"])#, format="%Y%m%d")
@@ -121,14 +127,14 @@ troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
 
 
-for r in range(1, _retroagir + 1):
+for r in range(1, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
 
-for r in range(5, _retroagir + 1):
+for r in range(5, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -191,8 +197,8 @@ def abre_modelo(cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    modelo = joblib.load(f"{caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5")
-    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_retroagir}_{cidade}.h5{reset}")
+    modelo = joblib.load(f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5")
+    print(f"\n{green}MODELO RANDOM FOREST DE {cidade} ABERTO!\n\nCaminho e Nome:\n {caminho_modelos}RF_casos_r{_RETROAGIR}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
     return modelo
 
@@ -209,7 +215,7 @@ def monta_dataset(cidade):
     troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS", f"{cidade}" : "CASOS"}
     dataset = dataset.rename(columns = troca_nome)
     dataset.fillna(0, inplace = True)
-    for r in range(3, _retroagir + 1):
+    for r in range(3, _RETROAGIR + 1):
         dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
         dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
         dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
@@ -304,8 +310,8 @@ def grafico(previsoes, R_2):
     final = pd.DataFrame()
     final["Semana"] = casos["Semana"]
     final["Casos"] = casos[cidade]
-    #final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    #final.drop(final.index[-_retroagir + 4:], axis=0, inplace = True)
+    #final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    #final.drop(final.index[-_RETROAGIR + 4:], axis=0, inplace = True)
     final.drop(1, axis=0, inplace = True)
     """
     previsoes = previsao
@@ -354,8 +360,8 @@ def grafico_previsao(previsao, teste, string_modelo):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Casos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop([d for d in range(_RETROAGIR)], axis=0, inplace = True)
+    final.drop(final.index[-_RETROAGIR:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -384,8 +390,8 @@ def salva_modelo(modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         cidade = cidade.replace(velho, novo)
-    joblib.dump(modelo, f"{caminho_modelos}RF_r{_retroagir}_{cidade}.h5")
-    print(f"{green}\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
+    joblib.dump(modelo, f"{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5")
+    print(f"{green}\nMODELO RANDOM FOREST DE {cidade} SALVO!\n\nCaminho e Nome:\n {caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5{reset}")
     print("\n" + "="*80 + "\n")
 
 ######################################################MODELAGEM############################################################
@@ -396,10 +402,10 @@ previsao_total = pd.DataFrame()
 previsao_total["Semana"] = casos["Semana"].copy() #pd.date_range(start = "2014-01-05", end = "2022-12-25", freq = "W")
 previsao_total["Semana"] = pd.to_datetime(previsao_total["Semana"])
 previsao_total.drop(1, axis = 0, inplace = True)
-#previsao_total.drop([d for d in range(_retroagir)], axis = 0, inplace = True)
-#previsao_total.drop(previsao_total.index[-_retroagir:], axis = 0, inplace = True)
+#previsao_total.drop([d for d in range(_RETROAGIR)], axis = 0, inplace = True)
+#previsao_total.drop(previsao_total.index[-_RETROAGIR:], axis = 0, inplace = True)
 
-if _automatiza == True:
+if _AUTOMATIZA == True:
     for cidade in cidades:
         if cidade in value_error:
             print(f"\n{red}Modelo para {cidade} não está no diretório!\n{yellow}ValueError\n{cyan}Por favor, entre em contato para resolver o problema!{reset}\n")
@@ -435,7 +441,7 @@ geometry = [Point(xy) for xy in zip(previsao_melt_xy["longitude"], previsao_melt
 previsao_melt_geo = gpd.GeoDataFrame(previsao_melt_xy, geometry = geometry, crs = "EPSG:4674")
 previsao_melt_geo = previsao_melt_geo[["Semana", "Município", "Casos", "geometry"]]
 previsao_melt_geo["Semana"] = pd.to_datetime(previsao_melt_geo["Semana"])
-print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_retroagir}_{cidade}.h5{reset}")
+print(f"{green}Caminho e Nome do arquivo:\n{caminho_modelos}RF_r{_RETROAGIR}_{cidade}.h5{reset}")
 
 
 
@@ -486,12 +492,12 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-if _SALVAR == True:
+if _AUTOMATIZA == True and _SALVAR == True:
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/pontual/"
 	os.makedirs(caminho_resultados, exist_ok = True)
 	plt.savefig(f"{caminho_resultados}CASOS_mapa_pontual_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-if _VISUALIZAR == True:
+if _AUTOMATIZA == True and _VISUALIZAR == True:
 	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
 	plt.show()
 	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_pontual_{semana_epidemio}.pdf\n{reset}\n\n")
@@ -539,12 +545,12 @@ plt.ylabel("Latitude")
 plt.title(f"""Mapa de Densidade de Kernel dos Casos de Dengue Previstos.
 Santa Catarina, Semana Epidemiológica: {semana_epidemio}.""", fontsize = 18)
 plt.grid(True)
-if _SALVAR == True:
+if  _AUTOMATIZA == True and _SALVAR == True:
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/densidade/"
 	os.makedirs(caminho_resultados, exist_ok = True)
 	plt.savefig(f"{caminho_resultados}CASOS_mapa_densidade_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-if _VISUALIZAR == True:
+if _AUTOMATIZA == True and _VISUALIZAR == True:
 	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
  	plt.show()
 	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_densidade_{semana_epidemio}.pdf\n{reset}\n\n")
@@ -603,12 +609,12 @@ plt.xlabel("Longitude")
 plt.ylabel("Latitude")
 plt.title(f"Casos de Dengue Previstos em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 plt.grid(True)
-if _SALVAR == True:
+if _AUTOMATIZA == True and _SALVAR == True:
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/coropletico/"
 	os.makedirs(caminho_resultados, exist_ok = True)
 	plt.savefig(f"{caminho_resultados}CASOS_mapa_coropletico_{semana_epidemio}.pdf", format = "pdf", dpi = 1200)
 	print(f"\n\n{green}{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\nSALVO COM SUCESSO!{reset}\n\n")
-if _VISUALIZAR == True:	
+if _AUTOMATIZA == True and _VISUALIZAR == True:	
 	print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
 	plt.show()
 	print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\nCASOS_mapa_coropletico_{semana_epidemio}.pdf\n{reset}\n\n")
