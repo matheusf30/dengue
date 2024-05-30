@@ -18,8 +18,17 @@ Para organização, os dados serão agrupados em três divisões distintas:
 \indent ...\\
 \indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012.\\
 \indent A série histórica dos casos de dengue começa em 2014, sendo previamente agrupados e disponilizados em semanas epidemiológicas.\\
-\indent Os \acrshort{DEE} e \acrshort{DEC} foram estruturados a ponto de compartilhar a mesma escala espaço-temporal. Os dados diários foram agrupados em semanas epidemiológicas, assim como o recorte espacial englobou área de estudo \textcolor{red}{(figura N)}, o próprio Estado catarinense.\\
-\indent Para melhor explicação dos métodos, pretende-se dividir o estudo em etapas, relativas ao percurso de execução do próprio projeto, sendo: pré-processamento dos dados; análise estatística descritiva; modelagem preditiva e validação do modelo; espacialização dos dados preditos e estudo de casos; além de síntese do \acrfull{PTT}.\\
+\indent Os \acrshort{DEE} e \acrshort{DEC} foram estruturados a ponto de compartilhar a mesma escala espaço-temporal. Os dados diários foram agrupados em semanas epidemiológicas, assim como o recorte espacial englobou área de estudo (figura \ref{fig:area_de_estudo}), o próprio Estado catarinense.
+\begin{figure}[h]
+    \centering
+    \caption{Mapa temático da área de estudo do projeto evidenciando municípios catarinenses.}
+    \includegraphics[scale=0.5]{figuras/area_de_estudo_SC_MATHEUS.pdf}
+    \label{fig:area_de_estudo}
+    \\
+    \vspace{-0.05cm}\hspace{-7.5cm}\small{Fonte: Elaborado pelo próprio autor (2024).} 
+\end{figure}
+
+\indent Para melhor explicação dos métodos, pretende-se dividir o estudo em etapas, relativas ao percurso de execução do próprio projeto, sendo: pré-processamento dos dados; análise estatística descritiva; modelagem preditiva e validação do modelo; espacialização dos dados preditos e estudo de casos; além de síntese do \acrfull{PTT}.
 
 
 \section{Pré-processamento dos Dados}
@@ -45,7 +54,7 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \section{Validação/Verificação dos Modelos}
 
-\indet \textcolor{red}{Histograma do Erro (Obs - Pre)\\
+\indent \textcolor{red}{Histograma do Erro (Obs - Pre)\\
 \indent Intervalo de Confiança para o Erro\\
 \indent Raiz Quadrada do Erro Quadrático Médio (RQEQM)\\
 \indent Erro Médio Absoluto (EMA)\\
