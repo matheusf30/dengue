@@ -16,16 +16,17 @@ _SALVAR = False
 _VISUALIZAR = True
 
 ### Encaminhamento aos Diretórios
-_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _LOCAL == "GH": # _ = Variável Privada
-    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 elif _LOCAL == "CASA":
-    caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+	caminho_dados = "/home/mfsouza90/Documents/git_matheusf30/dados_dengue/"
+	caminho_estatistica = "/home/mfsouza90/Documents/git_matheusf30/dengue/resultados/estatistica/"
 elif _LOCAL == "IFSC":
-    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-    caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/"
+	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/"
 else:
-    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+	print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
