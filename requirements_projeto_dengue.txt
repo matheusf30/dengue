@@ -30,6 +30,7 @@ patsy==0.5.6
 pillow==10.3.0
 protobuf==4.25.3
 Pygments==2.18.0
+pymannkendall==1.4.3
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 pytz==2024.1
@@ -42,10 +43,3 @@ six==1.16.0
 statsmodels==0.14.2
 tensorboard==2.16.2
 tensorboard-data-server==0.7.2
-termcolor==2.4.0
-typing_extensions==4.12.0
-tzdata==2024.1
-urllib3==2.2.1
-Werkzeug==3.0.3
-wheel==0.43.0
-wrapt==1.16.0
