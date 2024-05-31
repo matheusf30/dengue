@@ -12,13 +12,20 @@ Para organização, os dados serão agrupados em três divisões distintas:
     \item \acrfull{DGR}: Informações relacionadas aos aspectos geográficos atualizados para o momento atual, provenientes do \acrshort{IBGE}. 
 \end{alineas}
 
-\indent Os dados de precipitação acumulada a superfície (mm), são armazenados no produto \ingles{\acrshort{MERGE}},  sendo adquiridos dados diários a partir de junho de 2000.\\
-\indent Os dados do \ingles{\acrshort{SAMeT}} são aferidos a dois metros (2m) da superfície em escala de temperaturas dadas em celsius (C), agrupados em médias diárias e com série histórica iniciando em janeiro de 2000.\\
-\indent \textcolor{red}{FALTA CITAR GFS/CFS!}.\\
-\indent ...\\
-\indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012.\\
-\indent A série histórica dos casos de dengue começa em 2014, sendo previamente agrupados e disponilizados em semanas epidemiológicas.\\
+\indent Os dados de precipitação acumulada a superfície (mm), são armazenados no produto \ingles{\acrshort{MERGE}},  sendo adquiridos dados diários a partir de junho de 2000.
+
+\indent Os dados do \ingles{\acrshort{SAMeT}} são aferidos a dois metros (2m) da superfície em escala de temperaturas dadas em celsius (C), agrupados em médias diárias e com série histórica iniciando em janeiro de 2000.
+
+\indent \textcolor{red}{FALTA CITAR GFS/CFS!}.
+
+\indent ...
+
+\indent Os dados referentes a focos de \latim{Aedes} sp. são contabilizados no dia do próprio registro, ocorrendo apenas de segunda a sexta, e têm início no ano de 2012.
+
+\indent A série histórica dos casos de dengue começa em 2014, sendo previamente agrupados e disponilizados em semanas epidemiológicas.
+]
 \indent Os \acrshort{DEE} e \acrshort{DEC} foram estruturados a ponto de compartilhar a mesma escala espaço-temporal. Os dados diários foram agrupados em semanas epidemiológicas, assim como o recorte espacial englobou área de estudo (figura \ref{fig:area_de_estudo}), o próprio Estado catarinense.
+
 \begin{figure}[h]
     \centering
     \caption{Mapa temático da área de estudo do projeto evidenciando municípios catarinenses.}
@@ -41,15 +48,19 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \section{Análise Estatística Descritiva}
 
-\indent \textcolor{red}{ARGUMENTAR COM O ADRIANO}\\
+\indent \textcolor{red}{ARGUMENTAR COM O ADRIANO}
 
 \section{Modelagem Preditiva}
 
-\indent Inicialmente, foram utilizados os pacotes \ingles{pandas}, \ingles{numpy} e \ingles{sklearn} \cite{scikit-learn_2011_pedregosa, sklearn_2013_buitinck}. Dessa maneira, os conjuntos de dados entomo-epidemiológicos e climatológicos foram estruturados em um único arranjo de dados para cada município. Essa estrutura foi composta pela variável dependente (entomológica ou epidemiológica) e por variáveis explicativas (elementos climáticos). Esse arranjo só foi possível com municípios que apresentavam todos os conjuntos de dados presentes. Sendo a variável dependente epidemiológica, é incluída a variável entomológica como explicativa. A configuração final do arranjo assumia, entre a variável dependente e as explicativas, horizonte preditivo de quatro (4) semanas epidemiológicas e retroação de oito (8) semanas epidemiológicas. Sendo a variável dependente epidemiológica, o horizonte preditivo de duas (2) semanas epidemiológicas e retroação de três (3) semanas epidemiológicas. Dessa última configuração, as variáveis explicativas (x) e dependente (y) foram divididas em dois conjuntos: treino e teste. Também foi previamente fixado um valor de gerador de números aleatórios (\ingles{seed}).\\
-\indent Após isso, com a utilização dos pacotes \ingles{tensorflow}\cite{tensorflow_2015_whitepaper} e \ingles{keras} \cite{keras_2015_chollet}, do próprio \ingles{tensorflow}, fez-se a instanciação do modelo de rede neural. A primeira camada incluída (camada zero (0)) faz o achatamento dos dados de entrada (variáveis explicativas). Logo, foram adicionadas duas camadas densas (camadas: um (1) e dois (2)) com dez (10) nós (neurônios) cada e ativadas por uma função \ingles{\acrshort{ReLU}} (unidade linear retificada). Então, acionou-se uma camada de regularização (camada três (3)) e uma camada densa de saída (camada 4 (4)). Essa última camada foi criada com a quantidade de nós suficientes para receber o valor de saída (variável dependente) e ativada por uma função \ingles{softmax}. Finalmente, o modelo foi compilado com otimização da taxa de aprendizagem (0,01), configuração de perda (entropia cruzada categórica esparsa) e de métrica (acurácia). Foi ajustado com 100 ciclos (épocas) máximos de treinamento e alocados 20 porcento (0,2) para validação, sendo que o número de ciclos durante a fase de treino foi limitado por um monitor de valor de perda, assim o treinamento encerra antes de 100 ciclos.\\
+\indent Inicialmente, foram utilizados os pacotes \ingles{pandas}, \ingles{numpy} e \ingles{sklearn} \cite{scikit-learn_2011_pedregosa, sklearn_2013_buitinck}. Dessa maneira, os conjuntos de dados entomo-epidemiológicos e climatológicos foram estruturados em um único arranjo de dados para cada município. Essa estrutura foi composta pela variável dependente (entomológica ou epidemiológica) e por variáveis explicativas (elementos climáticos). Esse arranjo só foi possível com municípios que apresentavam todos os conjuntos de dados presentes. Sendo a variável dependente epidemiológica, é incluída a variável entomológica como explicativa. A configuração final do arranjo assumia, entre a variável dependente e as explicativas, horizonte preditivo de quatro (4) semanas epidemiológicas e retroação de oito (8) semanas epidemiológicas. Sendo a variável dependente epidemiológica, o horizonte preditivo de duas (2) semanas epidemiológicas e retroação de três (3) semanas epidemiológicas. Dessa última configuração, as variáveis explicativas (x) e dependente (y) foram divididas em dois conjuntos: treino e teste. Também foi previamente fixado um valor de gerador de números aleatórios (\ingles{seed}).
+
+\indent Após isso, com a utilização dos pacotes \ingles{tensorflow}\cite{tensorflow_2015_whitepaper} e \ingles{keras} \cite{keras_2015_chollet}, do próprio \ingles{tensorflow}, fez-se a instanciação do modelo de rede neural. A primeira camada incluída (camada zero (0)) faz o achatamento dos dados de entrada (variáveis explicativas). Logo, foram adicionadas duas camadas densas (camadas: um (1) e dois (2)) com dez (10) nós (neurônios) cada e ativadas por uma função \ingles{\acrshort{ReLU}} (unidade linear retificada). Então, acionou-se uma camada de regularização (camada três (3)) e uma camada densa de saída (camada 4 (4)). Essa última camada foi criada com a quantidade de nós suficientes para receber o valor de saída (variável dependente) e ativada por uma função \ingles{softmax}. Finalmente, o modelo foi compilado com otimização da taxa de aprendizagem (0,01), configuração de perda (entropia cruzada categórica esparsa) e de métrica (acurácia). Foi ajustado com 100 ciclos (épocas) máximos de treinamento e alocados 20 porcento (0,2) para validação, sendo que o número de ciclos durante a fase de treino foi limitado por um monitor de valor de perda, assim o treinamento encerra antes de 100 ciclos.
+
 \indent Para o modelo \ingles{random forest}, utilizou-se o pacote \ingles{sklearn} e o mesmo conjunto de treino e teste das variáveis explicativas (x) e dependente (y). Ao compilar, foi atribuído um número total de árvores presentes (100) e o gerador de números aleatórios (previamente citado) para, então, ajustar aos conjuntos de treino das variáveis explicativas (x) e dependente (y).
 
+\indent explicar como evitar "double dipping".
 
+\indent explicar como ocorreu a correlação.
 
 
 \section{Validação/Verificação dos Modelos}
@@ -58,9 +69,9 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 \indent Intervalo de Confiança para o Erro\\
 \indent Raiz Quadrada do Erro Quadrático Médio (RQEQM)\\
 \indent Erro Médio Absoluto (EMA)\\
-\indent Viés = EMA - RQEQM}\\
+\indent Viés = EMA - RQEQM}
 
-\indent \textcolor{red}{ARGUMENTAR COM O ADRIANO}\\
+\indent \textcolor{red}{ARGUMENTAR COM O ADRIANO}
 
 \section{Espacialização dos Dados Preditos}
 
