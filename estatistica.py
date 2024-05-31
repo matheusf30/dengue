@@ -1,4 +1,10 @@
 ### Bibliotecas Correlatas
+"""
+# Biblioteca para visualização gráfica de script python executado no terminal
+sudo apt-get install python3-tk
+import matplotlib
+matplotlib.use("TkAgg")
+"""
 import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
