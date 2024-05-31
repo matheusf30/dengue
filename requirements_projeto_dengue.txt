@@ -1,9 +1,12 @@
 absl-py==2.1.0
+asttokens==2.4.1
 astunparse==1.6.3
 certifi==2024.2.2
 charset-normalizer==3.3.2
 contourpy==1.2.1
 cycler==0.12.1
+decorator==5.1.1
+executing==2.0.1
 flatbuffers==24.3.25
 fonttools==4.52.4
 gast==0.5.4
@@ -11,6 +14,8 @@ google-pasta==0.2.0
 grpcio==1.64.0
 h5py==3.11.0
 idna==3.7
+ipython==8.25.0
+jedi==0.19.1
 keras==3.3.3
 kiwisolver==1.4.5
 libclang==18.1.1
@@ -18,6 +23,7 @@ Markdown==3.6
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.9.0
+matplotlib-inline==0.1.7
 mdurl==0.1.2
 ml-dtypes==0.3.2
 namex==0.0.8
@@ -26,9 +32,14 @@ opt-einsum==3.3.0
 optree==0.11.0
 packaging==24.0
 pandas==2.2.2
+parso==0.8.4
 patsy==0.5.6
+pexpect==4.9.0
 pillow==10.3.0
+prompt_toolkit==3.0.45
 protobuf==4.25.3
+ptyprocess==0.7.0
+pure-eval==0.2.2
 Pygments==2.18.0
 pymannkendall==1.4.3
 pyparsing==3.1.2
@@ -40,6 +51,9 @@ scipy==1.13.1
 seaborn==0.13.2
 setuptools==70.0.0
 six==1.16.0
+stack-data==0.6.3
 statsmodels==0.14.2
 tensorboard==2.16.2
 tensorboard-data-server==0.7.2
+traitlets==5.14.3
+wcwidth==0.2.13
