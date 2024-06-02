@@ -72,8 +72,8 @@ focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
 ### Definindo Função
 def visualiza_focos(cidade, focos):
 	fig = plt.figure(figsize = (15, 8))
-	eixo = fig.add_axes([0, 0, 1, 1])
-	eixo2 = fig.add_axes([0.08, 0.6, 0.55, 0.3])
+	eixo = fig.add_axes([0, 0, 1, 1])            # type: ignore
+	eixo2 = fig.add_axes([0.08, 0.6, 0.55, 0.3]) # type: ignore
 
 	eixo.plot(focos["Semana"], focos[cidade], color = "r")
 	eixo.set_xlim(datetime.datetime(2020,1,1), datetime.datetime(2022,12,4))
@@ -132,14 +132,13 @@ def histograma(cidade, csv, str_var):
 	else:
 		n, divisoes, patches = axs[0].hist(csv[cidade], bins = int(csv[cidade].max() * 4))
 		plt.xlabel("Temperatura (C), Média em Semanas Epidemiológicas")
-		#sns.kdeplot(csv[cidade], color = "black", ax = axs[0])
 	for patch, bin_valor in zip(patches, divisoes):
 		if bin_valor <= anomalia_negativa:
 			patch.set_facecolor("red")
 		elif bin_valor <= Q1:
 			patch.set_facecolor("lime")
 		elif bin_valor <= mediana:
-			patch.set_facecolor("darkgreen")
+			patch.set_facecolor("mediumseagreen")
 		elif bin_valor <= Q3:
 			patch.set_facecolor("seagreen")
 		elif bin_valor <= anomalia:
@@ -149,27 +148,20 @@ def histograma(cidade, csv, str_var):
 	axs[0].axvline(x = media, linestyle = "--", color = "darkblue")
 	axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange")
 	if str_var == "tmin" or str_var == "tmed" or str_var == "tmax":
-		fig.text(0.8, 0.2, f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.2, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	else:
-		fig.text(0.8, 0.8, f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}", fontsize = 12)
-	#axs[0].annotate(f"$ \mu = {round(media, 2)} $ \n$\sigma = {round(desvio_padrao, 2)} $ \nmediana = {round(mediana, 2)}",
-              		#xy = (0.8, 0.8), fontsize = 12)
-
-	#axs[0].legend(loc="upper right")
+		fig.text(0.8, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	plt.ylabel("Quantidade")
 	axs[0].grid(True)
-
-	# Plot boxplot
+	caixa = dict(color = "darkgreen", facecolor = "seagreen")
+	bigodes = dict(color = "lime")
 	outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
 	linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
 	ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
-	axs[1].boxplot(csv[cidade], vert = False, showmeans = True, notch = True,
-					flierprops = outliers, medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
-
-	# Set grid for boxplot
+	axs[1].boxplot(csv[cidade], vert = False, showmeans = True, notch = True, patch_artist = True,
+				boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
+				medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 	axs[1].grid(True)
-
-	# Set title and labels
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
 	if _SALVAR == True:
 		_cidade = cidade.copy()
