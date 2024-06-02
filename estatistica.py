@@ -138,7 +138,7 @@ def histograma(cidade, csv, str_var):
 		elif bin_valor <= Q1:
 			patch.set_facecolor("lime")
 		elif bin_valor <= mediana:
-			patch.set_facecolor("mediumseagreen")
+			patch.set_facecolor("seagreen")
 		elif bin_valor <= Q3:
 			patch.set_facecolor("seagreen")
 		elif bin_valor <= anomalia:
