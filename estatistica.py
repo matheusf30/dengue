@@ -110,6 +110,9 @@ def tendencia(cidade, csv):
 
 def histograma(cidade, csv, str_var):
 	"""
+	Função para avaliar histograma e boxplot do conjunto de dados.
+	Entrada: Nome da cidade (str.upper()), Conjunto de dados (.csv) e Nome da variável (str);
+	Retorno: Exibindo e/ou salvando arquivo (.pdf) com a histograma e boxplot do conjunto de dados.
 	"""
 	fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
 							 sharex = True, layout = "constrained", frameon = False)
