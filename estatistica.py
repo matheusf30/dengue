@@ -265,7 +265,6 @@ for i in lista_cidades:
 	teste_normal(i, tmin, "tmin")
 	teste_normal(i, tmed, "tmed")
 	teste_normal(i, tmax, "tmax")
-"""
 
 histograma("FLORIANÓPOLIS", focos, "focos")
 histograma("FLORIANÓPOLIS", casos, "casos")
@@ -273,7 +272,14 @@ histograma("FLORIANÓPOLIS", prec, "prec")
 histograma("FLORIANÓPOLIS", tmin, "tmin")
 histograma("FLORIANÓPOLIS", tmed, "tmed")
 histograma("FLORIANÓPOLIS", tmax, "tmax")
-
+"""
+for i in lista_cidades:
+	histograma(i, focos, "focos")
+	histograma(i, casos, "casos")
+	histograma(i, prec, "prec")
+	histograma(i, tmin, "tmin")
+	histograma(i, tmed, "tmed")
+	histograma(i, tmax, "tmax")
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
