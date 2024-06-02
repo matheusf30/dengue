@@ -14,6 +14,7 @@ import pymannkendall as mk
 #from sklearn.preprocessing import NormalityTest
 from scipy.stats import shapiro, normaltest
 import statsmodels.api as sm
+import unicodedata
 
 ### Condicionantes
 
@@ -70,6 +71,26 @@ focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
 #mk = mk.original_test(focos[cidade])
 
 ### Definindo Função
+def normalizando_nome_cidade(cidade):
+	"""
+	Função para tratar acentos dos nomes das cidades.
+	Entrada: Nome da cidade (str.upper());
+	Retorno: Nome da cidade tratado (str.upper()).
+	"""
+	cidade = unicodedata.normalize("NFD", cidade)  # Normalize to decomposed form
+	cidade = ''.join(c for c in cidade if unicodedata.category(c) != 'Mn')  # Remove diacritic marks
+	#return ''.join(c for c in unicodedata.normalize("NFD", cidade) if unicodedata.category(c) != "Mn")
+	troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+	_cidade = cidade
+	for velho, novo in troca.items():
+		_cidade = _cidade.replace(velho, novo)
+	return _cidade
+
 def visualiza_focos(cidade, focos):
 	fig = plt.figure(figsize = (15, 8))
 	eixo = fig.add_axes([0, 0, 1, 1])            # type: ignore
@@ -170,17 +191,9 @@ def histograma(cidade, csv, str_var):
 	axs[1].grid(True)
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
 	if _SALVAR == True:
-		_cidade = cidade
-		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-		         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-		         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-		         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-		         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-		         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		for velho, novo in troca.items():
-			_cidade = _cidade.replace(velho, novo)
-			plt.savefig(f"{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
-			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf\n\n")
+		_cidade = normalizando_nome_cidade(cidade)
+		plt.savefig(f"{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
+		print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf\n\n")
 	if _VISUALIZAR == True:
 		print(f"\n\nVISUALIZANDO:\n\n{caminho_estatistica}histograma_{str_var.upper()}_{cidade}.pdf\n\n")
 		plt.show()
