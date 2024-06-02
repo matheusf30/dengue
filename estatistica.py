@@ -145,8 +145,9 @@ def histograma(cidade, csv, str_var):
 			patch.set_facecolor("lime")
 		else:
 			patch.set_facecolor("red")
-	axs[0].axvline(x = media, linestyle = "--", color = "darkblue")
-	axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange")
+	linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
+	linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
+	axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
 	if str_var == "tmin" or str_var == "tmed" or str_var == "tmax":
 		fig.text(0.2, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	else:
