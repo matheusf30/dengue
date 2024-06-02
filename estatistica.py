@@ -149,9 +149,9 @@ def histograma(cidade, csv, str_var):
 	linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
 	axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
 	if str_var == "tmin" or str_var == "tmed" or str_var == "tmax":
-		fig.text(0.2, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	else:
-		fig.text(0.8, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	plt.ylabel("Quantidade")
 	axs[0].grid(True)
 	caixa = dict(color = "darkgreen", facecolor = "seagreen")
