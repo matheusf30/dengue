@@ -156,6 +156,7 @@ def histograma(cidade, csv, str_var):
 	else:
 		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 	plt.ylabel("Quantidade")
+	axs[0].set_facecolor("honeydew")
 	axs[0].grid(True)
 	caixa = dict(color = "darkgreen", facecolor = "seagreen")
 	bigodes = dict(color = "lime")
@@ -166,7 +167,6 @@ def histograma(cidade, csv, str_var):
 				boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 				medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 	axs[1].set_facecolor("honeydew")
-	axs[0].set_facecolor("honeydew")
 	axs[1].grid(True)
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
 	if _SALVAR == True:
