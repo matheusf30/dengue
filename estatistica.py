@@ -17,9 +17,9 @@ import statsmodels.api as sm
 
 ### Condicionantes
 
-_SALVAR = False
+_SALVAR = True
 
-_VISUALIZAR = True
+_VISUALIZAR = False
 
 ### Encaminhamento aos Diretórios
 _LOCAL = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
@@ -167,7 +167,7 @@ def histograma(cidade, csv, str_var):
 	axs[1].grid(True)
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
 	if _SALVAR == True:
-		_cidade = cidade.copy()
+		_cidade = cidade
 		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 		         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
 		         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
@@ -177,7 +177,7 @@ def histograma(cidade, csv, str_var):
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
 			plt.savefig(f"{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
-			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}histograma_{str_var.upper()}_{cidade}.pdf\n\n")
+			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf\n\n")
 	if _VISUALIZAR == True:
 		print(f"\n\nVISUALIZANDO:\n\n{caminho_estatistica}histograma_{str_var.upper()}_{cidade}.pdf\n\n")
 		plt.show()
