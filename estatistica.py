@@ -161,6 +161,7 @@ def histograma(cidade, csv, str_var):
 	axs[1].boxplot(csv[cidade], vert = False, showmeans = True, notch = True, patch_artist = True,
 				boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 				medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
+	axs[1].set_facecolor("lightgray")
 	axs[1].grid(True)
 	fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
 	if _SALVAR == True:
