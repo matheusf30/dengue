@@ -18,12 +18,12 @@ import unicodedata
 
 ### Condicionantes
 
-_SALVAR = True
+_SALVAR = False
 
-_VISUALIZAR = False
+_VISUALIZAR = True
 
 ### Encaminhamento aos Diretórios
-_LOCAL = "CASA" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 if _LOCAL == "GH": # _ = Variável Privada
 	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 elif _LOCAL == "CASA":
@@ -291,11 +291,11 @@ histograma("FLORIANÓPOLIS", tmax, "tmax")
 """
 for i in lista_cidades:
 	histograma(i, focos, "focos")
-	histograma(i, casos, "casos")
-	histograma(i, prec, "prec")
-	histograma(i, tmin, "tmin")
-	histograma(i, tmed, "tmed")
-	histograma(i, tmax, "tmax")
+	#histograma(i, casos, "casos")
+	#histograma(i, prec, "prec")
+	#histograma(i, tmin, "tmin")
+	#histograma(i, tmed, "tmed")
+	#histograma(i, tmax, "tmax")
 
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
