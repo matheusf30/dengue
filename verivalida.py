@@ -65,7 +65,7 @@ key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 not_found_c = list(cidades_c.iloc[151:])  # Desconsiderando 2023, pois ainda não há modelagem
 """
 #### Condições para Variar entre Modelos ############
-cidade = "Joinville"
+cidade = "Florianópolis"
 cidade = cidade.upper()
 SEED = np.random.seed(0)
 ####################################################
@@ -456,6 +456,49 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.ylabel("Número de Casos de Dengue")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
+								 sharex = True, layout = "constrained", frameon = False)
+		Q1 = np.percentile(final["Erro"], [25])
+		mediana = final["Erro"].median()
+		Q3 = np.percentile(final["Erro"], [75])
+		anomalia = Q3 + 1.5 * (Q3 - Q1)
+		anomalia_negativa = Q1 - 1.5 * (Q3 - Q1)
+		media, desvio_padrao = final["Erro"].mean(), final["Erro"].std()
+		n, divisoes, patches = axs[0].hist(final["Erro"], bins = 50)#, bins = int((final["Erro"].max() * 4)))
+		plt.xlabel("Erro")
+		plt.ylabel("Quantidade")
+		for patch, bin_valor in zip(patches, divisoes):
+			if bin_valor <= anomalia_negativa:
+				patch.set_facecolor("red")
+			elif bin_valor <= Q1:
+				patch.set_facecolor("lime")
+			elif bin_valor <= mediana:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= Q3:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= anomalia:
+				patch.set_facecolor("lime")
+			else:
+				patch.set_facecolor("red")
+		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
+		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		axs[0].set_facecolor("honeydew")
+		axs[0].grid(True)
+		caixa = dict(color = "darkgreen", facecolor = "seagreen")
+		bigodes = dict(color = "lime")
+		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
+		linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
+		ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
+		axs[1].boxplot(final["Erro"], vert = False, showmeans = True, notch = True, patch_artist = True,
+					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
+					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
+		axs[1].set_facecolor("honeydew")
+		axs[1].grid(True)
+		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.show()
 		print("="*80)
 
 	def grafico_previsao_casos_limite(self, previsao, teste, z, limite, fim):
@@ -500,10 +543,53 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
 		sns.lineplot(x = final["Semana"], y = final["Casos"], # linestyle = "--" linestyle = "-."
 				     color = "darkblue", linewidth = 1, label = "Observado")
-		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - CASOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Casos de Dengue")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		plt.show()
+		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
+								 sharex = True, layout = "constrained", frameon = False)
+		Q1 = np.percentile(final["Erro"], [25])
+		mediana = final["Erro"].median()
+		Q3 = np.percentile(final["Erro"], [75])
+		anomalia = Q3 + 1.5 * (Q3 - Q1)
+		anomalia_negativa = Q1 - 1.5 * (Q3 - Q1)
+		media, desvio_padrao = final["Erro"].mean(), final["Erro"].std()
+		n, divisoes, patches = axs[0].hist(final["Erro"], bins = 50)#, bins = int((final["Erro"].max() * 4)))
+		plt.xlabel("Erro")
+		plt.ylabel("Quantidade")
+		for patch, bin_valor in zip(patches, divisoes):
+			if bin_valor <= anomalia_negativa:
+				patch.set_facecolor("red")
+			elif bin_valor <= Q1:
+				patch.set_facecolor("lime")
+			elif bin_valor <= mediana:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= Q3:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= anomalia:
+				patch.set_facecolor("lime")
+			else:
+				patch.set_facecolor("red")
+		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
+		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		axs[0].set_facecolor("honeydew")
+		axs[0].grid(True)
+		caixa = dict(color = "darkgreen", facecolor = "seagreen")
+		bigodes = dict(color = "lime")
+		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
+		linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
+		ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
+		axs[1].boxplot(final["Erro"], vert = False, showmeans = True, notch = True, patch_artist = True,
+					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
+					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
+		axs[1].set_facecolor("honeydew")
+		axs[1].grid(True)
+		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - CASOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
@@ -552,6 +638,49 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
+								 sharex = True, layout = "constrained", frameon = False)
+		Q1 = np.percentile(final["Erro"], [25])
+		mediana = final["Erro"].median()
+		Q3 = np.percentile(final["Erro"], [75])
+		anomalia = Q3 + 1.5 * (Q3 - Q1)
+		anomalia_negativa = Q1 - 1.5 * (Q3 - Q1)
+		media, desvio_padrao = final["Erro"].mean(), final["Erro"].std()
+		n, divisoes, patches = axs[0].hist(final["Erro"], bins = 50)#, bins = int((final["Erro"].max() * 4)))
+		plt.xlabel("Erro")
+		plt.ylabel("Quantidade")
+		for patch, bin_valor in zip(patches, divisoes):
+			if bin_valor <= anomalia_negativa:
+				patch.set_facecolor("red")
+			elif bin_valor <= Q1:
+				patch.set_facecolor("lime")
+			elif bin_valor <= mediana:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= Q3:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= anomalia:
+				patch.set_facecolor("lime")
+			else:
+				patch.set_facecolor("red")
+		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
+		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		axs[0].set_facecolor("honeydew")
+		axs[0].grid(True)
+		caixa = dict(color = "darkgreen", facecolor = "seagreen")
+		bigodes = dict(color = "lime")
+		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
+		linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
+		ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
+		axs[1].boxplot(final["Erro"], vert = False, showmeans = True, notch = True, patch_artist = True,
+					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
+					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
+		axs[1].set_facecolor("honeydew")
+		axs[1].grid(True)
+		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total) - FOCOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+		plt.show()
 		print("="*80)
 
 	def grafico_previsao_focos_limite(self,previsao, teste, z, limite, fim):
@@ -589,17 +718,48 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
-		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
-		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
-                     color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
-		sns.lineplot(x = final["Semana"], y = final["Previstos"],
-				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
-		sns.lineplot(x = final["Semana"], y = final["Focos"], # linestyle = "--" linestyle = "-."
-				     color = "darkblue", linewidth = 1, label = "Observado")
-		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-		plt.xlabel("Semanas Epidemiológicas")
-		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
+								 sharex = True, layout = "constrained", frameon = False)
+		Q1 = np.percentile(final["Erro"], [25])
+		mediana = final["Erro"].median()
+		Q3 = np.percentile(final["Erro"], [75])
+		anomalia = Q3 + 1.5 * (Q3 - Q1)
+		anomalia_negativa = Q1 - 1.5 * (Q3 - Q1)
+		media, desvio_padrao = final["Erro"].mean(), final["Erro"].std()
+		n, divisoes, patches = axs[0].hist(final["Erro"], bins = 50)#, bins = int((final["Erro"].max() * 4)))
+		plt.xlabel("Erro")
+		plt.ylabel("Quantidade")
+		for patch, bin_valor in zip(patches, divisoes):
+			if bin_valor <= anomalia_negativa:
+				patch.set_facecolor("red")
+			elif bin_valor <= Q1:
+				patch.set_facecolor("lime")
+			elif bin_valor <= mediana:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= Q3:
+				patch.set_facecolor("seagreen")
+			elif bin_valor <= anomalia:
+				patch.set_facecolor("lime")
+			else:
+				patch.set_facecolor("red")
+		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
+		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
+		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		axs[0].set_facecolor("honeydew")
+		axs[0].grid(True)
+		caixa = dict(color = "darkgreen", facecolor = "seagreen")
+		bigodes = dict(color = "lime")
+		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
+		linha_mediana = dict( color = "darkorange", linestyle= "-", linewidth = 2.5)
+		ponto_media = dict(markerfacecolor = "blue", markeredgecolor = "black")
+		axs[1].boxplot(final["Erro"], vert = False, showmeans = True, notch = True, patch_artist = True,
+					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
+					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
+		axs[1].set_facecolor("honeydew")
+		axs[1].grid(True)
+		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - FOCOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
 		print("="*80)
 
