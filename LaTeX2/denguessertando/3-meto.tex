@@ -84,9 +84,11 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \indent Os modelos, previamente sintetizados, foram abertos através da biblioteca \ingles{joblib}, dos próprios desenvolvedores da biblioteca \ingles{sklearn}. Os dados de entrada são as próprias variáveis explicativas (x). Esses são abertos e estruturados pela biblioteca \ingles{pandas} e logo computados pela modelagem, retornando os valores de previsão da variável dependente (y).
 
-\indent O centróide de cada município, que tenha algum valor de previsão, é incluído nesse novo conjunto de dados de retorno (previsão). Esse centróide é padronizado no CRS EPSG:4674 e o conjunto é transformado em \ingles{geodataframe} pela biblioteca \ingles{geopandas}. As semanas epidemiológicas também são transformadas em variável tipo \ingles{datetime64}.
+\indent O centróide de cada município, que tenha algum valor de previsão, é incluído nesse novo conjunto de dados de retorno (previsão). O próprio centróide é padronizado ao Sistema de Referência de Coordenadas (\acrfull{CRS}) utilizado pelos \ingles{shapefiles} do \acrshort{IBGE} e o conjunto  de dados é transformado em \ingles{geodataframe} pela biblioteca \ingles{geopandas}. As semanas epidemiológicas também são transformadas em variável do tipo \ingles{datetime64[ns](YYYY-mm-dd)}.
 
-\indent Para cada semana epidemiológica prevista e através das bibliotecas \ingles{geopandas} e \ingles{matplotlib}, os valores previstos foram atribuídos ao posicionamento geográfico de cada centróide, conforme CRS, e sintetizado o mapa temático.
+\indent Para cada semana epidemiológica prevista, e através das bibliotecas \ingles{geopandas} e \ingles{matplotlib}, os valores calculados da variável dependente (y) foram atribuídos ao posicionamento geográfico de cada centróide, conforme \acrshort{CRS}, e sintetizado o mapa temático.
+
+\textcolor{red}{Comentar sobre as diferenças na metodologia de mapa de calor e mapa coroplético?}
  
 \section{Estudo de Caso}
 
