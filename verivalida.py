@@ -387,6 +387,26 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		print("\n".join(lista_op))
 		print("~"*80)
 		
+		"""
+		import numpy as np
+		import scipy.stats as st
+
+		# calculando o erro padrao
+		erro_padrao1 = 4/(30**0.5) # desvio padrao dividido por raiz de n
+		erro_padrao2 = 3/(30**0.5) 
+
+		# calculando g1
+		n1 = 30 - 1
+		n2 = 30 - 1
+
+		# criando o intervalo
+		amostra1 = st.t.interval(alpha=.95, df=n1, loc=90.73, scale=erro_padrao)
+		amostra2 = st.t.interval(alpha=.95, df=n2, loc=87.65, scale=erro_padrao)
+
+		Out: amostra1 = (89.35801824717812, 92.10198175282189)
+		Out: amostra2 = (86.27801824717812, 89.02198175282189)
+		"""
+		
 		EQM = mean_squared_error(y, previsoes)
 		EMA = mean_absolute_error(y, previsoes)
 		RQ_EQM = np.sqrt(EQM)
