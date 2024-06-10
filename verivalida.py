@@ -392,16 +392,17 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		import scipy.stats as st
 
 		# calculando o erro padrao
-		erro_padrao1 = 4/(30**0.5) # desvio padrao dividido por raiz de n
-		erro_padrao2 = 3/(30**0.5) 
+		erro_padrao1 = desvio_padrao/(n1**0.5) # desvio padrao dividido por raiz de n
+		erro_padrao2 = desvio_padrao/(n2**0.5) n = tamanho da amostra
 
 		# calculando g1
-		n1 = 30 - 1
-		n2 = 30 - 1
+		ng1 = n - 1
+		ng2 = n - 1
 
 		# criando o intervalo
-		amostra1 = st.t.interval(alpha=.95, df=n1, loc=90.73, scale=erro_padrao)
-		amostra2 = st.t.interval(alpha=.95, df=n2, loc=87.65, scale=erro_padrao)
+		amostra1 = st.t.interval(alpha=.95, df=ng1, loc=média, scale=erro_padrao)
+		amostra2 = st.t.interval(alpha=.95, df=ng2, loc=média, scale=erro_padrao)
+		st.t.interval(alpha=0.95, df=len(data)-1, loc=np.mean(data), scale=st.sem(data)) 
 
 		Out: amostra1 = (89.35801824717812, 92.10198175282189)
 		Out: amostra2 = (86.27801824717812, 89.02198175282189)
