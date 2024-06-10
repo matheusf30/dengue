@@ -54,6 +54,8 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \indent \textcolor{red}{explicar como ocorreu a correlação.}
 
+\indent Com os conjuntos de dados previamente estruturados, quatro (4) cidades foram elencadas para realizar análises de correlações. Alguns dados foram retroagidos em semanas epidemiológicas para melhor evidenciar possíveis correlações. Essas análises foram realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue), entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima), e entre os \acrshort{DEE} e limiares dos \acrshort{DEC}. A correlação propriamente dita foi calculada por meio do método \ingles{.corr()} da biblioteca \ingles{pandas}. Para melhor visualização do resultado desse cálculo, foram utilizadas as bibliotecas \ingles{numpy}, \ingles{matplotlib} \cite{matplotlib_2007_hunter} e \ingles{seaborn} \cite{seaborn_2021_waskom}.
+
 \section{Modelagem Preditiva}
 
 \indent Inicialmente, foram utilizados os pacotes \ingles{pandas}, \ingles{numpy} e \ingles{sklearn} \cite{scikit-learn_2011_pedregosa, sklearn_2013_buitinck}. Dessa maneira, os conjuntos de dados entomo-epidemiológicos e climatológicos foram estruturados em um único arranjo de dados para cada município. Essa estrutura foi composta pela variável dependente (entomológica ou epidemiológica) e por variáveis explicativas (elementos climáticos). Esse arranjo só foi possível com municípios que apresentavam todos os conjuntos de dados presentes. Sendo a variável dependente epidemiológica, é incluída a variável entomológica como explicativa. A configuração final do arranjo assumia, entre a variável dependente e as explicativas, horizonte preditivo de quatro (4) semanas epidemiológicas e retroação de oito (8) semanas epidemiológicas. Sendo a variável dependente epidemiológica, o horizonte preditivo de duas (2) semanas epidemiológicas e retroação de três (3) semanas epidemiológicas. Dessa última configuração, as variáveis explicativas (x) e dependente (y) foram divididas em dois conjuntos: treino e teste. Também foi previamente fixado um valor de gerador de números aleatórios (\ingles{seed}).
@@ -78,17 +80,30 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \section{Espacialização dos Dados Preditos}
 
-\indent Para esse estudo, foi utilizado o recorte espacial durante a execução do prório \ingles{script}, sendo: longitude entre 54º5' e 57º5', ambas sul; e latitude entre 29º5' e 25º5', ambas oeste. Com esse recorte, pode-se evidenciar a totalidade do Estado de \acrlong{SC} e um pouco além de seus limites.\\
-\indent Obteve-se os \ingles{shapefiles} do \acrshort{IBGE} (2022) para os limites territoriais (federal, estadual e municipais) do Estado de \acrlong{SC}.\\
+\indent Obteve-se os \ingles{shapefiles} do \acrshort{IBGE} (2022) para os limites territoriais (federal, estadual e municipais) do Estado de \acrlong{SC}. Para esse estudo, foi utilizado o recorte espacial durante a execução do prório \ingles{script}, sendo: longitude entre 54º5' e 57º5', ambas sul; e latitude entre 29º5' e 25º5', ambas oeste. Com esse recorte, pode-se evidenciar a totalidade do Estado de \acrlong{SC} e um pouco além de seus limites.
 
+\indent Os modelos, previamente sintetizados, foram abertos através da biblioteca \ingles{joblib}, dos próprios desenvolvedores da biblioteca \ingles{sklearn}. Os dados de entrada são as próprias variáveis explicativas (x). Esses são abertos e estruturados pela biblioteca \ingles{pandas} e logo computados pela modelagem, retornando os valores de previsão da variável dependente (y).
+
+\indent O centróide de cada município, que tenha algum valor de previsão, é incluído nesse novo conjunto de dados de retorno (previsão). Esse centróide é padronizado no CRS EPSG:4674 e o conjunto é transformado em \ingles{geodataframe} pela biblioteca \ingles{geopandas}. As semanas epidemiológicas também são transformadas em variável tipo \ingles{datetime64}.
+
+\indent Para cada semana epidemiológica prevista e através das bibliotecas \ingles{geopandas} e \ingles{matplotlib}, os valores previstos foram atribuídos ao posicionamento geográfico de cada centróide, conforme CRS, e sintetizado o mapa temático.
+ 
 \section{Estudo de Caso}
 
-\indent Durante a quarta etapa, retorna-se ao acoplamento e espacialização, que resultará na determinação dos \acrfull{ICRe}. Esses \acrshort{ICRe} serão corrigidos pelo acoplamento dos \acrshort{DEC} à interação dos \acrshort{LACRe} e ajustados na distribuição do Estado de \acrlong{SC}. Após isso, os novos limiares serão aplicados ao modelo preditivo proposto \acrshort{SAMeT}-\acrshort{MERGE}-\acrshort{GFS}.
-
+\indent Quatro (4) cidades, escolhidas previamente à modelagem, foram utilizadas como estudo de caso para melhor entendimento dos próprios modelos.
 
 \section{Síntese do \acrfull{PTT}} 
 
-\indent O \acrshort{PTT} resultante será: i) o sistema computacional e ii) a visualização cartográfica desses resultados, como preditivo da dinâmica regionalizada de focos de \latim{Aedes} sp. no Estado de \acrlong{SC}. O limiar temporal estipulado para previsão da incidência dos focos será de 60 dias. Os primeiros 30 dias serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias serão determinados através do modelo de previsão \acrshort{GFS}.
+\indent Como preditivo da dinâmica entomológica de focos de \latim{Aedes} sp. e epidemiológica de casos de dengue no Estado de \acrlong{SC}, o \acrshort{PTT} resultante será:
+
+\begin{itemize}
+  \item o sistema computacional;
+  \item visualização cartográfica desses resultados.
+\end{itemize}
+
+\indent O limiar temporal estipulado para previsão de focos de \latim{Aedes} sp. será de 56 dias (8 semanas epidemiológicas). Os primeiros 28 dias (4 semanas epidemiológicas) serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias/semanas epidemilógicas serão determinados através do \textcolor{red}{modelo de previsão \acrshort{GFS}.}
+
+\indent O limiar temporal estipulado para previsão de casos de dengue será de 28 dias (4 semanas epidemiológicas). Os primeiros 14 dias (2 semanas epidemiológicas) serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias/semanas epidemiológicas serão determinados através do \textcolor{red}{modelo de previsão \acrshort{GFS}.}
 
 
 %\section{Conjutos de Dados Utilizados}
