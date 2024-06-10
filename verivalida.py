@@ -2,6 +2,7 @@
 # Básicas e Gráficas
 import pandas as pd
 import numpy as np
+import scipy.stats as st
 import matplotlib.pyplot as plt
 import seaborn as sns 
 #import datetime
@@ -408,11 +409,16 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		Out: amostra2 = (86.27801824717812, 89.02198175282189)
 		"""
 		
-		EQM = mean_squared_error(y, previsoes)
-		EMA = mean_absolute_error(y, previsoes)
-		RQ_EQM = np.sqrt(EQM)
+		EQM = mean_squared_error(y, previsoes).round(2)
+		EMA = mean_absolute_error(y, previsoes).round(2)
+		RQ_EQM = np.sqrt(EQM).round(2)
 		R_2 = r2_score(y, previsoes).round(2)
 		VIES = EMA - RQ_EQM
+		VIES = round(VIES, 2)
+		NIVEL_SIGNIFICANCIA = 0.95
+		INTERCONFIANCA = st.t.interval(confidence = NIVEL_SIGNIFICANCIA, df = len(previsoes)-1,
+										loc = np.mean(previsoes), scale = st.sem(previsoes))
+		INTERCONFIANCA = tuple(round(value, 2) for value in INTERCONFIANCA)
 		print(f"""
 			 \n MÉTRICAS RANDOM FOREST - {cidade}
 			 \n Coeficiente de Determinação (R²): {R_2}
@@ -420,11 +426,12 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
 			 \n Erro Médio Absoluto: {EMA}
 			 \n Viés: {VIES}
+			 \n Intervalo de Confiança (nível de significância = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}
 			 """)
 		print("="*80)
 		return R_2, EQM, RQ_EQM, EMA, VIES
 
-	def grafico_previsao_casos(self,previsao, teste, limite):
+	def grafico_previsao_casos(self, previsao, teste, limite):
 		# Gráfico de Comparação entre Observação e Previsão dos Modelos
 		final = pd.DataFrame()
 		final["Semana"] = casos["Semana"]
@@ -477,6 +484,25 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.ylabel("Número de Casos de Dengue")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		EQM = mean_squared_error(final["Casos"], final["Previstos"]).round(2)
+		EMA = mean_absolute_error(final["Casos"], final["Previstos"]).round(2)
+		RQ_EQM = np.sqrt(EQM).round(2)
+		R_2 = r2_score(final["Casos"], final["Previstos"]).round(2)
+		VIES = EMA - RQ_EQM
+		VIES = round(VIES, 2)
+		NIVEL_SIGNIFICANCIA = 0.95
+		INTERCONFIANCA = st.t.interval(confidence = NIVEL_SIGNIFICANCIA, df = len(final["Erro"])-1,
+										loc = np.mean(final["Erro"]), scale = st.sem(final["Erro"]))
+		INTERCONFIANCA = tuple(round(value, 2) for value in INTERCONFIANCA)
+		print(f"""
+			 \n MÉTRICAS RANDOM FOREST - {cidade}
+			 \n Coeficiente de Determinação (R²): {R_2}
+			 \n Erro Quadrático Médio: {EQM}
+			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
+			 \n Erro Médio Absoluto: {EMA}
+			 \n Viés: {VIES}
+			 \n Intervalo de Confiança do erro (nível de significância = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}
+			 """)
 		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
 								 sharex = True, layout = "constrained", frameon = False)
 		Q1 = np.percentile(final["Erro"], [25])
@@ -503,8 +529,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				patch.set_facecolor("red")
 		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
 		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
-		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
-		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		intervalo_confianca = axs[0].axvspan(INTERCONFIANCA[0], INTERCONFIANCA[1], color = "lightblue", alpha=0.5, label = "intervalo de confiança", hatch = "\\")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana, intervalo_confianca])
+		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
 		axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
@@ -569,6 +597,25 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.ylabel("Número de Casos de Dengue")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		EQM = mean_squared_error(final["Casos"], final["Previstos"]).round(2)
+		EMA = mean_absolute_error(final["Casos"], final["Previstos"]).round(2)
+		RQ_EQM = np.sqrt(EQM).round(2)
+		R_2 = r2_score(final["Casos"], final["Previstos"]).round(2)
+		VIES = EMA - RQ_EQM
+		VIES = round(VIES, 2)
+		NIVEL_SIGNIFICANCIA = 0.95
+		INTERCONFIANCA = st.t.interval(confidence = NIVEL_SIGNIFICANCIA, df = len(final["Erro"])-1,
+										loc = np.mean(final["Erro"]), scale = st.sem(final["Erro"]))
+		INTERCONFIANCA = tuple(round(value, 2) for value in INTERCONFIANCA)
+		print(f"""
+			 \n MÉTRICAS RANDOM FOREST - {cidade}
+			 \n Coeficiente de Determinação (R²): {R_2}
+			 \n Erro Quadrático Médio: {EQM}
+			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
+			 \n Erro Médio Absoluto: {EMA}
+			 \n Viés: {VIES}
+			 \n Intervalo de Confiança do erro (nível de significância = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}
+			 """)
 		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
 								 sharex = True, layout = "constrained", frameon = False)
 		Q1 = np.percentile(final["Erro"], [25])
@@ -595,8 +642,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				patch.set_facecolor("red")
 		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
 		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
-		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
-		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		intervalo_confianca = axs[0].axvspan(INTERCONFIANCA[0], INTERCONFIANCA[1], color = "lightblue", alpha=0.5, label = "intervalo de confiança", hatch = "\\")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana, intervalo_confianca])
+		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
 		axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
@@ -659,6 +708,25 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
 		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		EQM = mean_squared_error(final["Focos"], final["Previstos"]).round(2)
+		EMA = mean_absolute_error(final["Focos"], final["Previstos"]).round(2)
+		RQ_EQM = np.sqrt(EQM).round(2)
+		R_2 = r2_score(final["Focos"], final["Previstos"]).round(2)
+		VIES = EMA - RQ_EQM
+		VIES = round(VIES, 2)
+		NIVEL_SIGNIFICANCIA = 0.95
+		INTERCONFIANCA = st.t.interval(confidence = NIVEL_SIGNIFICANCIA, df = len(final["Erro"])-1,
+										loc = np.mean(final["Erro"]), scale = st.sem(final["Erro"]))
+		INTERCONFIANCA = tuple(round(value, 2) for value in INTERCONFIANCA)
+		print(f"""
+			 \n MÉTRICAS RANDOM FOREST - {cidade}
+			 \n Coeficiente de Determinação (R²): {R_2}
+			 \n Erro Quadrático Médio: {EQM}
+			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
+			 \n Erro Médio Absoluto: {EMA}
+			 \n Viés: {VIES}
+			 \n Intervalo de Confiança do erro (nível de significância = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}
+			 """)
 		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
 								 sharex = True, layout = "constrained", frameon = False)
 		Q1 = np.percentile(final["Erro"], [25])
@@ -685,8 +753,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				patch.set_facecolor("red")
 		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
 		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
-		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
-		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		intervalo_confianca = axs[0].axvspan(INTERCONFIANCA[0], INTERCONFIANCA[1], color = "lightblue", alpha=0.5, label = "intervalo de confiança", hatch = "\\")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana, intervalo_confianca])
+		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
 		axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
@@ -739,6 +809,25 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 			_cidade = _cidade.replace(velho, novo)
 		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
 		plt.show()
+		EQM = mean_squared_error(final["Focos"], final["Previstos"]).round(2)
+		EMA = mean_absolute_error(final["Focos"], final["Previstos"]).round(2)
+		RQ_EQM = np.sqrt(EQM).round(2)
+		R_2 = r2_score(final["Focos"], final["Previstos"]).round(2)
+		VIES = EMA - RQ_EQM
+		VIES = round(VIES, 2)
+		NIVEL_SIGNIFICANCIA = 0.95
+		INTERCONFIANCA = st.t.interval(confidence = NIVEL_SIGNIFICANCIA, df = len(final["Erro"])-1,
+										loc = np.mean(final["Erro"]), scale = st.sem(final["Erro"]))
+		INTERCONFIANCA = tuple(round(value, 2) for value in INTERCONFIANCA)
+		print(f"""
+			 \n MÉTRICAS RANDOM FOREST - {cidade}
+			 \n Coeficiente de Determinação (R²): {R_2}
+			 \n Erro Quadrático Médio: {EQM}
+			 \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM}
+			 \n Erro Médio Absoluto: {EMA}
+			 \n Viés: {VIES}
+			 \n Intervalo de Confiança do erro (nível de significância = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}
+			 """)
 		fig, axs = plt.subplots(2, 1, figsize = (12, 8), gridspec_kw = {"height_ratios": [9, 1]},
 								 sharex = True, layout = "constrained", frameon = False)
 		Q1 = np.percentile(final["Erro"], [25])
@@ -765,8 +854,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				patch.set_facecolor("red")
 		linha_hist_media = axs[0].axvline(x = media, linestyle = "--", color = "darkblue", label = "média")
 		linha_hist_mediana = axs[0].axvline(x = mediana, linestyle = "--", color = "darkorange", label = "mediana")
-		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana])
-		fig.text(0.9, 0.8, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		intervalo_confianca = axs[0].axvspan(INTERCONFIANCA[0], INTERCONFIANCA[1], color = "lightblue", alpha=0.5, label = "intervalo de confiança", hatch = "\\")
+		axs[0].legend(handles = [linha_hist_media, linha_hist_mediana, intervalo_confianca])
+		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
+		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
 		axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
@@ -791,7 +882,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 modelo = Modelo()
 _retroagir, _horizonte = modelo.variar(3, 2)
 dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
-### Total
+### Totaldata
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
 y_previsto = random_forest.predict(treino_x_explicado)
@@ -801,6 +892,7 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
 modelo.grafico_previsao_casos(previsoes, y, "22")
+
 ### Apenas 2023
 treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
 random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
@@ -837,4 +929,3 @@ print(y_previsto)
 print(previsoes)
 R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
 modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
-
