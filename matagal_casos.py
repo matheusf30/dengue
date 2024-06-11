@@ -379,7 +379,7 @@ def treino_teste(dataset, _CIDADE):
     explicativas = x.columns.tolist()
     treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
     treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-    return x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado
+    return x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas
 
 def escalona(treino_x, teste_x):
     escalonador = StandardScaler()
@@ -555,10 +555,22 @@ def matriz_confusao(teste, previsao):
 	sns.heatmap(matriz_confusao, annot = True)
 	return matriz_confusao
 
-def relatorio_metricas(teste, previsao):
+def relatorio_metricas(teste, previsao, modeloRF, explicativas):
 	relatorio = classification_report(teste, previsao)
 	print(relatorio)
-	return relatorio
+	importancias = modeloRF.feature_importances_
+	indices = np.argsort(importancias)[::-1]
+	print("\nVariáveis Importantes para o Modelo:\n")
+	plt.figure()
+	plt.title("Variáveis Importantes")
+	for f in range (treino_x_explicado.shape[1]):
+		print(f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
+		plt.text(0.85, 0.8, f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
+	plt.bar(range(treino_x_explicado.shape[1]), importancias[indices], color = "r", align = "center")
+	plt.xticks(range(treino_x_explicado.shape[1]), indices)
+	plt.xlim([-1, treino_x_explicado.shape[1]])
+	plt.show()
+	return relatorio, importancias, indices
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -602,7 +614,7 @@ def salva_modelo(string_modelo, modeloNN = None):
 ### Iniciando Dataset
 #dataset = monta_dataset(_CIDADE)
 #dataset = testa_dataset(_CIDADE)
-#x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
+#x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = treino_teste(dataset, _CIDADE)
 
 ### Instanciando e Treinando Modelo Regressor Random Forest
 modeloRF = RandomForestRegressor(n_estimators = 100, random_state = SEED) #n_estimators = número de árvores
@@ -636,7 +648,7 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 # matriz_confusao = matriz_confusao(y, previsoes_modelo)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
 
-relatorio = relatorio_metricas(y, previsoes_modelo)
+relatorio, importancias, indices = relatorio_metricas(y, previsoes_modelo, modeloRF, explicativas)
 
 #histograma_erro(y, previsoes_modelo)
 #boxplot_erro(y, previsoes_modelo)
