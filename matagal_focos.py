@@ -13,6 +13,7 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, accuracy_score, r2_score#, RocCurveDisplay
+from sklearn.inspection import permutation_importance
 # Modelos e Visualizações
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
@@ -44,11 +45,11 @@ fim = "ago2023"
 z = 32
 limite = "abr2023"
 fim = "mai2023"
-"""
+
 z = 50
 limite = "dez2022"
 fim = "jan2023"
-
+"""
 """
 obs = f"(Treino até {limite}; Teste após {fim})"
 #########################################################################
@@ -139,15 +140,19 @@ dataset = dataset.merge(prec[["Semana", cidade]], how = "left", on = "Semana").c
 dataset = dataset.merge(focos[["Semana", cidade]], how = "left", on = "Semana").copy()
 troca_nome = {f"{cidade}_x" : "PREC", f"{cidade}_y" : "FOCOS"}
 dataset = dataset.rename(columns = troca_nome)
-"""
+
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
     dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
     dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
     dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
     dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
     dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-"""
+dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC"], inplace = True)
+dataset.dropna(inplace = True)
+dataset.set_index("Semana", inplace = True)
+dataset.columns.name = f"{cidade}"
 
+"""
 dataset["iCLIMA"] =  (dataset["TMIN"].rolling(_K).mean() ** _K) * (dataset["PREC"].rolling(_K).mean() / _K)
 
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
@@ -161,7 +166,7 @@ dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "iCLIMA"], inplace = Tru
 dataset.dropna(inplace = True)
 dataset.set_index("Semana", inplace = True)
 dataset.columns.name = f"{cidade}"
-
+"""
 ### Dividindo Dataset em Treino e Teste
 SEED = np.random.seed(0)
 x = dataset.drop(columns = "FOCOS")
@@ -437,6 +442,48 @@ def metricas(string_modelo, modeloNN = None):
              \n Raiz Quadrada do Erro Quadrático Médio: {RQ_EQM_RF}
               """)
 
+def metricas_importancias(modeloRF, explicativas):
+	importancias = modeloRF.feature_importances_
+	importancias = importancias.round(4)
+	indices = np.argsort(importancias)[::-1]
+	variaveis_importantes = pd.DataFrame({"Variáveis": explicativas, "Importâncias": importancias})
+	variaveis_importantes = variaveis_importantes.sort_values(by = "Importâncias", ascending = False)
+	importancia_impureza = pd.Series(importancias, index = explicativas)
+	print(variaveis_importantes)
+	#1 Impurezas
+	std = np.std([tree.feature_importances_ for tree in modeloRF.estimators_], axis=0)
+	fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+	importancia_impureza = importancia_impureza.sort_values(ascending = False)
+	importancia_impureza.plot.bar(yerr = std, ax = ax)
+	ax.set_title(f"VARIÁVEIS IMPORTANTES PARA MODELO RANDOM FOREST\nMUNICÍPIO DE {cidade}, SANTA CATARINA.\n{obs}")
+	ax.set_ylabel("Impureza Média")
+	ax.set_xlabel("Variáveis Explicativas para Modelagem de Focos de _Aedes_ sp.")
+	ax.set_facecolor("honeydew")
+	plt.xticks(rotation = "horizontal")
+	for i, v in enumerate(importancia_impureza.values):
+		ax.text(i, v + 0.01, f"{v.round(4)}", color = "black", ha = "left")
+	fig.tight_layout()
+	plt.show()
+	#2 Permutações
+	n_permuta = 10
+	resultado_permuta = permutation_importance(modeloRF, teste_x, teste_y, n_repeats = n_permuta, random_state = SEED, n_jobs = 2)
+	importancia_permuta = pd.Series(resultado_permuta.importances_mean, index = explicativas)
+	importancia_permuta = importancia_permuta.sort_values(ascending = False)
+	fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+	importancia_permuta.plot.bar(yerr = resultado_permuta.importances_std, ax = ax)
+	ax.set_title(f"VARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO ({n_permuta})\nMUNICÍPIO DE {cidade}, SANTA CATARINA.\n{obs}")
+	ax.set_ylabel("Acurácia Média")
+	ax.set_xlabel("Variáveis Explicativas para Modelagem de Focos de _Aedes_ sp.")
+	ax.set_facecolor("honeydew")
+	plt.xticks(rotation = "horizontal")
+	for i, v in enumerate(importancia_permuta.values):
+		ax.text(i, v + 0.01, f"{v.round(4)}", color = "black", ha = "left")
+	fig.tight_layout()
+	plt.show()
+	print(f"\nVARIÁVEIS IMPORTANTES:\n{importancia_impureza}\n")
+	print(f"\nVARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO:\n{importancia_permuta}")
+	return importancias, indices, variaveis_importantes
+
 def salva_modelo(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
         print("!!"*80)
@@ -474,6 +521,7 @@ lista_previsao(previsoesRF, 5, "RF")
 grafico_previsao(previsoesRF, testesRF, "RF")
 metricas("RF")
 
+importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, explicativas)
 #########################################################AUTOMATIZANDO###############################################################
 if _AUTOMATIZA == True:
     for cidade in cidades:

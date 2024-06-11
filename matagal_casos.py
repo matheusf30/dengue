@@ -63,7 +63,8 @@ _LIMITE = "dez2022"
 _FIM = "jan2023"
 """
 """
-obs = f"(Treino até {_LIMITE}; Teste após {_FIM}; k = {_K})"
+obs = f"(Treino até {_LIMITE}; Teste após {_FIM})"
+obs_k = f"(Treino até {_LIMITE}; Teste após {_FIM}; k = {_K})"
 
 ##################################################################################
 
@@ -557,46 +558,52 @@ def matriz_confusao(teste, previsao):
 	sns.heatmap(matriz_confusao, annot = True)
 	return matriz_confusao
 
-def relatorio_metricas(teste, previsao, modeloRF, explicativas):
+def relatorio_metricas(teste, previsao):
 	relatorio = classification_report(teste, previsao)
 	print(relatorio)
+	return relatorio
+
+def metricas_importancias(modeloRF, explicativas):
 	importancias = modeloRF.feature_importances_
 	importancias = importancias.round(4)
 	indices = np.argsort(importancias)[::-1]
 	variaveis_importantes = pd.DataFrame({"Variáveis": explicativas, "Importâncias": importancias})
 	variaveis_importantes = variaveis_importantes.sort_values(by = "Importâncias", ascending = False)
+	importancia_impureza = pd.Series(importancias, index = explicativas)
 	print(variaveis_importantes)
-	"""
-	print("\nVariáveis Importantes para o Modelo:\n")
-	for f in range (treino_x_explicado.shape[1]):
-		print(f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
-	"""
-	#1
-	plt.figure()
-	plt.title("Variáveis Importantes")
-	plt.bar(range(treino_x_explicado.shape[1]), importancias[indices], color = "r", align = "center")
-	for i, idx in enumerate(indices):
-		plt.text(i, importancias[idx], f"{i+1}. Variável {idx} ({importancias[idx]})", ha='center', va='bottom')
-	#plt.text(0.85, 0.8, f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
-	plt.xticks(range(treino_x_explicado.shape[1]), indices)
-	plt.xlim([-1, treino_x_explicado.shape[1]])
+	#1 Impurezas
+	std = np.std([tree.feature_importances_ for tree in modeloRF.estimators_], axis=0)
+	fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+	importancia_impureza = importancia_impureza.sort_values(ascending = False)
+	importancia_impureza.plot.bar(yerr = std, ax = ax)
+	ax.set_title(f"VARIÁVEIS IMPORTANTES PARA MODELO RANDOM FOREST\nMUNICÍPIO DE {_CIDADE}, SANTA CATARINA.\n{obs}")
+	ax.set_ylabel("Impureza Média")
+	ax.set_xlabel("Variáveis Explicativas para Modelagem de Casos de Dengue")
+	ax.set_facecolor("honeydew")
+	plt.xticks(rotation = "horizontal")
+	for i, v in enumerate(importancia_impureza.values):
+		ax.text(i, v + 0.01, f"{v.round(4)}", color = "black", ha = "left")
+	fig.tight_layout()
 	plt.show()
-	#2
-	"""
-	plt.figure(figsize=(10, 6))
-	bars = plt.barh(variaveis_importantes["Variáveis"], variaveis_importantes["Importâncias"], color = "darkblue")
-	plt.xlabel("Importâncias")
-	plt.ylabel("Variáveis")
-	plt.title("Importâncias das variáveis no Modelo Random Forest")
-	plt.gca().invert_yaxis()
-	"""
-	# 3 Permutações
-	resultado_permuta = permutation_importance(modeloRF, teste_x, teste_y, n_repeats = 10, random_state = SEED, n_jobs = 2)
-	#resultado_permuta = resultado_permuta.round(4)
+	#2 Permutações
+	n_permuta = 10
+	resultado_permuta = permutation_importance(modeloRF, teste_x, teste_y, n_repeats = n_permuta, random_state = SEED, n_jobs = 2)
 	importancia_permuta = pd.Series(resultado_permuta.importances_mean, index = explicativas)
 	importancia_permuta = importancia_permuta.sort_values(ascending = False)
-	print(importancia_permuta)
-	return relatorio, importancias, indices, variaveis_importantes
+	fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+	importancia_permuta.plot.bar(yerr = resultado_permuta.importances_std, ax = ax)
+	ax.set_title(f"VARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO ({n_permuta})\nMUNICÍPIO DE {_CIDADE}, SANTA CATARINA.\n{obs}")
+	ax.set_ylabel("Acurácia Média")
+	ax.set_xlabel("Variáveis Explicativas para Modelagem de Casos de Dengue")
+	ax.set_facecolor("honeydew")
+	plt.xticks(rotation = "horizontal")
+	for i, v in enumerate(importancia_permuta.values):
+		ax.text(i, v + 0.01, f"{v.round(4)}", color = "black", ha = "left")
+	fig.tight_layout()
+	plt.show()
+	print(f"\nVARIÁVEIS IMPORTANTES:\n{importancia_impureza}\n")
+	print(f"\nVARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO:\n{importancia_permuta}")
+	return importancias, indices, variaveis_importantes
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -674,7 +681,9 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 # matriz_confusao = matriz_confusao(y, previsoes_modelo)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
 
-relatorio, importancias, indices, variaveis_importantes = relatorio_metricas(y, previsoes_modelo, modeloRF, explicativas)
+relatorio =relatorio_metricas(y, previsoes_modelo)
+
+importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, explicativas)
 
 #histograma_erro(y, previsoes_modelo)
 #boxplot_erro(y, previsoes_modelo)
