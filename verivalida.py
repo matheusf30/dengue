@@ -66,7 +66,7 @@ key_error = ["ABELARDO LUZ", "URUBICI", "RANCHO QUEIMADO"]
 not_found_c = list(cidades_c.iloc[151:])  # Desconsiderando 2023, pois ainda não há modelagem
 """
 #### Condições para Variar entre Modelos ############
-cidade = "Florianópolis"
+cidade = "Itajaí"
 cidade = cidade.upper()
 SEED = np.random.seed(0)
 ####################################################
