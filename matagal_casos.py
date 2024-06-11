@@ -9,18 +9,20 @@ import seaborn as sns
 import os
 import sys
 import joblib
-# Pré-Processamento e Validações
+# Pré-Processamento
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 #from imblearn.over_sampling import SMOTE
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
+# Validações
 from sklearn.metrics import mean_squared_error, accuracy_score, r2_score
 from sklearn.metrics import confusion_matrix, classification_report #, RocCurveDisplay
+from sklearn.inspection import permutation_importance
 # Modelos e Visualizações
 from sklearn.ensemble import RandomForestRegressor
-from imblearn.ensemble import BalancedRandomForestClassifier
+#from imblearn.ensemble import BalancedRandomForestClassifier
 #from sklearn.tree import DecisionTreeRegressor, ExtraTreeRegressor
 #from sklearn.tree import export_graphviz, export_text, plot_tree
 #from sklearn.utils.graph import single_source_shortest_path_lenght as short_path
@@ -559,18 +561,42 @@ def relatorio_metricas(teste, previsao, modeloRF, explicativas):
 	relatorio = classification_report(teste, previsao)
 	print(relatorio)
 	importancias = modeloRF.feature_importances_
+	importancias = importancias.round(4)
 	indices = np.argsort(importancias)[::-1]
+	variaveis_importantes = pd.DataFrame({"Variáveis": explicativas, "Importâncias": importancias})
+	variaveis_importantes = variaveis_importantes.sort_values(by = "Importâncias", ascending = False)
+	print(variaveis_importantes)
+	"""
 	print("\nVariáveis Importantes para o Modelo:\n")
-	plt.figure()
-	plt.title("Variáveis Importantes")
 	for f in range (treino_x_explicado.shape[1]):
 		print(f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
-		plt.text(0.85, 0.8, f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
+	"""
+	#1
+	plt.figure()
+	plt.title("Variáveis Importantes")
 	plt.bar(range(treino_x_explicado.shape[1]), importancias[indices], color = "r", align = "center")
+	for i, idx in enumerate(indices):
+		plt.text(i, importancias[idx], f"{i+1}. Variável {idx} ({importancias[idx]})", ha='center', va='bottom')
+	#plt.text(0.85, 0.8, f"{f + 1}. Variável {indices[f]} ({importancias[indices[f]]})")
 	plt.xticks(range(treino_x_explicado.shape[1]), indices)
 	plt.xlim([-1, treino_x_explicado.shape[1]])
 	plt.show()
-	return relatorio, importancias, indices
+	#2
+	"""
+	plt.figure(figsize=(10, 6))
+	bars = plt.barh(variaveis_importantes["Variáveis"], variaveis_importantes["Importâncias"], color = "darkblue")
+	plt.xlabel("Importâncias")
+	plt.ylabel("Variáveis")
+	plt.title("Importâncias das variáveis no Modelo Random Forest")
+	plt.gca().invert_yaxis()
+	"""
+	# 3 Permutações
+	resultado_permuta = permutation_importance(modeloRF, teste_x, teste_y, n_repeats = 10, random_state = SEED, n_jobs = 2)
+	#resultado_permuta = resultado_permuta.round(4)
+	importancia_permuta = pd.Series(resultado_permuta.importances_mean, index = explicativas)
+	importancia_permuta = importancia_permuta.sort_values(ascending = False)
+	print(importancia_permuta)
+	return relatorio, importancias, indices, variaveis_importantes
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
@@ -648,7 +674,7 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 # matriz_confusao = matriz_confusao(y, previsoes_modelo)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
 
-relatorio, importancias, indices = relatorio_metricas(y, previsoes_modelo, modeloRF, explicativas)
+relatorio, importancias, indices, variaveis_importantes = relatorio_metricas(y, previsoes_modelo, modeloRF, explicativas)
 
 #histograma_erro(y, previsoes_modelo)
 #boxplot_erro(y, previsoes_modelo)
