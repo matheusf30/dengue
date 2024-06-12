@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, r2_score
 from sklearn.inspection import permutation_importance
-from sklearn.tree import plot_tree
+from sklearn.tree import plot_tree, export_text
 # Modelos
 from sklearn.ensemble import RandomForestRegressor
 #from dtreeviz.trees import dtreeviz
@@ -997,6 +997,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		#caminho, _ = modelo.decision_path(amostra)
 		#caminho_denso = caminho.toarray()
 		unica_arvore = modelo.estimators_[0]
+		relatorio_decisao = export_text(unica_arvore, feature_names = explicativas,
+										spacing = 5, decimals = 0, show_weights = True)
 		plt.figure(figsize = (25, 10), layout = "constrained", frameon = False)
 		ax = plt.gca()
 		for i, child in enumerate(ax.get_children()):
@@ -1006,7 +1008,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 				else:
 					child.set_color("blue")
 		plt.title(f"ÁRVORE DE DECISÃO DO MODELO RANDOM FOREST.\nMUNICÍPIO DE {cidade}, SANTA CATARINA. {var_str.upper()}.")
-		plot_tree(unica_arvore, feature_names = explicativas, filled = True, rounded = True, fontsize = 6)#, max_depth = 3)
+		plot_tree(unica_arvore, feature_names = explicativas, filled = True, rounded = True, fontsize = 6,
+					proportion = True, node_ids = True, precision = 0, impurity = False)#, max_depth = 6) # impureza = ErroQuadrático
 		ax.set_facecolor("honeydew")
 		if _SALVAR == True:
 			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -1019,11 +1022,15 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 			for velho, novo in troca.items():
 				_cidade = _cidade.replace(velho, novo)
 			plt.savefig(f'{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.pdf', format = "pdf", dpi = 1200)
-			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.pdf\n')
+			print(f"\n{ansi['green']}ARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.pdf{ansi['reset']}\n")
+			with open(f'{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.txt', 'w') as file:
+				file.write(relatorio_decisao)
+			print(f"\n{ansi['green']}ARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.txt{ansi['reset']}\n")
 		if _VISUALIZAR == True:
+			print("\n\n{ansi['green']}RELATÓRIO DA ÁRVORE DE DECISÃO\n\n{cidade}\n\n{var_str.upper()}{ansi['reset']}\n\n", relatorio_decisao)
 			plt.show()
 		#print("\n\nCAMINHO DE DECISÃO\n\n", caminho_denso)
-		return unica_arvore #amostra, caminho, caminho_denso
+		return unica_arvore, relatorio_decisao #amostra, caminho, caminho_denso
 		
 ####################################### Orientação a Objetos #######################################
 
@@ -1043,7 +1050,7 @@ if _AUTOMATIZA == True:
 		### Totaldata
 		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
 		random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
-		unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
+		unica_arvore, relatorio_decisao = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
 		y_previsto = random_forest.predict(treino_x_explicado)
 		previsoes = random_forest.predict(x)
 		previsoes = [int(p) for p in previsoes]
@@ -1073,7 +1080,7 @@ if _AUTOMATIZA == True:
 		### Total
 		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
 		random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
-		unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "focos")
+		unica_arvore, relatorio_decisao = modelo.caminho_decisao(x, random_forest, explicativas, "focos")
 		y_previsto = random_forest.predict(treino_x_explicado)
 		previsoes = random_forest.predict(x)
 		previsoes = [int(p) for p in previsoes]
@@ -1104,7 +1111,7 @@ else:
 	random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
 	y_previsto = random_forest.predict(treino_x_explicado)
 	previsoes = random_forest.predict(x)
-	unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
+	unica_arvore, relatorio_decisao = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
 	previsoes = [int(p) for p in previsoes]
 	print(y_previsto)
 	print(previsoes)
@@ -1132,6 +1139,7 @@ else:
 	### Total
 	treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
 	random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+	unica_arvore, relatorio_decisao = modelo.caminho_decisao(x, random_forest, explicativas, "focos")
 	y_previsto = random_forest.predict(treino_x_explicado)
 	previsoes = random_forest.predict(x)
 	previsoes = [int(p) for p in previsoes]
