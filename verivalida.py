@@ -11,14 +11,17 @@ import os
 import sys
 import joblib
 import webbrowser
-
 # Pré-Processamento e Validações
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, r2_score
+from sklearn.inspection import permutation_importance
+from sklearn.tree import plot_tree
 # Modelos
 from sklearn.ensemble import RandomForestRegressor
-
+#from dtreeviz.trees import dtreeviz
+#from sklearn.tree import export_graphviz
+#import graphviz
 #import tensorflow
 #from tensorflow import keras
 #from keras.models import load_model
@@ -37,6 +40,7 @@ elif _local == "IFSC":
     caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
     caminho_erro = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/erro/"
     caminho_validacao = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/validacao/"
+    caminho_importancia = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/importancia/"
 else:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -341,7 +345,7 @@ class Modelo:
 		explicativas = x.columns.tolist()
 		treino_x_explicado = pd.DataFrame(treino_x, columns = explicativas)
 		treino_x_explicado = treino_x_explicado.to_numpy().astype(int)
-		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado
+		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas
 
 	def treino_teste_limite(self, x, y, z):
 		"""
@@ -364,7 +368,7 @@ Conjunto de Treino com as Variáveis Explicativas (>2023):\n{teste_x}\n
 Conjunto de Teste com a Variável Dependente (<2023):\n{treino_y}\n 
 Conjunto de Teste com a Variável Dependente (>2023):\n{teste_y}\n
 Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<2023):\n{treino_x_explicado}\n""")
-		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z
+		return treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z, explicativas
 
 		"""	
 	def preve(x, treino_x_explicado):
@@ -387,28 +391,6 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		lista_op = [f"{str_var} - {cidade}: {var[i]}\nPrevisão Random Forest: {previsoes[i]}\n" for i in range(n)]
 		print("\n".join(lista_op))
 		print("~"*80)
-		
-		"""
-		import numpy as np
-		import scipy.stats as st
-
-		# calculando o erro padrao
-		erro_padrao1 = desvio_padrao/(n1**0.5) # desvio padrao dividido por raiz de n
-		erro_padrao2 = desvio_padrao/(n2**0.5) n = tamanho da amostra
-
-		# calculando g1
-		ng1 = n - 1
-		ng2 = n - 1
-
-		# criando o intervalo
-		amostra1 = st.t.interval(alpha=.95, df=ng1, loc=média, scale=erro_padrao)
-		amostra2 = st.t.interval(alpha=.95, df=ng2, loc=média, scale=erro_padrao)
-		st.t.interval(alpha=0.95, df=len(data)-1, loc=np.mean(data), scale=st.sem(data)) 
-
-		Out: amostra1 = (89.35801824717812, 92.10198175282189)
-		Out: amostra2 = (86.27801824717812, 89.02198175282189)
-		"""
-		
 		EQM = mean_squared_error(y, previsoes).round(2)
 		EMA = mean_absolute_error(y, previsoes).round(2)
 		RQ_EQM = np.sqrt(EQM).round(2)
@@ -461,17 +443,21 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
-		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		_cidade = cidade
-		for velho, novo in troca.items():
-			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
                      color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
@@ -482,8 +468,12 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		EQM = mean_squared_error(final["Casos"], final["Previstos"]).round(2)
 		EMA = mean_absolute_error(final["Casos"], final["Previstos"]).round(2)
 		RQ_EQM = np.sqrt(EQM).round(2)
@@ -534,7 +524,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
-		axs[0].grid(True)
+		#axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
 		bigodes = dict(color = "lime")
 		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
@@ -544,10 +534,13 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 		axs[1].set_facecolor("honeydew")
-		axs[1].grid(True)
+		#axs[1].grid(True)
 		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		print("="*80)
 
 	def grafico_previsao_casos_limite(self, previsao, teste, z, limite, fim):
@@ -574,17 +567,21 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Casos de Dengue")
-		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		_cidade = cidade
-		for velho, novo in troca.items():
-			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_validacao}validacao_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
                      color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
@@ -595,8 +592,12 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - CASOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.ylabel("Número de Casos de Dengue")
-		plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}erro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		EQM = mean_squared_error(final["Casos"], final["Previstos"]).round(2)
 		EMA = mean_absolute_error(final["Casos"], final["Previstos"]).round(2)
 		RQ_EQM = np.sqrt(EQM).round(2)
@@ -647,7 +648,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
-		axs[0].grid(True)
+		#axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
 		bigodes = dict(color = "lime")
 		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
@@ -657,10 +658,13 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 		axs[1].set_facecolor("honeydew")
-		axs[1].grid(True)
+		#axs[1].grid(True)
 		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - CASOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}histogramaerro_modelo_RF_casos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		print("="*80)
 
 	def grafico_previsao_focos(self, previsao, teste, limite):
@@ -685,17 +689,21 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		_cidade = cidade
-		for velho, novo in troca.items():
-			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
 		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
                      color = "black", linewidth = 2, label = "Erro")#, bins = 500)#, element = "poly")
@@ -706,8 +714,12 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas na Série Histórica de Anos")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}erro_modelo_RF_focos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		EQM = mean_squared_error(final["Focos"], final["Previstos"]).round(2)
 		EMA = mean_absolute_error(final["Focos"], final["Previstos"]).round(2)
 		RQ_EQM = np.sqrt(EQM).round(2)
@@ -758,7 +770,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
-		axs[0].grid(True)
+		#axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
 		bigodes = dict(color = "lime")
 		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
@@ -768,13 +780,16 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 		axs[1].set_facecolor("honeydew")
-		axs[1].grid(True)
+		#axs[1].grid(True)
 		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (Total) - FOCOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-total.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-total.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		print("="*80)
 
-	def grafico_previsao_focos_limite(self,previsao, teste, z, limite, fim):
+	def grafico_previsao_focos_limite(self, previsao, teste, z, limite, fim):
 		# Gráfico de Comparação entre Observação e Previsão dos Modelos
 		final = pd.DataFrame()
 		final["Semana"] = focos["Semana"].iloc[-z:]
@@ -798,17 +813,37 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
 		plt.xlabel("Semanas Epidemiológicas em 2023")
 		plt.ylabel("Número de Focos de _Aedes_ sp.")
-		troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		_cidade = cidade
-		for velho, novo in troca.items():
-			_cidade = _cidade.replace(velho, novo)
-		plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_validacao}validacao_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
+		plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+		sns.lineplot(x = final["Semana"], y = final["Erro"], linestyle = "dotted",
+                     color = "black", linewidth = 2, label = "Erro")
+		sns.lineplot(x = final["Semana"], y = final["Focos"],
+				     color = "darkblue", linewidth = 1, label = "Observado")
+		sns.lineplot(x = final["Semana"], y = final["Previstos"],
+				     color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+		plt.title(f"MODELO RANDOM FOREST (20{limite}) - OBSERVAÇÃO E PREVISÃO (20{fim}):\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		plt.xlabel("Semanas Epidemiológicas em 2023")
+		plt.ylabel("Número de Focos de _Aedes_ sp.")
+		plt.gca().set_facecolor("honeydew")
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_validacao}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_validacao}erro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		EQM = mean_squared_error(final["Focos"], final["Previstos"]).round(2)
 		EMA = mean_absolute_error(final["Focos"], final["Previstos"]).round(2)
 		RQ_EQM = np.sqrt(EQM).round(2)
@@ -859,7 +894,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		fig.text(0.9, 0.75, f"$ \\mu = {round(media, 2)} $ \n$\\sigma = {round(desvio_padrao, 2)} $ \nMd = {round(mediana, 2)}", fontsize = 12)
 		fig.text(0.6, 0.7, f"R²: {R_2}\nEQM: {EQM}\nRQEQM: {RQ_EQM}\nEMA: {EMA}\nViés: {VIES}\nIntervalo de Confiança ($\\alpha$ = {NIVEL_SIGNIFICANCIA}): {INTERCONFIANCA}", fontsize = 12)
 		axs[0].set_facecolor("honeydew")
-		axs[0].grid(True)
+		#axs[0].grid(True)
 		caixa = dict(color = "darkgreen", facecolor = "seagreen")
 		bigodes = dict(color = "lime")
 		outliers = dict(marker = "o", markerfacecolor = "red", markersize = 4, markeredgecolor = "black")
@@ -869,63 +904,251 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 					boxprops = caixa, whiskerprops = bigodes, flierprops = outliers,
 					medianprops = linha_mediana, meanprops = ponto_media)#, color = "green")
 		axs[1].set_facecolor("honeydew")
-		axs[1].grid(True)
+		#axs[1].grid(True)
 		fig.suptitle(f"MODELO RANDOM FOREST (20{limite}) - DISTRIBUIÇÃO DO ERRO (20{fim}) - FOCOS:\n MUNICÍPIO DE {cidade}, SANTA CATARINA.")
-		plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
-		plt.show()
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_erro}histogramaerro_modelo_RF_focos_{_cidade}_{limite}-{fim}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
 		print("="*80)
 
+	def metricas_importancias(self, modelo, explicativas, var_str, limite = None):
+		importancias = modelo.feature_importances_
+		importancias = importancias.round(4)
+		indices = np.argsort(importancias)[::-1]
+		variaveis_importantes = pd.DataFrame({"Variáveis": explicativas, "Importâncias": importancias})
+		variaveis_importantes = variaveis_importantes.sort_values(by = "Importâncias", ascending = False)
+		importancia_impureza = pd.Series(importancias, index = explicativas)
+		print(variaveis_importantes)
+		#1 Impurezas
+		std = np.std([tree.feature_importances_ for tree in modelo.estimators_], axis=0)
+		fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+		importancia_impureza = importancia_impureza.sort_values(ascending = False)
+		importancia_impureza.plot.barh(xerr = std, ax = ax)
+		if limite == None:
+			ax.set_title(f"VARIÁVEIS IMPORTANTES PARA MODELO RANDOM FOREST.\nMUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		else:
+			ax.set_title(f"VARIÁVEIS IMPORTANTES PARA MODELO RANDOM FOREST.\nMUNICÍPIO DE {cidade}, SANTA CATARINA. {limite}.")
+		ax.set_xlabel("Impureza Média")
+		if var_str == "casos":
+			ax.set_ylabel("Variáveis Explicativas para Modelagem de Casos de Dengue")
+		elif var_str == "focos":
+			ax.set_ylabel("Variáveis Explicativas para Modelagem de Focos de _Aedes_ sp.")
+		ax.set_facecolor("honeydew")
+		plt.yticks(rotation = 30)
+		for i, (feature, importance) in enumerate(importancia_impureza.items()):
+			if importance > 0.5 * ax.get_xlim()[1]:
+				ax.text(importance - 0.1, i, f"{round(importance, 4)}(+/-{std[i].round(4)})", color = "black", va = "center", ha = "right")
+			else:
+				ax.text(importance + 0.1, i, f"{round(importance, 4)}(+/-{std[i].round(4)})", color = "black", va = "center", ha = "left")
+		#fig.tight_layout()
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_importancia}importancia_pureza_modelo_RF_{var_str}_{_cidade}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}importancia_pureza_modelo_RF_{var_str}_{_cidade}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
+		#2 Permutações
+		n_permuta = 10
+		resultado_permuta = permutation_importance(modelo, teste_x, teste_y, n_repeats = n_permuta, random_state = SEED, n_jobs = 2)
+		importancia_permuta = pd.Series(resultado_permuta.importances_mean, index = explicativas)
+		importancia_permuta = importancia_permuta.sort_values(ascending = False)
+		fig, ax = plt.subplots(figsize = (10, 6), layout = "constrained", frameon = False)
+		importancia_permuta.plot.barh(xerr = resultado_permuta.importances_std, ax = ax)
+		if limite == None:
+			ax.set_title(f"VARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO ({n_permuta}).\nMUNICÍPIO DE {cidade}, SANTA CATARINA.")
+		else:
+			ax.set_title(f"VARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO ({n_permuta}).\nMUNICÍPIO DE {cidade}, SANTA CATARINA. {limite}")
+		ax.set_xlabel("Acurácia Média")
+		if var_str == "casos":
+			ax.set_ylabel("Variáveis Explicativas para Modelagem de Casos de Dengue")
+		elif var_str == "focos":
+			ax.set_ylabel("Variáveis Explicativas para Modelagem de Focos de _Aedes_ sp.")
+		ax.set_facecolor("honeydew")
+		plt.yticks(rotation = 30)
+		for i, (feature, importance) in enumerate(importancia_impureza.items()):
+			if importance > 0.5 * ax.get_xlim()[1]:
+				ax.text(importance - 0.1, i, f"{round(importance, 4)} (+/-{resultado_permuta.importances_std[i].round(4)})",
+						color = "black", va = "center", ha = "right")
+			else:
+				ax.text(importance + 0.1, i, f"{round(importance, 4)} (+/-{resultado_permuta.importances_std[i].round(4)})",
+						color = "black", va = "center", ha = "left")
+		#fig.tight_layout()
+		if _SALVAR == True:
+			plt.savefig(f'{caminho_importancia}importancia_permuta{n_permuta}_modelo_RF_{var_str}_{_cidade}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}importancia_permuta{n_permuta}_modelo_RF_{var_str}_{_cidade}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
+		print(f"\nVARIÁVEIS IMPORTANTES:\n{importancia_impureza}\n")
+		print(f"\nVARIÁVEIS IMPORTANTES UTILIZANDO PERMUTAÇÃO:\n{importancia_permuta}")
+		return importancias, indices, variaveis_importantes 
+
+	def caminho_decisao(self, x, modelo, explicativas, var_str):
+		#amostra = x.iloc[0].values.reshape(1, -1)
+		#caminho, _ = modelo.decision_path(amostra)
+		#caminho_denso = caminho.toarray()
+		unica_arvore = modelo.estimators_[0]
+		plt.figure(figsize = (25, 10), layout = "constrained", frameon = False)
+		ax = plt.gca()
+		for i, child in enumerate(ax.get_children()):
+			if isinstance(child, plt.Line2D):
+				if i % 2 == 0:
+					child.set_color("red")
+				else:
+					child.set_color("blue")
+		plt.title(f"ÁRVORE DE DECISÃO DO MODELO RANDOM FOREST.\nMUNICÍPIO DE {cidade}, SANTA CATARINA. {var_str.upper()}.")
+		plot_tree(unica_arvore, feature_names = explicativas, filled = True, rounded = True, fontsize = 6)#, max_depth = 3)
+		ax.set_facecolor("honeydew")
+		if _SALVAR == True:
+			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		     'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		     'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		     'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		     'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+			_cidade = cidade
+			for velho, novo in troca.items():
+				_cidade = _cidade.replace(velho, novo)
+			plt.savefig(f'{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.pdf', format = "pdf", dpi = 1200)
+			print(f'\nARQUIVO SALVO COM SUCESSO\n\n{caminho_importancia}arvore_decisao_modelo_RF_{var_str}_{_cidade}.pdf\n')
+		if _VISUALIZAR == True:
+			plt.show()
+		#print("\n\nCAMINHO DE DECISÃO\n\n", caminho_denso)
+		return unica_arvore #amostra, caminho, caminho_denso
 		
 ####################################### Orientação a Objetos #######################################
 
-##### CASOS
-modelo = Modelo()
-_retroagir, _horizonte = modelo.variar(3, 2)
-dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
-### Totaldata
-treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
-random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
-y_previsto = random_forest.predict(treino_x_explicado)
-previsoes = random_forest.predict(x)
-previsoes = [int(p) for p in previsoes]
-print(y_previsto)
-print(previsoes)
-R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
-modelo.grafico_previsao_casos(previsoes, y, "22")
+_SALVAR = True
 
-### Apenas 2023
-treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
-random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
-y_previsto = random_forest.predict(treino_x_explicado)
-previsoes23 = random_forest.predict(teste_x)
-previsoes = [int(p) for p in previsoes23]
-print(y_previsto)
-print(previsoes)
-R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
-modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
+_VISUALIZAR = False
 
-##### FOCOS
-modelo = Modelo()
-_retroagir, _horizonte = modelo.variar(8, 4)
-dataset, x, y, x_array, y_array = modelo.monta_dataset_focos(cidade)
-#dataset, x, y, x_array, y_array = modelo.testa_dataset_focos(cidade)
-### Total
-treino_x, teste_x, treino_y, teste_y, treino_x_explicado = modelo.treino_teste(x, x_array, y_array)
-random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
-y_previsto = random_forest.predict(treino_x_explicado)
-previsoes = random_forest.predict(x)
-previsoes = [int(p) for p in previsoes]
-print(y_previsto)
-print(previsoes)
-R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 500, y)
-modelo.grafico_previsao_focos(previsoes, y, "22")
-### Apenas 2023
-treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
-random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
-y_previsto = random_forest.predict(treino_x_explicado)
-previsoes23 = random_forest.predict(teste_x)
-previsoes = [int(p) for p in previsoes23]
-print(y_previsto)
-print(previsoes)
-R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
-modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
+_AUTOMATIZA = True
+
+if _AUTOMATIZA == True:
+	lista_cidades = ["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]
+	for cidade in lista_cidades:
+		##### CASOS
+		modelo = Modelo()
+		_retroagir, _horizonte = modelo.variar(3, 2)
+		dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
+		### Totaldata
+		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
+		random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
+		unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
+		y_previsto = random_forest.predict(treino_x_explicado)
+		previsoes = random_forest.predict(x)
+		previsoes = [int(p) for p in previsoes]
+		print(y_previsto)
+		print(previsoes)
+		R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
+		modelo.grafico_previsao_casos(previsoes, y, "22")
+		importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "casos")
+
+		### Apenas 2023
+		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z, explicativas = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
+		random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
+		y_previsto = random_forest.predict(treino_x_explicado)
+		previsoes23 = random_forest.predict(teste_x)
+		previsoes = [int(p) for p in previsoes23]
+		print(y_previsto)
+		print(previsoes)
+		R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
+		modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
+		importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "casos", "2023")
+
+		##### FOCOS
+		modelo = Modelo()
+		_retroagir, _horizonte = modelo.variar(8, 4)
+		dataset, x, y, x_array, y_array = modelo.monta_dataset_focos(cidade)
+		#dataset, x, y, x_array, y_array = modelo.testa_dataset_focos(cidade)
+		### Total
+		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
+		random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+		unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "focos")
+		y_previsto = random_forest.predict(treino_x_explicado)
+		previsoes = random_forest.predict(x)
+		previsoes = [int(p) for p in previsoes]
+		print(y_previsto)
+		print(previsoes)
+		R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 500, y)
+		modelo.grafico_previsao_focos(previsoes, y, "22")
+		importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "focos")
+
+		### Apenas 2023
+		treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z, explicativas = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
+		random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+		y_previsto = random_forest.predict(treino_x_explicado)
+		previsoes23 = random_forest.predict(teste_x)
+		previsoes = [int(p) for p in previsoes23]
+		print(y_previsto)
+		print(previsoes)
+		R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
+		modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
+		importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "focos", "2023")
+else:
+	##### CASOS
+	modelo = Modelo()
+	_retroagir, _horizonte = modelo.variar(3, 2)
+	dataset, x, y, x_array, y_array = modelo.monta_dataset_casos(cidade)
+	### Totaldata
+	treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
+	random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
+	y_previsto = random_forest.predict(treino_x_explicado)
+	previsoes = random_forest.predict(x)
+	unica_arvore = modelo.caminho_decisao(x, random_forest, explicativas, "casos")
+	previsoes = [int(p) for p in previsoes]
+	print(y_previsto)
+	print(previsoes)
+	R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 500, y)
+	modelo.grafico_previsao_casos(previsoes, y, "22")
+	importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "casos")
+
+	### Apenas 2023
+	treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z, explicativas = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
+	random_forest = modelo.abre_modelo("casos", cidade, _retroagir)
+	y_previsto = random_forest.predict(treino_x_explicado)
+	previsoes23 = random_forest.predict(teste_x)
+	previsoes = [int(p) for p in previsoes23]
+	print(y_previsto)
+	print(previsoes)
+	R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("casos", dataset, previsoes, 5, teste_y)
+	modelo.grafico_previsao_casos_limite(previsoes, teste_y, z, "22", "23")
+	importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "casos", "2023")
+
+	##### FOCOS
+	modelo = Modelo()
+	_retroagir, _horizonte = modelo.variar(8, 4)
+	dataset, x, y, x_array, y_array = modelo.monta_dataset_focos(cidade)
+	#dataset, x, y, x_array, y_array = modelo.testa_dataset_focos(cidade)
+	### Total
+	treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = modelo.treino_teste(x, x_array, y_array)
+	random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+	y_previsto = random_forest.predict(treino_x_explicado)
+	previsoes = random_forest.predict(x)
+	previsoes = [int(p) for p in previsoes]
+	print(y_previsto)
+	print(previsoes)
+	R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 500, y)
+	modelo.grafico_previsao_focos(previsoes, y, "22")
+	importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "focos")
+
+	### Apenas 2023
+	treino_x, teste_x, treino_y, teste_y, treino_x_explicado, z, explicativas = modelo.treino_teste_limite(x, y, 50) # z == 50 (ano de 2023)
+	random_forest = modelo.abre_modelo("focos", cidade, _retroagir)
+	y_previsto = random_forest.predict(treino_x_explicado)
+	previsoes23 = random_forest.predict(teste_x)
+	previsoes = [int(p) for p in previsoes23]
+	print(y_previsto)
+	print(previsoes)
+	R_2, EQM, RQ_EQM, EMA, VIES = modelo.metricas("focos", dataset, previsoes, 5, teste_y)
+	modelo.grafico_previsao_focos_limite(previsoes, teste_y, z, "22", "23")
+	importancias, indices, variaveis_importantes =  modelo.metricas_importancias(random_forest, explicativas, "focos", "2023")
