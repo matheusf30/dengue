@@ -19,45 +19,50 @@ import cmocean
 ## Abrir aquivo NETCDF MERGE (ds)
 #
 #### Encaminhamento aos Diretórios
-_local = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
-if _local == "GH": # _ = Variável Privada
-    caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-    caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _local == "CASA":
-    caminho_dados = "/home/mfsouza90/Documents/git_matheusf30/dados_dengue/"
-    caminho_dados = "/home/mfsouza90/Documents/git_matheusf30/dados_dengue/modelos/"
-elif _local == "IFSC":
-    caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-    caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+if _LOCAL == "GH": # _ = Variável Privada
+	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+	caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos/"
+elif _LOCAL == "CASA":
+	caminho_dados = "/home/mfsouza90/Documents/git_matheusf30/dados_dengue/"
+	caminho_dados = "/home/mfsouza90/Documents/git_matheusf30/dados_dengue/modelos/"
+elif _LOCAL == "IFSC":
+	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
+	caminho_climatologia = "/home/sifapsc/scripts/matheus/dengue/resultados/climatologia/"
 else:
-    print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
+	print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
 
 # SAMeT / MERGE
-caminho_samet = "/dados/operacao/samet/clima/TMED/"
+caminho_samet = "/dados/operacao/samet/clima/"
 caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
 
 # Renomeação de dados e variáveis
-prec_sc = "prec_sc_2000_2022.nc"
-samet_tmed = "SAMeT_CPTEC_DAILY_TMED_SB_2000_2023.nc"
+samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2023.nc"
+samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2023.nc"
+samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2023.nc"
 merge = "MERGE_CPTEC_DAILY_SB_2000_2023.nc"
-municipios_sc = "shapefiles/SC_Municipios_2022.shp"
-br = "shapefiles/BR_UF_2022.shp"
+prec_sc = "prec_sc_2000_2022.nc"
+shape_sc = "shapefiles/SC_Municipios_2022.shp"
+shape_br = "shapefiles/BR_UF_2022.shp"
 
 # ABRE ARQUIVO NETCDF DATASET (ds)     {caminho}{dado}
+tmin = xr.open_dataset(f'{caminho_samet}{samet_tmin}')
+tmed = xr.open_dataset(f'{caminho_samet}{samet_tmed}')
+tmax = xr.open_dataset(f'{caminho_samet}{samet_tmax}')
+prec = xr.open_dataset(f'{caminho_merge}{merge}')
 prec_sc = xr.open_dataset(f'{caminho_dados}{prec_sc}')
-temp = xr.open_dataset(f'{caminho_samet}{samet_tmed}')
-#prec_sc = xr.open_dataset(f'{caminho_merge}{merge}')
 
 ##### Padrão ANSI ##################################
 ansi = {"bold" : "\033[1m", "red" : "\033[91m",
         "green" : "\033[92m", "yellow" : "\033[33m",
         "blue" : "\033[34m", "magenta" : "\033[35m",
         "cyan" : "\033[36m", "white" : "\033[37m", "reset" : "\033[0m"}
-""" CORES E MAPAS DE CORES
+""" CORES E MAPAS DE CORES../../CDO.MERGE
 https://xkcd.com/color/rgb/
 https://matplotlib.org/stable/gallery/color/named_colors.html
-https://matplotlib.org/cmocean/
+,https://matplotlib.org/cmocean/
 https://matplotlib.org/stable/users/explain/colors/colormaps.html
 """
 ################################################################################
@@ -76,8 +81,8 @@ class Clima:
 		self.netcdf = netcdf
 		self.lat = self.netcdf.variables["lat"][:]
 		self.lon = self.netcdf.variables["lon"][:]
-		self.lon = self.netcdf.variables["time"][:]
-		self.lon = self.netcdf.variables["time"][:]
+		self.time = self.netcdf.variables["time"][:]
+		self.var = self.netcdf.variables[var_str][:]
 		print(f"\n\n{ansi['green']}Arquivo original:{ansi['reset']}\n{netcdf}\n")
 		print("\n" + "="*80 + "\n")
 		#VISUALIZAR dimensões do aquivo (Latitude, Longitude, Tempo e Variáveis)
@@ -87,22 +92,109 @@ class Clima:
 		# LON
 		print(f"{ansi['cyan']}Longitudes:{ansi['reset']}\n{netcdf['lon']}\n")
 		print("\n" + "="*80 + "\n")
-		# TIME
+		# Data
 		print(f"{ansi['cyan']}Datas:{ansi['reset']}\n{netcdf['time']}\n")
 		print("\n" + "="*80 + "\n")
 		# Variável
 		print(f"{ansi['cyan']}Variável:{ansi['reset']}\n{netcdf[var_str]}\n")
 		print("\n" + "="*80 + "\n")
 
+	def visualizacao_basica(self, netcdf, var_str, data):
+		plt.figure(figsize = (8, 8), layout = "constrained", frameon = False)
+		plt.title(f"Visualização do dia: {data}")
+		dia = self.netcdf.sel(time = f"{data}")
+		dia[var_str].plot()
+		print(f"\n{ansi['red']}Visualizando {var_str.upper()} nos padrões definidos automaticamente...{ansi['reset']}\n")
+		plt.show()
+
+	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc, shape_br):
+		plt.figure(figsize = (8, 10), layout = "constrained", frameon = False)
+		ax = plt.axes(projection = ccrs.PlateCarree())
+		br = list(shpreader.Reader(f"{caminho_dados}{shape_br}").geometries())
+		municipios = list(shpreader.Reader(f"{caminho_dados}{shape_sc}").geometries())
+		#cmap = plt.get_cmap("coolwarm")
+		if var_str == "tmin" or var_str == "tmed" or var_str == "tmax":
+			cmap = cmocean.cm.thermal #balance
+			cmap.set_over("#3c0008") #  dark "maroon"
+			cmap.set_under("#00022e") # dark navy blue # "midnightblue"
+			interval = 1
+		elif var_str == "prec": # PASSAR AS MARGENS PARA ESCURO E ALTERAR EXTREMOS
+			cmap = cmocean.cm.rain #balance
+			cmap.set_over("#00022e") # dark navy blue
+			cmap.set_under("#3c0008")  #  dark maroon
+			interval = 10
+		data_min = self.netcdf[var_str].min()
+		data_max = self.netcdf[var_str].max()
+		levels = np.arange(data_min, data_max + interval, interval)
+		dia = self.netcdf.sel(time = f"{data}")
+		figura = dia[var_str].plot.pcolormesh(robust = True, cmap = cmap, add_colorbar = False,
+												levels = levels, add_labels = False,
+												norm = cls.Normalize(vmin = data_min, vmax = data_max))
+		if var_str == "tmin" or var_str == "tmed" or var_str == "tmax":
+			plt.colorbar(figura, pad = 0.02, fraction = 0.05, extend = "both",
+					ticks = np.linspace(int(data_min), int(data_max), 10), orientation = "vertical",
+					label = "Temperatura Média Diária [C]")
+			if var_str == "tmin":
+				plt.title(f"Temperatura Mínima (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+			elif var_str == "tmed":
+				plt.title(f"Temperatura Média (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+			elif var_str == "tmax":
+				plt.title(f"Temperatura Máxima (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+		elif var_str == "prec":
+			plt.colorbar(figura, pad = 0.02, fraction = 0.05, extend = "max",
+					ticks = np.linspace(int(data_min), int(data_max), 10), orientation = "vertical",
+					label = "Precipitação Acumulada Diária [mm]")
+			plt.title(f"Precipitação Acumulada (mm) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+		ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = "white",
+							facecolor = "none", linewidth = 0.15)
+		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = "white",
+							facecolor = "none", linewidth = 0.1)
+		ax.coastlines(resolution = "10m", color = "white", linewidth = 0.8)
+		ax.add_feature(cartopy.feature.BORDERS, edgecolor = "white", linewidth = 0.9)
+		gl = ax.gridlines(crs = ccrs.PlateCarree(), color = "white", alpha = 1.0,
+				          linestyle = "--", linewidth = 0.25, draw_labels = True,
+				          xlocs = np.arange(-180, 180, 2),ylocs = np.arange(-90, 90, 2))
+		gl.top_labels = False
+		gl.right_labels = False
+		if _SALVAR == True:
+			plt.savefig(f"{caminho_climatologia}climatologia_{var_str}_{data}.pdf",
+						transparent = True, format = "pdf", dpi = 1200)
+		if _VISUALIZAR == True:
+			print(f"\n{ansi['red']}Visualizando {var_str.upper()} com ajustes customizados...{ansi['reset']}\n")
+			plt.show()
+
+
+####################
+
+_SALVAR = False
+
+_VISUALIZAR = True
+
+### PREC
+prec = Clima(prec, "prec")
+#prec.visualizacao_basica(prec, "prec", "2023-06-21")
+prec.visualizacao_aprimorada(prec, "prec", "2023-06-21", shape_sc, shape_br)
+### TMIN
+tmin = Clima(tmin, "tmin")
+#temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
+tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06-21", shape_sc, shape_br)
+"""
+### TMED
+tmed = Clima(tmed, "tmed")
+#temp.visualizacao_basica(tmed, "tmed", "2023-06-21")
+tmed.visualizacao_aprimorada(tmed, "tmed", "2023-06-21", shape_sc, shape_br)
+### TMAX
+tmax = Clima(tmax, "tmax")
+#tmax.visualizacao_basica(tmax, "tmax", "2023-06-21")
+tmax.visualizacao_aprimorada(tmax, "tmax", "2023-06-21", shape_sc, shape_br)
+"""
+
+
+
+"""
 # SELECIONAR DATA
 dia = "2023-06-21"
-"""
-plt.figure(figsize = (8, 8), layout = "constrained", frameon = False)
-plt.title(f"Visualização do dia: {dia}")
-temp.sel(time = f"{dia}")["tmed"].plot()
-plt.show()
-"""
-"""
+
 ### Visualizando variável na data selecionada
 plt.figure(figsize = (9, 10), layout = "constrained", frameon = False)
 ax = plt.axes(projection=ccrs.PlateCarree())
@@ -138,12 +230,9 @@ gl.right_labels = False
 plt.title(f"Dia: {dia}", fontsize = 14, ha = "center")
 #plt.savefig(f"{caminho_imagens}teste_samet1.jpg", transparent = True, dpi = 300, bbox_inches = "tight", pad_inches = 0.02)
 plt.show()
-"""
-####################
-temp = Clima(temp, "tmed")
 
 
-"""
+
 print('Arquivo original:', prec_sc, '\n')
 print('***************************************\n')
 
