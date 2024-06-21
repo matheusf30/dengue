@@ -54,44 +54,60 @@ ansi = {"bold" : "\033[1m", "red" : "\033[91m",
         "green" : "\033[92m", "yellow" : "\033[33m",
         "blue" : "\033[34m", "magenta" : "\033[35m",
         "cyan" : "\033[36m", "white" : "\033[37m", "reset" : "\033[0m"}
-################################################################################
-
-########################### TESTANDO SAMeT ####################################
-print(f'\n\n{ansi["green"]}Arquivo original:{ansi["reset"]}', temp, '\n')
-print('***************************************\n')
-#VISUALIZAR dimensões do aquivo (Latitude, Longitude, Tempo e Variáveis)
-# LAT
-print(f'{ansi["cyan"]}Coordenadas em Latitude:{ansi["reset"]}', temp["lat"], '\n')
-print('***************************************\n')
-# LON
-print(f'{ansi["cyan"]}Coordenadas em Longitude:{ansi["reset"]}', temp["lon"], '\n')
-print('***************************************\n')
-# TIME
-print(f'{ansi["cyan"]}Datas:{ansi["reset"]}', temp["time"], '\n')
-print('***************************************\n')
-# Variável
-print(f'{ansi["cyan"]}Variável:{ansi["reset"]}', temp["tmed"], '\n')
-print('***************************************\n')
-
-# Visualizar variável de um dia qualquer
-
-dia = "2023-06-21"
-
-plt.figure(figsize = (8, 8), layout = "constrained", frameon = False)
-plt.title(f"Visualização do dia: {dia}")
-temp.sel(time = f"{dia}")["tmed"].plot()
-plt.show()
-
-plt.figure(figsize = (10, 11), layout = "constrained", frameon = False)
-ax = plt.axes(projection=ccrs.PlateCarree())
-br = list(shpreader.Reader(f"{caminho_dados}{br}").geometries())
-municipios = list(shpreader.Reader(f"{caminho_dados}{municipios_sc}").geometries())
-"""
+""" CORES E MAPAS DE CORES
 https://xkcd.com/color/rgb/
 https://matplotlib.org/stable/gallery/color/named_colors.html
 https://matplotlib.org/cmocean/
 https://matplotlib.org/stable/users/explain/colors/colormaps.html
 """
+################################################################################
+
+########################### TESTANDO CLASSE ####################################
+
+class Clima:
+
+	def __init__(self, netcdf, var_str):
+		"""
+		Função de Instanciação do Objeto Classe
+		"""
+		print("\n" + "="*80 + "\n")
+		print(f"\n{ansi['cyan']}>>>OBJETO CLIMATOLÓGICO INSTANCIADO<<<{ansi['reset']}")
+		print("\n" + "="*80 + "\n")
+		self.netcdf = netcdf
+		self.lat = self.netcdf.variables["lat"][:]
+		self.lon = self.netcdf.variables["lon"][:]
+		self.lon = self.netcdf.variables["time"][:]
+		self.lon = self.netcdf.variables["time"][:]
+		print(f"\n\n{ansi['green']}Arquivo original:{ansi['reset']}\n{netcdf}\n")
+		print("\n" + "="*80 + "\n")
+		#VISUALIZAR dimensões do aquivo (Latitude, Longitude, Tempo e Variáveis)
+		# LAT
+		print(f"{ansi['cyan']}Latitudes:{ansi['reset']}\n{netcdf['lat']}\n")
+		print("\n" + "="*80 + "\n")
+		# LON
+		print(f"{ansi['cyan']}Longitudes:{ansi['reset']}\n{netcdf['lon']}\n")
+		print("\n" + "="*80 + "\n")
+		# TIME
+		print(f"{ansi['cyan']}Datas:{ansi['reset']}\n{netcdf['time']}\n")
+		print("\n" + "="*80 + "\n")
+		# Variável
+		print(f"{ansi['cyan']}Variável:{ansi['reset']}\n{netcdf[var_str]}\n")
+		print("\n" + "="*80 + "\n")
+
+# SELECIONAR DATA
+dia = "2023-06-21"
+"""
+plt.figure(figsize = (8, 8), layout = "constrained", frameon = False)
+plt.title(f"Visualização do dia: {dia}")
+temp.sel(time = f"{dia}")["tmed"].plot()
+plt.show()
+"""
+"""
+### Visualizando variável na data selecionada
+plt.figure(figsize = (9, 10), layout = "constrained", frameon = False)
+ax = plt.axes(projection=ccrs.PlateCarree())
+br = list(shpreader.Reader(f"{caminho_dados}{br}").geometries())
+municipios = list(shpreader.Reader(f"{caminho_dados}{municipios_sc}").geometries())
 cmap = cmocean.cm.balance
 #cmap = plt.get_cmap("coolwarm")
 cmap.set_over("#3c0008") #  dark "maroon"
@@ -122,6 +138,9 @@ gl.right_labels = False
 plt.title(f"Dia: {dia}", fontsize = 14, ha = "center")
 #plt.savefig(f"{caminho_imagens}teste_samet1.jpg", transparent = True, dpi = 300, bbox_inches = "tight", pad_inches = 0.02)
 plt.show()
+"""
+####################
+temp = Clima(temp, "tmed")
 
 
 """
