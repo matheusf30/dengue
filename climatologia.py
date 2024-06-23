@@ -43,6 +43,7 @@ samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2023.nc"
 samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2023.nc"
 samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2023.nc"
 merge = "MERGE_CPTEC_DAILY_SB_2000_2023.nc"
+merge24 = "MERGE_CPTEC_DAILY_SB_2024_2024.nc"
 prec_sc = "prec_sc_2000_2022.nc"
 shape_sc = "shapefiles/SC_Municipios_2022.shp"
 shape_br = "shapefiles/BR_UF_2022.shp"
@@ -53,6 +54,7 @@ tmed = xr.open_dataset(f'{caminho_samet}{samet_tmed}')
 tmax = xr.open_dataset(f'{caminho_samet}{samet_tmax}')
 prec = xr.open_dataset(f'{caminho_merge}{merge}')
 prec_sc = xr.open_dataset(f'{caminho_dados}{prec_sc}')
+prec24 = xr.open_dataset(f'{caminho_merge}{merge24}')
 
 ##### Padrão ANSI ##################################
 ansi = {"bold" : "\033[1m", "red" : "\033[91m",
@@ -62,7 +64,7 @@ ansi = {"bold" : "\033[1m", "red" : "\033[91m",
 """ CORES E MAPAS DE CORES../../CDO.MERGE
 https://xkcd.com/color/rgb/
 https://matplotlib.org/stable/gallery/color/named_colors.html
-,https://matplotlib.org/cmocean/
+https://matplotlib.org/cmocean/
 https://matplotlib.org/stable/users/explain/colors/colormaps.html
 """
 ################################################################################
@@ -114,11 +116,13 @@ class Clima:
 		municipios = list(shpreader.Reader(f"{caminho_dados}{shape_sc}").geometries())
 		#cmap = plt.get_cmap("coolwarm")
 		if var_str == "tmin" or var_str == "tmed" or var_str == "tmax":
+			cor_linha = "white"
 			cmap = cmocean.cm.thermal #balance
-			cmap.set_over("#3c0008") #  dark "maroon"
-			cmap.set_under("#00022e") # dark navy blue # "midnightblue"
+			cmap.set_over("#ffff7e") # "#ffff7e" banana "#3c0008" dark "maroon"
+			cmap.set_under("#00022e") # "#00022e" dark navy blue # "midnightblue"
 			interval = 1
 		elif var_str == "prec": # PASSAR AS MARGENS PARA ESCURO E ALTERAR EXTREMOS
+			cor_linha = "black"
 			cmap = cmocean.cm.rain #balance
 			cmap.set_over("#00022e") # dark navy blue
 			cmap.set_under("#3c0008")  #  dark maroon
@@ -135,23 +139,23 @@ class Clima:
 					ticks = np.linspace(int(data_min), int(data_max), 10), orientation = "vertical",
 					label = "Temperatura Média Diária [C]")
 			if var_str == "tmin":
-				plt.title(f"Temperatura Mínima (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+				plt.title(f"Temperatura Mínima para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
 			elif var_str == "tmed":
-				plt.title(f"Temperatura Média (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+				plt.title(f"Temperatura Média para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
 			elif var_str == "tmax":
-				plt.title(f"Temperatura Máxima (C) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+				plt.title(f"Temperatura Máxima para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
 		elif var_str == "prec":
 			plt.colorbar(figura, pad = 0.02, fraction = 0.05, extend = "max",
 					ticks = np.linspace(int(data_min), int(data_max), 10), orientation = "vertical",
-					label = "Precipitação Acumulada Diária [mm]")
-			plt.title(f"Precipitação Acumulada (mm) para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
-		ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = "white",
-							facecolor = "none", linewidth = 0.15)
-		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = "white",
+					label = "Precipitação Acumulada Diária [kg/m²]")
+			plt.title(f"Precipitação Acumulada para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
+		ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = cor_linha,
 							facecolor = "none", linewidth = 0.1)
-		ax.coastlines(resolution = "10m", color = "white", linewidth = 0.8)
-		ax.add_feature(cartopy.feature.BORDERS, edgecolor = "white", linewidth = 0.9)
-		gl = ax.gridlines(crs = ccrs.PlateCarree(), color = "white", alpha = 1.0,
+		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = cor_linha,
+							facecolor = "none", linewidth = 0.1)
+		ax.coastlines(resolution = "10m", color = cor_linha, linewidth = 0.1)
+		ax.add_feature(cartopy.feature.BORDERS, edgecolor = cor_linha, linewidth = 0.1)
+		gl = ax.gridlines(crs = ccrs.PlateCarree(), color = "lightgray", alpha = 1.0,
 				          linestyle = "--", linewidth = 0.25, draw_labels = True,
 				          xlocs = np.arange(-180, 180, 2),ylocs = np.arange(-90, 90, 2))
 		gl.top_labels = False
@@ -170,10 +174,17 @@ _SALVAR = False
 
 _VISUALIZAR = True
 
+"""
 ### PREC
 prec = Clima(prec, "prec")
-#prec.visualizacao_basica(prec, "prec", "2023-06-21")
+prec.visualizacao_basica(prec, "prec", "2023-06-21")
 prec.visualizacao_aprimorada(prec, "prec", "2023-06-21", shape_sc, shape_br)
+"""
+### PREC24
+prec24 = Clima(prec24, "prec")
+prec24.visualizacao_basica(prec24, "prec", "2024-06-20")
+prec24.visualizacao_aprimorada(prec24, "prec", "2024-06-20", shape_sc, shape_br)
+
 ### TMIN
 tmin = Clima(tmin, "tmin")
 #temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
