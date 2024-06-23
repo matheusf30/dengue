@@ -131,6 +131,8 @@ class Clima:
 		data_max = self.netcdf[var_str].max()
 		levels = np.arange(data_min, data_max + interval, interval)
 		dia = self.netcdf.sel(time = f"{data}")
+		print(dia[var_str].dims)
+		print(dia[var_str].shape)
 		figura = dia[var_str].plot.pcolormesh(robust = True, cmap = cmap, add_colorbar = False,
 												levels = levels, add_labels = False,
 												norm = cls.Normalize(vmin = data_min, vmax = data_max))
