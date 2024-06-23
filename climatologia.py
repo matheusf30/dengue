@@ -172,7 +172,7 @@ class Clima:
 
 ####################
 
-_SALVAR = False
+_SALVAR = True
 
 _VISUALIZAR = True
 
@@ -181,12 +181,12 @@ _VISUALIZAR = True
 prec = Clima(prec, "prec")
 prec.visualizacao_basica(prec, "prec", "2023-06-21")
 prec.visualizacao_aprimorada(prec, "prec", "2023-06-21", shape_sc, shape_br)
-"""
+
 ### PREC24
 prec24 = Clima(prec24, "prec")
 prec24.visualizacao_basica(prec24, "prec", "2024-06-20")
 prec24.visualizacao_aprimorada(prec24, "prec", "2024-06-20", shape_sc, shape_br)
-
+"""
 ### TMIN
 tmin = Clima(tmin, "tmin")
 #temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
