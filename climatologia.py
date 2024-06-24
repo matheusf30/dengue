@@ -110,7 +110,7 @@ class Clima:
 		plt.show()
 
 	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc, shape_br):
-		plt.figure(figsize = (8, 10), layout = "constrained", frameon = False)
+		plt.figure(figsize = (9.5, 8), layout = "constrained", frameon = False)
 		ax = plt.axes(projection = ccrs.PlateCarree())
 		br = list(shpreader.Reader(f"{caminho_dados}{shape_br}").geometries())
 		municipios = list(shpreader.Reader(f"{caminho_dados}{shape_sc}").geometries())
@@ -131,8 +131,8 @@ class Clima:
 		data_max = self.netcdf[var_str].max()
 		levels = np.arange(data_min, data_max + interval, interval)
 		dia = self.netcdf.sel(time = f"{data}")
-		print(dia[var_str].dims)
-		print(dia[var_str].shape)
+		print(f"dia[var_str].dims = {dia[var_str].dims}")
+		print(f"dia[var_str].shape = {dia[var_str].shape}")
 		figura = dia[var_str].plot.pcolormesh(robust = True, cmap = cmap, add_colorbar = False,
 												levels = levels, add_labels = False,
 												norm = cls.Normalize(vmin = data_min, vmax = data_max))
@@ -151,8 +151,7 @@ class Clima:
 					ticks = np.linspace(int(data_min), int(data_max), 10), orientation = "vertical",
 					label = "Precipitação Acumulada Diária [kg/m²]")
 			plt.title(f"Precipitação Acumulada para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
-		ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = cor_linha,
-							facecolor = "none", linewidth = 0.1)
+		#ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = cor_linha, facecolor = "none", linewidth = 0.1)
 		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = cor_linha,
 							facecolor = "none", linewidth = 0.1)
 		ax.coastlines(resolution = "10m", color = cor_linha, linewidth = 0.1)
