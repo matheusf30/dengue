@@ -40,6 +40,7 @@ caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
 
 # Renomeação de dados e variáveis
 samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2023.nc"
+samet_tmin24 = "TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2024.nc"
 samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2023.nc"
 samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2023.nc"
 merge = "MERGE_CPTEC_DAILY_SB_2000_2023.nc"
@@ -49,6 +50,7 @@ shape_sc = "shapefiles/SC_Municipios_2022.shp"
 shape_br = "shapefiles/BR_UF_2022.shp"
 
 # ABRE ARQUIVO NETCDF DATASET (ds)     {caminho}{dado}
+#tmin24 = xr.open_dataset(f'{caminho_samet}{samet_tmin24}')
 tmin = xr.open_dataset(f'{caminho_samet}{samet_tmin}')
 tmed = xr.open_dataset(f'{caminho_samet}{samet_tmed}')
 tmax = xr.open_dataset(f'{caminho_samet}{samet_tmax}')
@@ -109,7 +111,7 @@ class Clima:
 		print(f"\n{ansi['red']}Visualizando {var_str.upper()} nos padrões definidos automaticamente...{ansi['reset']}\n")
 		plt.show()
 
-	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc, shape_br):
+	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc = None, shape_br = None):
 		plt.figure(figsize = (9.5, 8), layout = "constrained", frameon = False)
 		ax = plt.axes(projection = ccrs.PlateCarree())
 		br = list(shpreader.Reader(f"{caminho_dados}{shape_br}").geometries())
@@ -152,8 +154,7 @@ class Clima:
 					label = "Precipitação Acumulada Diária [kg/m²]")
 			plt.title(f"Precipitação Acumulada para o Sul do Brasil no Dia: {data}", fontsize = 12, ha = "center")
 		#ax.add_geometries(municipios, ccrs.PlateCarree(), edgecolor = cor_linha, facecolor = "none", linewidth = 0.1)
-		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = cor_linha,
-							facecolor = "none", linewidth = 0.1)
+		ax.add_geometries(br, ccrs.PlateCarree(), edgecolor = cor_linha, facecolor = "none", linewidth = 0.1)
 		ax.coastlines(resolution = "10m", color = cor_linha, linewidth = 0.1)
 		ax.add_feature(cartopy.feature.BORDERS, edgecolor = cor_linha, linewidth = 0.1)
 		gl = ax.gridlines(crs = ccrs.PlateCarree(), color = "lightgray", alpha = 1.0,
@@ -176,6 +177,7 @@ _SALVAR = True
 _VISUALIZAR = True
 
 """
+
 ### PREC
 prec = Clima(prec, "prec")
 prec.visualizacao_basica(prec, "prec", "2023-06-21")
@@ -190,6 +192,11 @@ prec24.visualizacao_aprimorada(prec24, "prec", "2024-06-20", shape_sc, shape_br)
 tmin = Clima(tmin, "tmin")
 #temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
 tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06-21", shape_sc, shape_br)
+
+### TMIN24
+tmin24 = Clima(tmin24, "tmin")
+#tmin24.visualizacao_basica(tmin24, "tmin", "2024-06-20")
+tmin24.visualizacao_aprimorada(tmin24, "tmin", "2024-06-20", shape_sc, shape_br)
 """
 ### TMED
 tmed = Clima(tmed, "tmed")
