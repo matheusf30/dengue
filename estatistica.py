@@ -269,7 +269,7 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	axs[3].set_facecolor("honeydew")
 	axs[3].grid(True)
 	axs[3].set_xticks(csv["Semana"][::52])
-	axs[3].set_xticklabels(csv["Semana"][::52], rotation = 15)
+	axs[3].set_xticklabels(csv["Semana"][::52], rotation = 30)
 	"""
 	for ax in axs:
 		ax.set_xticks(csv["Semana"][::52])
