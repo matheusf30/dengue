@@ -45,7 +45,7 @@ tmin = "tmin_semana_ate_2023.csv"
 tmed = "tmed_semana_ate_2023.csv"
 tmax = "tmax_semana_ate_2023.csv"
 cidade = "Florianópolis"
-lista_cidades = ["FLORIANÓPOLIS", "CHAPECÓ", "JOINVILLE", "ITAJAÍ"]
+lista_cidades = ["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -218,7 +218,7 @@ def decomposicao_sazonal(cidade, csv, str_var):
 	tendencia_sazo = mk.seasonal_test(csv[cidade])
 	print(f"\nMANN KENDALL DE {cidade} COM SAZONALIDADE = {mannkendall_sazo}.\n")
 	print(f"\nMANN KENDALL DE {cidade} SEM SAZONALIDADE = {mannkendall}.\n")
-	print(f"\nSEASONAL MANN KENDALL DE {cidade} SEM SAZONALIDADE = {tendencia_sazo}.\n")
+	print(f"\nSEASONAL MANN KENDALL DE {cidade} = {tendencia_sazo}.\n")
 	#teste_normal = NormalityTest()
 	#shapiro_teste, shapiro_valor_p = teste_normal.shapiro(csv[cidade])
 	shapiro_teste, shapiro_valor_p = shapiro(csv[cidade])
@@ -254,7 +254,7 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	axs[0].grid(True)
 	axs[1].plot(tendencia, label = "Tendência")
 	axs[1].legend(loc = "upper left")
-	#axs[1].set_title(f"Teste de Tendência Mann-Kendall Sazonal: {tendencia_sazo.trend}, (Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)})", fontsize = 10)
+	axs[1].set_title(f"Teste de Tendência Sazonal Mann-Kendall: {tendencia_sazo.trend}, (Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)})", fontsize = 10)
 	axs[1].set_facecolor("honeydew")
 	axs[1].grid(True)
 	axs[2].plot(sazonalidade, label = "Sazonalidade")
