@@ -20,7 +20,7 @@ import unicodedata
 
 _SALVAR = True
 
-_VISUALIZAR = True
+_VISUALIZAR = False
 
 ### Encaminhamento aos Diretórios
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
@@ -200,7 +200,7 @@ def histograma(cidade, csv, str_var):
 		print(f"\n\nENCERRADO:\n\n{caminho_estatistica}histograma_{str_var.upper()}_{cidade}.pdf\n\n")
 
 
-def teste_normal(cidade, csv, str_var):
+def decomposicao_sazonal(cidade, csv, str_var):
 	"""
 	Função para avaliar decomposição sazonal e tendência no conjunto de dados.
 	Entrada: Nome da cidade (str.upper()), Conjunto de dados (.csv) e Nome da variável (str);
@@ -249,12 +249,12 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	fig, axs = plt.subplots(4, 1, figsize = (12, 8), sharex = True)
 	axs[0].plot(csv[cidade], label = "Original")
 	axs[0].legend(loc = "upper left")
-	fig.text(0.1, 0.8, f"Teste Estatístico D’Agostino-Pearson: {round(dagostino_teste, 5)}, Valor $ p $: {round(dagostino_valor_p, 5)}", fontsize = 10)
+	#axs[1].set_title(f"Teste Estatístico D’Agostino-Pearson: {round(dagostino_teste, 5)} (Valor $ p $: {round(dagostino_valor_p, 5)})", fontsize = 10)
 	axs[0].set_facecolor("honeydew")
 	axs[0].grid(True)
 	axs[1].plot(tendencia, label = "Tendência")
 	axs[1].legend(loc = "upper left")
-	fig.text(0.1, 0.6, f"Teste de Tendência Mann-Kendall Sazonal: {tendencia_sazo.trend}, Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)}", fontsize = 10)
+	#axs[1].set_title(f"Teste de Tendência Mann-Kendall Sazonal: {tendencia_sazo.trend}, (Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)})", fontsize = 10)
 	axs[1].set_facecolor("honeydew")
 	axs[1].grid(True)
 	axs[2].plot(sazonalidade, label = "Sazonalidade")
@@ -263,7 +263,7 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	axs[2].grid(True)
 	axs[3].plot(residuo, label = "Residual")
 	axs[3].legend(loc = "upper left")
-	fig.text(0.1, 0.2, f"Teste de Tendência Mann-Kendall: {mannkendall.trend}, Valor $ p $: {round(mannkendall.p, 5)}, Tau: {round(mannkendall.Tau, 5)}", fontsize = 10)
+	#fig.text(0.1, 0.2, f"Teste de Tendência Mann-Kendall: {mannkendall.trend}, Valor $ p $: {round(mannkendall.p, 5)}, Tau: {round(mannkendall.Tau, 5)}", fontsize = 10)
 	axs[3].set_facecolor("honeydew")
 	axs[3].grid(True)
 	fig.suptitle(f"Decomposição Sazonal: {cidade} - {str_var.upper()}")
@@ -279,12 +279,12 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
-			plt.savefig(f"{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
-			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf\n\n")
+		plt.savefig(f"{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
+		print(f"\n\n{ansi['green']}SALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
 	if _VISUALIZAR == True:
-		print(f"\n\nVISUALIZANDO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf\n\n")
+		print(f"\n\n{ansi['cyan']}VISUALIZANDO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
 		plt.show()
-		print(f"\n\nENCERRADO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf\n\n")
+		print(f"\n\n{ansi['red']}ENCERRADO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
 
 	
 
@@ -297,12 +297,12 @@ for i in lista_cidades:
 	tendencia(i, focos)
 """
 for i in lista_cidades:
-	teste_normal(i, focos, "focos")
-	teste_normal(i, casos, "casos")
-	teste_normal(i, prec, "prec")
-	teste_normal(i, tmin, "tmin")
-	teste_normal(i, tmed, "tmed")
-	teste_normal(i, tmax, "tmax")
+	decomposicao_sazonal(i, focos, "focos")
+	decomposicao_sazonal(i, casos, "casos")
+	decomposicao_sazonal(i, prec, "prec")
+	decomposicao_sazonal(i, tmin, "tmin")
+	decomposicao_sazonal(i, tmed, "tmed")
+	decomposicao_sazonal(i, tmax, "tmax")
 """
 histograma("FLORIANÓPOLIS", focos, "focos")
 histograma("FLORIANÓPOLIS", casos, "casos")
