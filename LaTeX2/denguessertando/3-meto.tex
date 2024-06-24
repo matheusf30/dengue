@@ -50,15 +50,17 @@ Para organização, os dados serão agrupados em três divisões distintas:
 
 \indent \textcolor{red}{ARGUMENTAR COM O ADRIANO}
 
+\indent Para tal, utilizou-se a linguagem \ingles{Python} (versão 3) \cite{python3_2009_van} e feito o pré-processamento dos dados, comentado a frente, para estruturação básica dos mesmos. Realizou-se a decomposição sazonal simples dos dados para avaliar tendência na série histórica através da biblioteca \ingles{statsmodels} \cite{statsmodels_2010_seabold}. Para aprofundamento, utilizou-se o teste sazonal de Mann-Kendall , que pondera a sazonalidade dos dados, da biblioteca \ingles{pyMannKendall} \cite{pyMannKendall_2019_Hussain}.
 
+\indent Também como visualização da distribuição dos dados, fez-se o histograma das séries históricas, através da biblioteca \ingles{matplolib} \cite{matplotlib_2007_hunter}. Com a utilização das bibliotecas \ingles{pandas} \cite{pandas_2010_scipy, pandas_2020_reback} e \ingles{numpy} \cite{numpy_2020_harrisarray}, os menores e maiores valores para os \acrshort{DEC} do Estado catarinense foram encontrados, assim como valores médios e o maior desvio padrão para esses mesmos dados.
 
 \section{Modelagem Preditiva}
 
 \subsection{Pré-processamento}
 
-Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser concatenados, adicionados, uma planilha após a outra. Para tal, utilizou-se a linguagem \ingles{Python} (versão 3) \cite{python3_2009_van}  e a biblioteca \ingles{pandas} \cite{pandas_2010_scipy, pandas_2020_reback}, como pacote principal para estruturação dos dados . Outras também foram utilizadas, como: \ingles{numpy} \cite{numpy_2020_harrisarray}, para tratar dados faltantes e tipagem de variáveis; \ingles{datetime} \cite{python2_1995_van}, para padronização de todas as datas e variáveis desse tipo; e \ingles{geopandas} \cite{geopandas_2020_kelseyjordahl}, para manipular arquivos georreferenciados, extrair deles a nomenclatura padrão dos municípios do \acrshort{IBGE} e aplicar aos próprios dados.
+Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser concatenados, adicionados, uma planilha após a outra. Utilizou-se a biblioteca \ingles{pandas}, como pacote principal para estruturação dos dados . Outras também foram utilizadas, como: \ingles{numpy}, para tratar dados faltantes e tipagem de variáveis; \ingles{datetime} \cite{python2_1995_van}, para padronização de todas as datas e variáveis desse tipo; e \ingles{geopandas} \cite{geopandas_2020_kelseyjordahl}, para manipular arquivos georreferenciados, extrair deles a nomenclatura padrão dos municípios do \acrshort{IBGE} e aplicar aos próprios dados.
 
-\indent Os \acrshort{DEC} foram previamente \textcolor{red}{(GRIB2 > NetCDF4)} Após isso, foram tratados utilizando o \ingles{\acrfull{CDO}} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial (entre longitudes sul 62.95 e 45.05, e latitudes oeste 36.95 e 19.05), para o sul do Brasil (figura \ref{fig: sul_brasil}), diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{\acrshort{nc} (.nc)}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}.
+\indent Os \acrshort{DEC} foram previamente convertidos de \ingles{\acrshort{grib}} para \ingles{\acrshort{nc}}, por meio de \ingles{script} escrito em linguagem \ingles{shell} \cite{shell_1999_heroldlinux, bash_2007_gnu-free}. Após isso, foram tratados utilizando o \ingles{\acrfull{CDO}} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial (entre longitudes sul 63 e 45, e latitudes oeste 37 e 19), para o sul do Brasil (figura \ref{fig: sul_brasil}), diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{\acrshort{nc} (.nc)}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}.
 
 \begin{figure}[htbp]
     \centering
@@ -75,7 +77,7 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \subsection{Processamento}
 
-\indent Com os conjuntos de dados previamente estruturados, quatro (4) cidades foram elencadas para realizar análises de correlações. Alguns dados foram retroagidos em semanas epidemiológicas para melhor evidenciar possíveis correlações. Essas análises foram realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue), entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima), e entre os \acrshort{DEE} e limiares dos \acrshort{DEC}. A correlação propriamente dita foi calculada por meio do método \ingles{.corr()} da biblioteca \ingles{pandas}. Para melhor visualização do resultado desse cálculo, foram utilizadas as bibliotecas \ingles{numpy}, \ingles{matplotlib} \cite{matplotlib_2007_hunter} e \ingles{seaborn} \cite{seaborn_2021_waskom}.
+\indent Com os conjuntos de dados previamente estruturados, quatro (4) cidades foram elencadas para realizar análises de correlações. Alguns dados foram retroagidos em semanas epidemiológicas para melhor evidenciar possíveis correlações. Essas análises foram realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue), entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima), e entre os \acrshort{DEE} e limiares dos \acrshort{DEC}. A correlação propriamente dita foi calculada por meio do método \ingles{.corr()} da biblioteca \ingles{pandas}. Para melhor visualização do resultado desse cálculo, foram utilizadas as bibliotecas \ingles{numpy}, \ingles{matplotlib} e \ingles{seaborn} \cite{seaborn_2021_waskom}.
 
 \indent Inicialmente, foram utilizados os pacotes \ingles{pandas}, \ingles{numpy} e \ingles{sklearn} \cite{scikit-learn_2011_pedregosa, sklearn_2013_buitinck}. Dessa maneira, os conjuntos de dados entomo-epidemiológicos e climatológicos foram estruturados em um único arranjo de dados para cada município. Essa estrutura foi composta pela variável dependente (entomológica ou epidemiológica) e por variáveis explicativas (elementos climáticos). Esse arranjo só foi possível com municípios que apresentavam todos os conjuntos de dados presentes. Sendo a variável dependente epidemiológica, é incluída a variável entomológica como explicativa. A configuração final do arranjo assumia, entre a variável dependente e as explicativas, horizonte preditivo de quatro (4) semanas epidemiológicas e retroação de oito (8) semanas epidemiológicas. Sendo a variável dependente epidemiológica, o horizonte preditivo de duas (2) semanas epidemiológicas e retroação de três (3) semanas epidemiológicas. Dessa última configuração, as variáveis explicativas (x) e dependente (y) foram divididas em dois conjuntos: treino e teste. Também foi previamente fixado um valor de gerador de números aleatórios (\ingles{seed}).
 
@@ -96,6 +98,8 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 \textcolor{red}{Comentar sobre as diferenças na metodologia de mapa de calor e mapa coroplético?}
 
 \section{Validação dos Modelos}
+
+
 
 \indent \textcolor{red}{Histograma do Erro (Obs - Pre)\\
 \indent Intervalo de Confiança para o Erro\\
