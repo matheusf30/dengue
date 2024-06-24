@@ -18,7 +18,7 @@ import unicodedata
 
 ### Condicionantes
 
-_SALVAR = False
+_SALVAR = True
 
 _VISUALIZAR = True
 
@@ -208,10 +208,17 @@ def teste_normal(cidade, csv, str_var):
 								tratando e não tratando sazonalidade.
 			 - Exibindo e salvando arquivo (.pdf) com a decompsição sazonal do conjunto de dados.
 	"""
+	#csv = csv.iloc[:-208]
 	decomposicao = sm.tsa.seasonal_decompose(csv[cidade], model = "additive", period = 52)
 	tendencia = decomposicao.trend
 	sazonalidade = decomposicao.seasonal
 	residuo = decomposicao.resid
+	mannkendall_sazo = mk.original_test(csv[cidade])
+	mannkendall = mk.original_test(residuo)
+	tendencia_sazo = mk.seasonal_test(csv[cidade])
+	print(f"\nMANN KENDALL DE {cidade} COM SAZONALIDADE = {mannkendall_sazo}.\n")
+	print(f"\nMANN KENDALL DE {cidade} SEM SAZONALIDADE = {mannkendall}.\n")
+	print(f"\nSEASONAL MANN KENDALL DE {cidade} SEM SAZONALIDADE = {tendencia_sazo}.\n")
 	#teste_normal = NormalityTest()
 	#shapiro_teste, shapiro_valor_p = teste_normal.shapiro(csv[cidade])
 	shapiro_teste, shapiro_valor_p = shapiro(csv[cidade])
@@ -222,27 +229,42 @@ Valor $ p $: {round(shapiro_valor_p, 5)}\n""")
 	print(f"""\n{cidade}- {str_var.upper()} - Sem Sazonal
 Teste Estatístico Shapiro-Wik: {shapiro_teste}
 Valor $ p $: {round(shapiro_valor_p, 5)}\n""")
+	shapiro_teste, shapiro_valor_p = shapiro(sazonalidade)
+	print(f"""\n{cidade}- {str_var.upper()} - Apenas Sazonal
+Teste Estatístico Shapiro-Wik: {shapiro_teste}
+Valor $ p $: {round(shapiro_valor_p, 5)}\n""")
 	#dagostino_teste, dagostino_valor_p = teste_normal.dagostino(csv[cidade])
-	dagostino_teste, dagostino_valor_p = normaltest(csv[cidade])
-	print(f"""\n{cidade}- {str_var.upper()}
-Teste Estatístico Dagostino: {dagostino_teste}
-Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	dagostino_teste, dagostino_valor_p = normaltest(residuo)
 	print(f"""\n{cidade}- {str_var.upper()} - Sem Sazonal
+Teste Estatístico Dagostino: {dagostino_teste}
+Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
+	dagostino_teste, dagostino_valor_p = normaltest(sazonalidade)
+	print(f"""\n{cidade}- {str_var.upper()} - Apenas Sazonal
+Teste Estatístico Dagostino: {dagostino_teste}
+Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
+	dagostino_teste, dagostino_valor_p = normaltest(csv[cidade])
+	print(f"""\n{cidade}- {str_var.upper()}
 Teste Estatístico Dagostino: {dagostino_teste}
 Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	fig, axs = plt.subplots(4, 1, figsize = (12, 8), sharex = True)
 	axs[0].plot(csv[cidade], label = "Original")
 	axs[0].legend(loc = "upper left")
+	fig.text(0.1, 0.8, f"Teste Estatístico D’Agostino-Pearson: {round(dagostino_teste, 5)}, Valor $ p $: {round(dagostino_valor_p, 5)}", fontsize = 10)
+	axs[0].set_facecolor("honeydew")
 	axs[0].grid(True)
 	axs[1].plot(tendencia, label = "Tendência")
 	axs[1].legend(loc = "upper left")
+	fig.text(0.1, 0.6, f"Teste de Tendência Mann-Kendall Sazonal: {tendencia_sazo.trend}, Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)}", fontsize = 10)
+	axs[1].set_facecolor("honeydew")
 	axs[1].grid(True)
 	axs[2].plot(sazonalidade, label = "Sazonalidade")
 	axs[2].legend(loc = "upper left")
+	axs[2].set_facecolor("honeydew")
 	axs[2].grid(True)
 	axs[3].plot(residuo, label = "Residual")
 	axs[3].legend(loc = "upper left")
+	fig.text(0.1, 0.2, f"Teste de Tendência Mann-Kendall: {mannkendall.trend}, Valor $ p $: {round(mannkendall.p, 5)}, Tau: {round(mannkendall.Tau, 5)}", fontsize = 10)
+	axs[3].set_facecolor("honeydew")
 	axs[3].grid(True)
 	fig.suptitle(f"Decomposição Sazonal: {cidade} - {str_var.upper()}")
 	plt.xlabel("Semanas Epidemiológicas")
@@ -254,11 +276,11 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 		         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
 		         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
 		         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-		_cidade = cidade.copy()
+		_cidade = cidade
 		for velho, novo in troca.items():
 			_cidade = _cidade.replace(velho, novo)
 			plt.savefig(f"{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
-			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf\n\n")
+			print(f"\n\nSALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf\n\n")
 	if _VISUALIZAR == True:
 		print(f"\n\nVISUALIZANDO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf\n\n")
 		plt.show()
@@ -273,7 +295,7 @@ for i in lista_cidades:
 
 for i in lista_cidades:
 	tendencia(i, focos)
-
+"""
 for i in lista_cidades:
 	teste_normal(i, focos, "focos")
 	teste_normal(i, casos, "casos")
@@ -281,14 +303,14 @@ for i in lista_cidades:
 	teste_normal(i, tmin, "tmin")
 	teste_normal(i, tmed, "tmed")
 	teste_normal(i, tmax, "tmax")
-
+"""
 histograma("FLORIANÓPOLIS", focos, "focos")
 histograma("FLORIANÓPOLIS", casos, "casos")
 histograma("FLORIANÓPOLIS", prec, "prec")
 histograma("FLORIANÓPOLIS", tmin, "tmin")
 histograma("FLORIANÓPOLIS", tmed, "tmed")
 histograma("FLORIANÓPOLIS", tmax, "tmax")
-"""
+
 for i in lista_cidades:
 	histograma(i, focos, "focos")
 	#histograma(i, casos, "casos")
@@ -296,7 +318,7 @@ for i in lista_cidades:
 	#histograma(i, tmin, "tmin")
 	#histograma(i, tmed, "tmed")
 	#histograma(i, tmax, "tmax")
-
+"""
 ### Exibindo Informações
 print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA (DIVE/SC) \n")
 print(focos.info())
