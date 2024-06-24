@@ -65,7 +65,9 @@ ansi = {"bold" : "\033[1m", "red" : "\033[91m",
 ### Pré-Processamento
 cidade = cidade.upper()
 cidades = focos.columns
-focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
+#focos['Semana'] = pd.to_datetime(focos['Semana'])#, format="%Y%m%d")
+
+print(focos, casos, tmin, tmed, tmax, prec)
 
 ### Estatística de Tendência
 #mk = mk.original_test(focos[cidade])
@@ -247,14 +249,14 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 Teste Estatístico Dagostino: {dagostino_teste}
 Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	fig, axs = plt.subplots(4, 1, figsize = (12, 8), sharex = True)
-	axs[0].plot(csv[cidade], label = "Original")
+	axs[0].plot(csv["Semana"], csv[cidade], label = "Original")
 	axs[0].legend(loc = "upper left")
 	#axs[1].set_title(f"Teste Estatístico D’Agostino-Pearson: {round(dagostino_teste, 5)} (Valor $ p $: {round(dagostino_valor_p, 5)})", fontsize = 10)
 	axs[0].set_facecolor("honeydew")
 	axs[0].grid(True)
 	axs[1].plot(tendencia, label = "Tendência")
 	axs[1].legend(loc = "upper left")
-	axs[1].set_title(f"Teste de Tendência Sazonal Mann-Kendall: {tendencia_sazo.trend}, (Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)})", fontsize = 10)
+	axs[1].set_title(f"Teste de Tendência Sazonal de Mann-Kendall: {tendencia_sazo.trend}, (Valor $ p $: {round(tendencia_sazo.p, 5)}, Tau: {round(tendencia_sazo.Tau, 5)})", fontsize = 10)
 	axs[1].set_facecolor("honeydew")
 	axs[1].grid(True)
 	axs[2].plot(sazonalidade, label = "Sazonalidade")
@@ -266,6 +268,13 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 	#fig.text(0.1, 0.2, f"Teste de Tendência Mann-Kendall: {mannkendall.trend}, Valor $ p $: {round(mannkendall.p, 5)}, Tau: {round(mannkendall.Tau, 5)}", fontsize = 10)
 	axs[3].set_facecolor("honeydew")
 	axs[3].grid(True)
+	axs[3].set_xticks(csv["Semana"][::52])
+	axs[3].set_xticklabels(csv["Semana"][::52], rotation = 15)
+	"""
+	for ax in axs:
+		ax.set_xticks(csv["Semana"][::52])
+		ax.set_xticklabels(csv["Semana"][::52], rotation = 15)
+	"""
 	fig.suptitle(f"Decomposição Sazonal: {cidade} - {str_var.upper()}")
 	plt.xlabel("Semanas Epidemiológicas")
 	plt.tight_layout()
@@ -282,9 +291,9 @@ Valor $ p $: {round(dagostino_valor_p, 5)}\n""")
 		plt.savefig(f"{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
 		print(f"\n\n{ansi['green']}SALVO COM SUCESSO!\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
 	if _VISUALIZAR == True:
-		print(f"\n\n{ansi['cyan']}VISUALIZANDO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
+		print(f"\n\n{ansi['cyan']}VISUALIZANDO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf{ansi['reset']}\n\n")
 		plt.show()
-		print(f"\n\n{ansi['red']}ENCERRADO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{_cidade}.pdf{ansi['reset']}\n\n")
+		print(f"\n\n{ansi['red']}ENCERRADO:\n\n{caminho_estatistica}distribuicao_{str_var.upper()}_{cidade}.pdf{ansi['reset']}\n\n")
 
 	
 
