@@ -68,7 +68,7 @@ cidades = municipios["Município"].copy()
 
 _retroagir = 8 # Semanas Epidemiológicas
 
-cidade = "Chapecó"
+cidade = "Joinville"
 
 _automatiza = False
 
@@ -358,7 +358,7 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
         _cidade = _cidade.replace(velho, novo)
     plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
     if string_modelo == "NN":
-        plt.figure(figsize = (8, 8), layout = "constrained", frameon = False)
+        plt.figure(figsize = (5, 5), layout = "constrained", frameon = False)
         plt.plot(valida.history["accuracy"])
         plt.plot(valida.history["val_accuracy"])
         plt.plot(valida.history["loss"])
@@ -367,10 +367,10 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
         plt.xlabel("Ciclos de Treino (epochs)")
         plt.ylabel("Perda e Acurácia")
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
-        sumario = []
-        modeloNN.summary(print_fn = lambda x: sumario.append(x))
-        sumario = "\n".join(sumario)
-        plt.text(0.5, 0.4, f"{sumario}", fontsize = 10)
+        #sumario = []
+        #modeloNN.summary(print_fn = lambda x: sumario.append(x))
+        #sumario = "\n".join(sumario)
+        #plt.text(0.5, 0.4, f"{sumario}", fontsize = 10)
         plt.savefig(f"{caminho_resultados}validacao_modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
         #plt.show()
     #plt.show()
