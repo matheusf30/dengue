@@ -65,7 +65,7 @@ cidades = municipios["Município"].copy()
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Itajaí"
+cidade = "Joinville"
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -343,6 +343,15 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
     plt.xlabel("Semanas Epidemiológicas na Série de Anos")
     plt.ylabel("Número de Focos de _Aedes_ sp.")
     # Gráfico de Validação do Modelo Rede Neural
+    _cidade = cidade
+    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+    for velho, novo in troca.items():
+        _cidade = _cidade.replace(velho, novo)
     if string_modelo == "NN":
         plt.figure(figsize = (5, 5), layout = "constrained", frameon = False)
         plt.plot(valida.history["accuracy"])
@@ -353,26 +362,9 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
         plt.xlabel("Ciclos de Treino (epochs)")
         plt.ylabel("Perda e Acurácia")
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
-        troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-        for velho, novo in troca.items():
-            cidade = cidade.replace(velho, novo)
-        plt.savefig(f"{caminho_resultados}validacao_modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
-        plt.show()
-    # Salvando Gráfico do Modelo
-    troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-         'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-         'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-         'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-         'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-         'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
-    for velho, novo in troca.items():
-        cidade = cidade.replace(velho, novo)
-    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{cidade}.pdf", format = "pdf", dpi = 1200)
+        plt.savefig(f"{caminho_resultados}validacao_modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
+        #plt.show()
+    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
     plt.show()
 
 def metricas(string_modelo, modeloNN = None):
