@@ -64,8 +64,12 @@ cidades = municipios["Município"].copy()
 #"Camboriú" "Joaçaba" "Blumenau" 
 #"Caçador" "Zortéa" "Xaxim" "Imbituba" "Laguna" "Palhoça" "São José"
 #"Grão-Pará" "Herval D'oeste" "Presidente Castello Branco" "São Cristóvão do Sul" "Lauro Müller"
+
+
 _retroagir = 8 # Semanas Epidemiológicas
-cidade = "Joinville"
+
+cidade = "Florianópolis"
+
 _automatiza = False
 
 # ValueError: cannot reshape array of size 0 into shape (0,newaxis)
@@ -352,6 +356,7 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
          'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
     for velho, novo in troca.items():
         _cidade = _cidade.replace(velho, novo)
+    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
     if string_modelo == "NN":
         plt.figure(figsize = (5, 5), layout = "constrained", frameon = False)
         plt.plot(valida.history["accuracy"])
@@ -364,8 +369,7 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
         plt.legend(["Acurácia_Treino", "Acurácia_Validação", "Perda_Treino", "Perda_Validação"])
         plt.savefig(f"{caminho_resultados}validacao_modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
         #plt.show()
-    plt.savefig(f"{caminho_resultados}modelo_{string_modelo}_{_cidade}.pdf", format = "pdf", dpi = 1200)
-    plt.show()
+    #plt.show()
 
 def metricas(string_modelo, modeloNN = None):
     if string_modelo not in ["RF", "NN"]:
