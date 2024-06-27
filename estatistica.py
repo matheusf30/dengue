@@ -73,6 +73,7 @@ tmin["ESTADUAL"] = tmin.drop(columns = "Semana").mean(axis=1)
 tmed["ESTADUAL"] = tmed.drop(columns = "Semana").mean(axis=1)
 tmax["ESTADUAL"] = tmax.drop(columns = "Semana").mean(axis=1)
 prec["ESTADUAL"] = prec.drop(columns = "Semana").mean(axis=1)
+prec["ESTADUALacumulada"] = prec.drop(columns = "Semana").sum(axis=1)
 
 print(focos, casos, tmin, tmed, tmax, prec)
 
@@ -348,6 +349,10 @@ for i in lista_cidades:
 	tmin.decomposicao_sazonal(i, tmin, "tmin")
 	tmed.decomposicao_sazonal(i, tmed, "tmed")
 	tmax.decomposicao_sazonal(i, tmax, "tmax")
+
+i = "ESTADUALacumulada"
+prec.histograma(i, prec, "prec")
+prec.decomposicao_sazonal(i, prec, "prec")
 
 """
 visualiza_focos(i, focos)
