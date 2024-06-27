@@ -222,6 +222,15 @@ tmax.visualizacao_aprimorada(tmax, "tmax", "2023-06-21", shape_sc, shape_br)
 
 
 """
+PARA TESTAR
+focossemana["Mes"] = focossemana["Data"].dt.to_period("M").dt.to_timestamp()
+focossemana = focossemana.groupby(["Mes"]).sum(numeric_only = True)["prec"]
+
+# Use datetime.to_period() method to extract month and year
+df['Month_Year'] = df['InsertedDate'].dt.to_period('M')
+print("Get month and year from datetime column:\n", df)
+
+
 # SELECIONAR DATA
 dia = "2023-06-21"
 
