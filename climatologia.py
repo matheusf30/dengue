@@ -111,6 +111,14 @@ class Clima:
 		print(f"\n{ansi['red']}Visualizando {var_str.upper()} nos padrões definidos automaticamente...{ansi['reset']}\n")
 		plt.show()
 
+	def recorte_espacial(self, netcdf, lat_min, lat_max, lon_min, lon_max):
+		recorte = netcdf.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
+		return recorte
+
+	def clima_mes(self, netcdf, aaaa_mm):
+		clima_mes = self.netcdf.sel(time = f"{aaaa_mm}").squeeze()
+		return clima_mes
+
 	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc = None, shape_br = None):
 		plt.figure(figsize = (9.5, 8), layout = "constrained", frameon = False)
 		ax = plt.axes(projection = ccrs.PlateCarree())
@@ -172,7 +180,7 @@ class Clima:
 
 ####################
 
-_SALVAR = True
+_SALVAR = False
 
 _VISUALIZAR = True
 
@@ -189,9 +197,12 @@ prec24.visualizacao_basica(prec24, "prec", "2024-06-20")
 prec24.visualizacao_aprimorada(prec24, "prec", "2024-06-20", shape_sc, shape_br)
 """
 ### TMIN
+
 tmin = Clima(tmin, "tmin")
 #temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
 tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06-21", shape_sc, shape_br)
+#tmin = tmin.clima_mes(tmin, "2023-06")
+#tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06", shape_sc, shape_br)
 
 ### TMIN24
 tmin24 = Clima(tmin24, "tmin")
