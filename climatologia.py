@@ -115,8 +115,8 @@ class Clima:
 		recorte = netcdf.sel(lat=slice(lat_min, lat_max), lon=slice(lon_min, lon_max))
 		return recorte
 
-	def clima_mes(self, netcdf, aaaa_mm):
-		clima_mes = self.netcdf.sel(time = f"{aaaa_mm}").squeeze()
+	def clima_mes(self, netcdf, aaaa_mm, var):
+		clima_mes = self.netcdf.sel(time = f"{aaaa_mm}")[self.var].squeeze()
 		return clima_mes
 
 	def visualizacao_aprimorada(self, netcdf, var_str, data, shape_sc = None, shape_br = None):
@@ -200,9 +200,9 @@ prec24.visualizacao_aprimorada(prec24, "prec", "2024-06-20", shape_sc, shape_br)
 
 tmin = Clima(tmin, "tmin")
 #temp.visualizacao_basica(tmin, "tmin", "2023-06-21")
-tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06-21", shape_sc, shape_br)
-#tmin = tmin.clima_mes(tmin, "2023-06")
-#tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06", shape_sc, shape_br)
+#tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06-21", shape_sc, shape_br)
+tmin = tmin.clima_mes(tmin, "2023-06", "prec")
+tmin.visualizacao_aprimorada(tmin, "tmin", "2023-06", shape_sc, shape_br)
 
 ### TMIN24
 tmin24 = Clima(tmin24, "tmin")
