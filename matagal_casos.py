@@ -37,11 +37,13 @@ _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _RETROAGIR = 3 # Semanas Epidemiológicas
 _HORIZONTE = 2 # Tempo de Previsão
+
 _JANELA_MM = 25 # Média Móvel
 _K = 3 # constante para fórmulas de índices
+
 _AJUSTADO = True #True #False # SMOTE (NÃO FUNCIONAL) #"BRFC"
 
-_CIDADE = "Itajaí"
+_CIDADE = "Florianópolis"
 _CIDADE = _CIDADE.upper()
 
 _AUTOMATIZA = False
@@ -49,7 +51,7 @@ _AUTOMATIZA = False
 z = 6
 _LIMITE = "out2023"
 _FIM = "nov2023"
-
+"""
 z = 19
 _LIMITE = "jul2023"
 _FIM = "ago2023"
@@ -61,7 +63,7 @@ _FIM = "mai2023"
 z = 50
 _LIMITE = "dez2022"
 _FIM = "jan2023"
-"""
+
 """
 obs = f"(Treino até {_LIMITE}; Teste após {_FIM})"
 obs_k = f"(Treino até {_LIMITE}; Teste após {_FIM}; k = {_K})"
@@ -161,7 +163,7 @@ dataset["TMED"] = tmed[_CIDADE].copy()
 dataset["TMAX"] = tmax[_CIDADE].copy()
 dataset = dataset.merge(prec[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-dataset.dropna(0, inplace = True)
+dataset.dropna(inplace = True)
 dataset = dataset.iloc[104:, :].copy()
 dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 troca_nome = {f"{_CIDADE}_x" : "PREC", f"{_CIDADE}_y" : "FOCOS", f"{_CIDADE}" : "CASOS"}
@@ -176,15 +178,16 @@ dataset["iCLIMA"] =  np.cbrt((tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_C
 dataset["iEPIDEMIO"] =  np.sqrt((dataset["FOCOS"].rolling(_K).mean() / _K) * dataset["CASOS"].rolling(_K).mean())
 
 #_RETROAGIR = 12
+#_RETROAGIR = 4
 for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
 	dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-	#dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
-	#dataset[f"iEPIDEMIO_r{r}"] = dataset["iEPIDEMIO"].shift(-r)
 	dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
 	dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
 	dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-	dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-	dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+	#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+	#dataset[f"iCLIMA_r{r}"] = dataset["iCLIMA"].shift(-r)
+	#dataset[f"iEPIDEMIO_r{r}"] = dataset["iEPIDEMIO"].shift(-r)
 """
 #_RETROAGIR = 2
 #dataset[f"TMED_r{_RETROAGIR}"] = dataset["TMED"].shift(-_RETROAGIR)
@@ -460,10 +463,11 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     final["Casos"] = casos[_CIDADE]
     #excluir_linhas = list(range(0,_JANELA_MM))
     #final.drop(excluir_linhas, axis=0, inplace = True)
-    #final.drop([0,1], axis=0, inplace = True)
+    #final.drop([0,1, 2, 3], axis=0, inplace = True)
     final.drop([0], axis=0, inplace = True)
-    #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
+    #final.drop([d for d in range(_RETROAGIR + _HORIZONTE)], axis=0, inplace = True)
     #final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
+    #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -641,7 +645,7 @@ def salva_modelo(string_modelo, modeloNN = None):
         else:
             modeloNN.save(modeloNN, f"{caminho_modelos}NN_casos_r{_RETROAGIR}_{_CIDADE}.h5")
     else:
-        joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_{_CIDADE}.h5")
+        joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_v2_{_CIDADE}.h5")
 
 ######################################################RANDOM_FOREST############################################################
 ### Iniciando Dataset
@@ -681,7 +685,7 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 # matriz_confusao = matriz_confusao(y, previsoes_modelo)
 # ValueError: Classification metrics can't handle a mix of multiclass and continuous targets
 
-relatorio =relatorio_metricas(y, previsoes_modelo)
+relatorio = relatorio_metricas(y, previsoes_modelo)
 
 importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, explicativas)
 
