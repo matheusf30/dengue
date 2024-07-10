@@ -25,11 +25,11 @@ print(diretorio_dados)
 try:
     _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
     if _LOCAL == "GH": # _ = Variável Privada
-        caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
+        caminho_shape = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
     elif _LOCAL == "CASA":
-        caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
+        caminho_shape = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     elif _LOCAL == "IFSC":
-        caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
+        caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
         caminho_samet = "/dados/operacao/samet/clima/"
     else:
@@ -37,7 +37,7 @@ try:
 except:
     print("CAMINHO NÃO RECONHECIDO! VERIFICAR CAMINHO OU LOCAL!")
 
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
+print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_shape}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
 _ANO_FINAL = "2024" # Até quando os produtos de reanálise foram compilados
 
@@ -65,7 +65,7 @@ prec = xr.open_dataset(f"{caminho_merge}{merge}")
 tmax = xr.open_dataset(f"{caminho_samet}{samet_tmax}")
 tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
 tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
-municipios = gpd.read_file(f"{caminho_dados}{municipios}")
+municipios = gpd.read_file(f"{caminho_shape}{municipios}")
 
 print(tmin.variables["tmin"][:])
 print(tmin.variables["time"][:])
@@ -181,7 +181,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
 	print("="*80)
-	print(f"\n\n{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv\n\n{green}{bold}ARQUIVO SALVO COM SUCESSO!{bold}{reset}\n\n")
+	print(f"\n\n{caminho_shape}{str_dados}_diario_ate_{_ANO_FINAL}.csv\n\n{green}{bold}ARQUIVO SALVO COM SUCESSO!{bold}{reset}\n\n")
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
