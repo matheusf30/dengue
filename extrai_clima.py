@@ -42,15 +42,21 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 _ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
 
 ### Renomeação variáveis pelos arquivos
-merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
 """
+merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
+
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2022.nc"
 samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
-"""
+
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_{_ANO_FINAL}.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_{_ANO_FINAL}.nc"
 samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
+"""
+merge = "MERGE_CPTEC_DAILY_SB_2024_2024.nc"
+samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_2024.nc"
+samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_2024.nc"
+samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_2024.nc"
 
 municipios = "SC_Municipios_2022.shp"
 
@@ -116,7 +122,7 @@ def semana_epidemiologica(csv, str_var):
 		csv_se = csv_se.groupby(["Semana"]).mean(numeric_only = True)
 	csv_se.reset_index(inplace = True)
 	csv_se.drop([0], axis = 0, inplace = True)
-	csv_se.to_csv(f"{caminho_dados}{str_var}_semana_ate_2023.csv", index = False)
+	csv_se.to_csv(f"{caminho_dados}{str_var}_semana_ate_{_ANO_FINAL}.csv", index = False)
 	print(f"\n{green}ARQUIVO SALVO COM SUCESSO!\n\nSemana Epidemiológica - {str_var.upper()}{reset}\n\n{csv_se}\n")
 	print(f"\n{red}As variáveis do arquivo ({str_var.upper()}), em semanas epidemiológicas, são:{reset}\n{csv_se.dtypes}\n")
 	return csv_se
