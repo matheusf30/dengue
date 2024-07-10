@@ -39,7 +39,7 @@ except:
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
-_ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
+_ANO_FINAL = "2024" # Até quando os produtos de reanálise foram compilados
 
 ### Renomeação variáveis pelos arquivos
 """
