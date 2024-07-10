@@ -35,8 +35,8 @@ from sklearn.ensemble import RandomForestRegressor
 
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_RETROAGIR = 3 # Semanas Epidemiológicas
-_HORIZONTE = 2 # Tempo de Previsão
+_RETROAGIR = 5 # Semanas Epidemiológicas
+_HORIZONTE = 4 # Tempo de Previsão
 
 _JANELA_MM = 25 # Média Móvel
 _K = 3 # constante para fórmulas de índices
@@ -95,6 +95,11 @@ prec = "merge_se.csv"
 tmin = "tmin_se.csv"
 tmed = "tmed_se.csv"
 tmax = "tmax_se.csv"
+
+prec = "prec_semana_ate_2024.csv"
+tmin = "tmin_semana_ate_2024.csv"
+tmed = "tmed_semana_ate_2024.csv"
+tmax = "tmax_semana_ate_2024.csv"
 """
 unicos = "casos_unicos.csv"
 prec = "prec_semana_ate_2023.csv"
@@ -337,13 +342,13 @@ def testa_dataset(_CIDADE):
 	dataset.fillna(0, inplace = True)
 	dataset["iCLIMA"] =  (tmin[_CIDADE].rolling(_K).mean() ** _K) * (prec[_CIDADE].rolling(_K).mean() / _K)	
 	for r in range(_HORIZONTE + 1, _RETROAGIR + 1):
-		#dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
-		#dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
-		#dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
+		dataset[f"TMIN_r{r}"] = dataset["TMIN"].shift(-r)
+		dataset[f"TMED_r{r}"] = dataset["TMED"].shift(-r)
+		dataset[f"TMAX_r{r}"] = dataset["TMAX"].shift(-r)
 		#dataset[f"PREC_r{r}"] = dataset["PREC"].shift(-r)
-		dataset[f"iCLIMA_r{r}"] = dataset[f"iCLIMA"].shift(-r)
-		dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
-		dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
+		#dataset[f"iCLIMA_r{r}"] = dataset[f"iCLIMA"].shift(-r)
+		#dataset[f"FOCOS_r{r}"] = dataset["FOCOS"].shift(-r)
+		#dataset[f"CASOS_r{r}"] = dataset["CASOS"].shift(-r)
 	dataset.drop(columns = ["TMIN", "TMED", "TMAX", "PREC", "FOCOS", "iCLIMA"], inplace = True)
 	dataset.dropna(inplace = True)
 	dataset.set_index("Semana", inplace = True)
@@ -464,9 +469,9 @@ def grafico_previsao(teste, previsao, string_modelo, _CIDADE):
     #excluir_linhas = list(range(0,_JANELA_MM))
     #final.drop(excluir_linhas, axis=0, inplace = True)
     #final.drop([0,1, 2, 3], axis=0, inplace = True)
-    final.drop([0], axis=0, inplace = True)
+    final.drop(final.index[-3:], axis=0, inplace = True)
     #final.drop([d for d in range(_RETROAGIR + _HORIZONTE)], axis=0, inplace = True)
-    #final.drop(final.index[-_RETROAGIR + _HORIZONTE:], axis=0, inplace = True)
+    #final.drop(final.index[-(_RETROAGIR - _HORIZONTE):], axis=0, inplace = True)
     #final.drop([d for d in range(_RETROAGIR + _HORIZONTE + _JANELA_MM)], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
@@ -646,6 +651,7 @@ def salva_modelo(string_modelo, modeloNN = None):
             modeloNN.save(modeloNN, f"{caminho_modelos}NN_casos_r{_RETROAGIR}_{_CIDADE}.h5")
     else:
         joblib.dump(modeloRF, f"{caminho_modelos}RF_casos_r{_RETROAGIR}_v2_{_CIDADE}.h5")
+        print(f"\n\n{caminho_modelos}RF_casos_r{_RETROAGIR}_v2_{_CIDADE}.h5\n\n")
 
 ######################################################RANDOM_FOREST############################################################
 ### Iniciando Dataset
@@ -668,6 +674,7 @@ else:
 	modeloRF.fit(treino_x_explicado, treino_y)
 
 ### Testando e Avaliando
+"""
 y_previsto = modeloRF.predict(teste_x)
 previsoes_modelo = modeloRF.predict(x)
 previsoes_modelo = [int(p) for p in previsoes_modelo]
@@ -688,6 +695,43 @@ grafico_previsao(y, previsoes_modelo, "RF", _CIDADE)
 relatorio = relatorio_metricas(y, previsoes_modelo)
 
 importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, explicativas)
+"""
+
+### Testando 2024
+
+prec = pd.read_csv(f"{caminho_dados}prec_semana_ate_2024.csv", low_memory = False)
+tmin = pd.read_csv(f"{caminho_dados}tmin_semana_ate_2024.csv", low_memory = False)
+tmed = pd.read_csv(f"{caminho_dados}tmed_semana_ate_2024.csv", low_memory = False)
+tmax = pd.read_csv(f"{caminho_dados}tmax_semana_ate_2024.csv", low_memory = False)
+
+dataset24 = tmin[["Semana"]].copy()
+dataset24["TMIN"] = tmin[_CIDADE].copy()
+dataset24["TMED"] = tmed[_CIDADE].copy()
+dataset24["TMAX"] = tmax[_CIDADE].copy()
+dataset24 = dataset24.merge(prec[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+dataset24 = dataset24.rename(columns = {_CIDADE : "PREC"})
+dataset24.dropna(inplace = True)
+dataset24.set_index("Semana", inplace = True)
+dataset24.columns.name = f"{_CIDADE}"
+print(dataset24, dataset24.info())
+
+### Dividindo Dataset em Treino e Teste
+SEED = np.random.seed(0)
+x24 = dataset24
+
+previsoes_modelo = modeloRF.predict(x24)
+previsoes_modelo = [int(p) for p in previsoes_modelo]
+#importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, explicativas)
+
+plt.figure(figsize = (10, 6), layout = "constrained", frameon = False)
+dataset24.reset_index(inplace = True)
+sns.lineplot(x = dataset24["Semana"], y = previsoes_modelo,
+             color = "red", alpha = 0.7, linewidth = 3, label = "Previsto")
+plt.title(f"MODELO RANDOM FOREST: PREVISÃO EM BASE CLIMATOLÓGICA.\n MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.\n")
+plt.xlabel("Semanas Epidemiológicas na Série de Anos")
+plt.ylabel("Número de Casos de Dengue")
+plt.xticks(rotation = 60)
+plt.show()
 
 #histograma_erro(y, previsoes_modelo)
 #boxplot_erro(y, previsoes_modelo)
@@ -697,7 +741,7 @@ importancias, indices, variaveis_importantes =  metricas_importancias(modeloRF, 
 if _AUTOMATIZA == True:
     for _CIDADE in _CIDADEs:
         dataset = monta_dataset(_CIDADE)
-        x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado = treino_teste(dataset, _CIDADE)
+        x, y, treino_x, teste_x, treino_y, teste_y, treino_x_explicado, explicativas = treino_teste(dataset, _CIDADE)
         modelo, y_previsto, previsoes = RF_modela_treina_preve(treino_x_explicado, treino_y, teste_x, SEED)
         EQM, RQ_EQM, R_2 = RF_previsao_metricas(dataset, previsoes, 5, teste_y, y_previsto)
         salva_modeloRF(modelo, _CIDADE)
