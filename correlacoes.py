@@ -18,13 +18,13 @@ _SALVAR = True
 _VISUALIZAR = False
 
 _LIMIAR_RETRO = True
-_CLIMA = False
-_ENTOMOEPIDEMIO = False
+_CLIMA = True
+_ENTOMOEPIDEMIO = True
 _iCLIMA = False
 _iEPIDEMIO = False
-_LIMIAR_TMIN = False
-_LIMIAR_TMAX = False
-_LIMIAR_PREC = False
+_LIMIAR_TMIN = True
+_LIMIAR_TMAX = True
+_LIMIAR_PREC = True
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
 _ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
@@ -84,7 +84,7 @@ tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 #################################################################################
 ### Correlacionando (Focos, Casos E Limiares, Retroações)
 #################################################################################
-# DEVO FAZER AS VARIÁVES, OS LIMIARES E AS RETROAÇÕES SE CORRELACIONAREM
+# VARIÁVES, LIMIARES E RETROAÇÕES CORRELACIONADOS
 if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
@@ -193,16 +193,20 @@ if _AUTOMATIZA == True and _LIMIAR_RETRO == True:
 				#sys.exit()
 				if _ANO == "2023":
 					dataset = dataset.iloc[-53:, :].copy()
+					print("\n\n2023\n\n")
 				elif _ANO == "2022":
 					dataset = dataset.iloc[-105:-53, :].copy()
+					print("\n\n2022\n\n")
 				elif _ANO == "2021":
 					dataset = dataset.iloc[-157:-105, :].copy()
+					print("\n\n2021\n\n")
 				elif _ANO == "2020":
 					dataset = dataset.iloc[-209:-157, :].copy()
+					print("\n\n2020\n\n")
 				else:
 					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
 				dataset.dropna(inplace = True)
-				dataset.dropna(inplace = True)
+				dataset.drop(columns = "Semana", inplace = True)
 				dataset.columns.name = f"{_CIDADE}"
 				### Matriz de Correlações
 				correlacao_dataset = dataset.corr(method = f"{_METODO}")
