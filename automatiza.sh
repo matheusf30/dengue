@@ -26,4 +26,4 @@ Ao final da sequência de execução, deve-se obter uma tabela única em formato
 -- Colunas são todos os municípios com registros de Focos de _Aedes_ sp.;
 -- Linhas são as semanas epidemiológicas de toda a série histórica de registro (iniciando em 2012).
 """
-#python une_casos_sinan.py
+#python une_casos_sinan.py # Pensar no próximo ano
