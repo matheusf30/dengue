@@ -19,6 +19,8 @@
 \usepackage{xcolor}
 \usepackage{longtable}
 \usepackage{subfigure}
+\usepackage{float}
+\usepackage{subfig}
 
 
 \title{4_resultados_rascunho}
@@ -84,7 +86,7 @@ Como aplicar Amplitude a esses dados?}
 
 \indent Durante o processo de estruturação de dados, todos os 295 municípios catarinenses apresentaram valores para todas as variáveis climatológicas em questão (precipitação e temperaturas mínima, média e máxima). Esse fato foi possível por adotarmos o valor do centróide do polígono atual do município para extração dos dados, assim, municípios recentes apresentam valores climatológicos mesmo antes de sua emancipação, como Pescaria Brava. Uma nota deve ser tomada, pois o valor do centróide do polígono do município não coincide com o ponto central urbano da cidade.
 
-\indent Em contraposição, o mesmo não ocorre com as variáveis epidemiológicas e entomológicas. Os \acrshort{DEE} apresentam poucos registros municipais no início das séries históricas disponíveis, além de serem mais recentes. Como exemplo, 2017 foi o ano com apenas cinco (5) municípios registrando casos de dengue dentro do Estado catarinense, sendo eles: Brusque, Guaraciaba, Itajaí, Itapema e Sombrio. Por isso a padronização das datas de todas as séries históricas, que foi assumido valor zero (0) para o período antes do primeiro registro de cada município. Dessa mesma maneira, tem-se o primeiro registro de cada município, para a séries históricas catarinenses tanto de focos de \latim{Aedes} sp. (tabela \ref{tab:primeiros_focos}) quanto de casos de dengue (tabela \ref{tab:primeiros_casos}), ambas tabelas disponibilizadas em Apêndices.
+\indent Em contraposição, o mesmo não ocorre com as variáveis epidemiológicas e entomológicas. Os \acrshort{DEE} apresentam poucos registros municipais no início das séries históricas disponíveis, além de serem mais recentes. Como exemplo, 2017 foi o ano com apenas cinco (5) municípios registrando casos de dengue dentro do Estado catarinense, sendo eles: Brusque, Guaraciaba, Itajaí, Itapema e Sombrio. Por isso a padronização das datas de todas as séries históricas, que foi assumido valor zero (0) para o período antes do primeiro registro de cada município. Dessa mesma maneira, tem-se o primeiro registro de cada município, para a séries históricas catarinenses tanto de focos de \latim{Aedes} sp. (tabela \ref{tab:primeiros_focos}) quanto de casos de dengue (tabela \ref{tab:primeiros_casos}), ambas as tabelas disponibilizadas em Apêndices.
 
 
 
@@ -100,28 +102,58 @@ Como aplicar Amplitude a esses dados?}
 
 \subsection{Processamento}
 
-\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações (figura \ref{fig: matriz_corr_DEE}), realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre casos de dengue e focos de \latim{Aedes} sp.
+% Realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue)
+\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue  (figura \ref{fig: matriz_corr_DEE}).
 
 \begin{figure}[htbp]
     \centering
-    \caption{Matriz de correlações de alguns municípios catarinenses durante 2023, método de Spearman.}
+    \caption{Matriz de correlações entre focos de \latim{Aedes} sp. e casos de dengue de alguns municípios catarinenses durante 2023, método de Spearman.}
     \label{fig: matriz_corr_DEE}
-    \subfigure[Florianópolis]{
+    \subfloat[Florianópolis \label{fig: corr_DEE_FLO}]{
+        \centering
         \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_fococaso_FLORIANOPOLIS_r16s_2023.pdf}
-    }
-    \subfigure[Itajaí]{
+        }
+    \subfloat[Itajaí \label{fig: corr_DEE_ITA}]{
+        \centering
         \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_fococaso_ITAJAI_r16s_2023.pdf}
-    }
-    \subfigure[Joinville]{
+        }\hfill
+    \subfloat[Joinville \label{fig: corr_DEE_JOI}]{
+        \centering
         \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_fococaso_JOINVILLE_r16s_2023.pdf}
-    }
-    \subfigure[Chapecó]{
+        }
+    \subfloat[Chapecó \label{fig: corr_DEE_CHA}]{
+        \centering
         \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_fococaso_CHAPECO_r16s_2023.pdf}
-    }
+        }\hfill
+    \small{Fonte: Elaboração própria (2024).}
 \end{figure}
 
+% entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima)
+\indent A correlação entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue) e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima) também foram realizadas pelo método de Spearman durante o ano de 2023.
 
-Realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue), entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima), e entre os \acrshort{DEE} e limiares dos \acrshort{DEC}. A correlação propriamente dita foi calculada por meio do método \ingles{.corr()} da biblioteca \ingles{pandas}. Para melhor visualização do resultado desse cálculo, foram utilizadas as bibliotecas \ingles{numpy}, \ingles{matplotlib} e \ingles{seaborn} \cite{seaborn_2021_waskom}.
+% E entre os \acrshort{DEE} e limiares dos \acrshort{DEC}.
+\indent 
+
+
+
+
+
+
+% \begin{figure}[H]
+%     \centering
+%     \caption{Número de focos de \ingles{Aedes aegypti} e casos de dengue em Santa Catarina nos anos de 2020 e 2021, segundo o Boletim Epidemiológico nº 33 da \acrshort{Dive}.} %LEGENDA DA IMAGEM GLOBAL
+%     \label{fig:focoscasos20-21}
+%     \subfloat[Número de focos de \ingles{Aedes aegypti} em 2020 e 2021 no Estado de Santa Catarina. \label{fig:focos20-21}]{
+%     \includegraphics[width=0.8\textwidth]{figuras/focos_20-21.png}
+%     }\hfill
+%     \subfloat[Número de casos de dengue em 2020 e 2021 no Estado de Santa Catarina. \label{fig:casos20-21}]{
+%     \includegraphics[width=0.8\textwidth]{figuras/casos_20-21.png}
+%     }\\
+%     \small{Fonte: \cite{DiveDENGUE}.}
+% \end{figure}
+
+
+
 
 \indent A rede neural apresentou baixo ajuste frente ao comportamento dos fenômenos.
 
