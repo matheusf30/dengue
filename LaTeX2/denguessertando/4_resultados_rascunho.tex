@@ -18,9 +18,10 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage{xcolor}
 \usepackage{longtable}
-\usepackage{subfigure}
+% \usepackage{subfigure}
 \usepackage{float}
 \usepackage{subfig}
+\usepackage{url}
 
 
 \title{4_resultados_rascunho}
@@ -37,7 +38,9 @@
 
 \section{Análise e discussão dos resultados}
 
-\indent Como forma de otimizar a leitura, os resultados serão apresentados e discutidos na sequência. Também como facilitação, a ordem e numeração apresentados seguirão os mesmos adotados na metodologia.
+\indent Como forma de otimizar a leitura, os resultados serão apresentados e discutidos na sequência. Também como facilitação, a ordem e numeração apresentados seguirão os mesmos adotados na metodologia. Para analisar de forma mais detalhada, os resultados se encontram no \href{https://github.com/matheusf30/dengue/tree/main/resultados}{GitHub}, publicados no endereço eletrônico abaixo:\\
+\url{https://github.com/matheusf30/dengue/tree/main/resultados}\\
+
 
 \section{Análise Estatística Descritiva \textcolor{red}{Climatologia}}
 
@@ -103,7 +106,7 @@ Como aplicar Amplitude a esses dados?}
 \subsection{Processamento}
 
 % Realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue)
-\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue  (figura \ref{fig: matriz_corr_DEE}).
+\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue. Foram analisados os anos de 2020, 2021, 2022 e 2023, assim como a própria série histórica, porém apenas será apresentado o ano de 2023 (figura \ref{fig: matriz_corr_DEE}).
 
 \begin{figure}[htbp]
     \centering
@@ -129,7 +132,30 @@ Como aplicar Amplitude a esses dados?}
 \end{figure}
 
 % entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima)
-\indent A correlação entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue) e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima) também foram realizadas pelo método de Spearman durante o ano de 2023.
+\indent A correlação entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue) e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima) também foram realizadas pelo método de Spearman durante cada ano citado anteriormente (de 2020 a 2023) e a série histórica. Apenas duas variáveis climatológicas, temperatura média e precipitação, foram retroagidas 16 semanas epidemiologicas.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Matriz de correlações entre focos de \latim{Aedes} sp., casos de dengue e variáveis climatológicas de alguns municípios catarinenses durante 2023, método de Spearman.}
+    \label{fig: matriz_corr_CLI}
+    \subfloat[Florianópolis \label{fig: corr_CLI_FLO}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_FLORIANOPOLIS_r16s_2023.pdf}
+        }
+    \subfloat[Itajaí \label{fig: corr_CLI_ITA}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_ITAJAI_r16s_2023.pdf}
+        }\hfill
+    \subfloat[Joinville \label{fig: corr_CLI_JOI}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_JOINVILLE_r16s_2023.pdf}
+        }
+    \subfloat[Chapecó \label{fig: corr_CLI_CHA}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_CHAPECO_r16s_2023.pdf}
+        }\hfill
+    \small{Fonte: Elaboração própria (2024).}
+\end{figure}
 
 % E entre os \acrshort{DEE} e limiares dos \acrshort{DEC}.
 \indent 
