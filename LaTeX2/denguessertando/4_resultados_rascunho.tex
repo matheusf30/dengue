@@ -47,7 +47,7 @@
 \indent Para melhor compreensão da descrição climatológica, acompanhe a tabela \textcolor{red}{(ou quadro?)} (tabela \ref{tab:valores_climato}) abaixo:
 
 \begin{table}[htbp]
-    \centering
+    \begin{center}
     \caption{Valores estaduais de variáveis climatológicas}
     {\rowcolors{1}{lightgray}{white}
     \begin{tabular}{r|cccc}
@@ -65,7 +65,9 @@
     Precipitação Semanal & 0,0 mm & 30,07 mm & 478,25 mm & 43,05 mm\\
     \bottomrule
     \end{tabular}}
+    \end{center}
     \label{tab:valores_climato}
+    \small{Fonte: Elaboração própria (2024).}
 \end{table}
 
 \indent Sobre a temperatura mínima diária, o menor valor que a série histórica do Estado de \acrlong{SC} apresentou foi de -7,98 C, sendo -2,77 C quando agrupado semanalmente. O valor máximo da temperatura mínima foi de 30,26 C, dados diários, e 26,15 C, dados semanais. A média diária da temperatura mínima para o Estado foi de 14,75 C, sendo o mesmo valor quando agrupado em semana, e o maior desvio padrão de 4,88 C para dados diários. O desvio padrão semanal foi de 4,11 C.
@@ -106,6 +108,30 @@ Como aplicar Amplitude a esses dados?}
 \subsection{Processamento}
 
 % Realizadas entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue)
+\indent De acordo com \citeonline{Stats_Dummies}, o \acrfull{r} é uma medida estatística que indica intensidade e direção linear de relação entre duas variáveis numéricas. Ainda para a autora, o \acrlong{r} pode assumir qualquer valor entre 1 e -1 e pode ser interpretado a partir de seu sinal, direção da relação linear, e valor em módulo, intensidade dessa mesma relação.
+Valores positivos indicam relação linear positiva, onde as duas variáveis oscilam conjuntamente. O oposto ocorre com valores negativos, cuja oscilação acontece em oposição, quando uma variável está em ascenção, uma outra está em descendência, indicando relação linear negativa. Interpretando a intensidade, deve-se analisar o valor em módulo. Relações lineares perfeitas apresentam módulo um (1), enquanto a ausência de relação apresenta módulo zero (0). Suas frações também podem ser classificadas, sendo: acima de 0,7 seria uma alta relação; acima de 0,5, moderada; e baixa relação acima de 0,3 \cite{Stats_Dummies}. Nesse trabalho, assumiremos uma escala fracionada em terços, como exemplificado (tabela \ref{tab:clas_corr}) abaixo:
+
+\begin{table}[htbp]
+    \begin{center}
+    \caption{Classificação de Coeficientes de Correlação (r) assumida no presente estudo.}
+    {\rowcolors{1}{lightgray}{white}
+    \begin{tabular}{r|cc}
+    \hline
+    \toprule
+    \rowcolor{darkgray} \textcolor{white}{Classificação de Intensidade (Valores em Módulo)} & \textcolor{white}{Limite Inferior} & \textcolor{white}{Limite Superior}\\
+    \midrule
+    Correlação Altíssima & $>$ 0,9 & 1\\
+    Correlação Alta & $>$  0,6 & 0,9\\
+    Correlação Média & $>$  0,3 & 0,6\\
+    Correlação Baixa & $>$  0,1 & 0,3\\
+    Ausência de Correlação & 0 & 0,1\\
+    \bottomrule
+    \end{tabular}}
+    \label{tab:class_corr}
+    \end{center}
+    \small{Fonte: Elaboração própria (2024).}
+\end{table}
+
 \indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue. Foram analisados os anos de 2020, 2021, 2022 e 2023, assim como a própria série histórica, porém apenas será apresentado o ano de 2023 (figura \ref{fig: matriz_corr_DEE}).
 
 \begin{figure}[htbp]
@@ -133,9 +159,7 @@ Como aplicar Amplitude a esses dados?}
 
 Há flutuação entre os anos, porém ao correlacionar a série temporal integralmente (figura \ref{fig: matriz_corr_DEEtotal}), os municípios de Florianópolis (figura \ref{fig: corr_DEE_FLOtotal}) e Joinville (figura \ref{fig: corr_DEE_JOItotal}) apresentaram valores médios (entre 0,5 e 0,7) e altos (entre 0,7 e 1) de correlação em quase a totalidade da análise. Os municípios de Itajaí figura \ref{fig: corr_DEE_ITAtotal}) e Chapecó figura \ref{fig: corr_DEE_CHAtotal}) apresentaram valores baixos e médios, sendo apenas altos quando correlacionados com a própria variável pretérita.  \textcolor{red}{Por quê? Pode ser indicativo que esses municípios, Florianópolis e Joinville, apresentem relação de casos de dengue autóctones maior; enquanto outros municípios, como Chapecó e Itajaí, tenham importação de casos de dengue dentro da série temporal?}
 
-\indent Citar essa classificação da correlação na metodologia. Sugerir própria classificação: baixa, média, alta (e altíssima).
 
-% Rumsey, D. J. (2023, 6 de fevereiro). What is r value correlation? Dummies. https://www.dummies.com/article/academics-the-arts/math/statistics/how-to-interpret-a-correlation-coefficient-r-169792/
 
 \begin{figure}[htbp]
     \centering
