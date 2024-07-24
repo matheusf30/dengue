@@ -214,7 +214,7 @@ Valores positivos indicam relação linear positiva, onde as duas variáveis osc
 \indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue. Foram analisados os anos de 2020, 2021, 2022 e 2023, assim como a própria série histórica. Logo, será apresentado o ano de 2023 (figura \ref{fig: matriz_corr_DEE}), por ser a análise anual mais recente. O município de Florianópolis (figura \ref{fig: corr_DEE_FLO}) apresentou correlação baixa entre as variáveis distintas dentro da mesma semana epidemiológica, mantendo-se baixa, mesmo negativamente, retrocedendo algumas semanas epidemiológicas. Itajaí (figura \ref{fig: corr_DEE_ITA}) apenas apresentou correlações médias entre as variáveis distintas quando retrocedidas muitas semanas epidemiológicas, sugerindo relação espúria. O município de Joinville (figura \ref{fig: corr_DEE_JOI}) apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, reduzindo gradualmente a medida que retrocede a ponto de aumentar a intensidade da correlação, negativamente. Chapecó (figura \ref{fig: corr_DEE_CHA}), por sua vez, apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, semelhante a Joinville, porém oscilando em redução gradual a medida que retrocede a ponto de ausentar correlação. \textcolor{red}{A que discussão chegamos?}
 
 \begin{figure}[htbp]
-    \centering
+    \begin{center}
     \caption{Matriz de correlações entre focos de \latim{Aedes} sp. e casos de dengue de alguns municípios catarinenses durante 2023, método de Spearman.}
     \label{fig: matriz_corr_DEE}
     \subfloat[Florianópolis \label{fig: corr_DEE_FLO}]{
@@ -233,6 +233,7 @@ Valores positivos indicam relação linear positiva, onde as duas variáveis osc
         \centering
         \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_fococaso_CHAPECO_r16s_2023.pdf}
         }\hfill
+    \end{center}
     \small{Fonte: Elaboração própria (2024).}
 \end{figure}
 
@@ -264,7 +265,7 @@ Há flutuação entre os anos, porém ao correlacionar a série temporal integra
 \end{figure}
 
 % entre esses elementos citados anteriormente e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima)
-\indent A correlação entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue) e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima) também foram realizadas pelo método de Spearman durante cada ano citado anteriormente (de 2020 a 2023) e a série histórica. Apenas duas variáveis climatológicas, temperatura média e precipitação, foram retroagidas 16 semanas epidemiologicas. A temperatura média foi a escolhida para retroação pois, nas quatro (4) cidades, as correlaçãos entre ela e as temperaturas mínima e máxima se apresentaram altas. Também apenas apresentaremos essas análises realizadas no ano de 2023 (figura \ref{fig: matriz_corr_CLI}). Também há flutuação entre os anos, porém ao correlacionar a série temporal integralmente, apenas as variáveis climatológicas entre si apresentaram valores médios (entre 0,5 e 0,7) e altos (entre 0,7 e 1) de correlação.
+\indent A correlação entre os \acrshort{DEE} (focos de \latim{Aedes} sp. e casos de dengue) e os \acrshort{DEC} (precipitação e temperaturas mínima, média e máxima) também foram realizadas pelo método de Spearman durante cada ano citado anteriormente (de 2020 a 2023) e a série histórica. Apenas duas variáveis climatológicas, temperatura média e precipitação, foram retrocedidas 16 semanas epidemiologicas. A temperatura média foi a escolhida para retroação pois, nas quatro (4) cidades, as correlaçãos entre ela e as temperaturas mínima e máxima se apresentaram altas. Também apenas apresentaremos essas análises realizadas no ano de 2023 (figura \ref{fig: matriz_corr_CLI}). 
 
 \begin{figure}[htbp]
     \centering
@@ -289,30 +290,37 @@ Há flutuação entre os anos, porém ao correlacionar a série temporal integra
     \small{Fonte: Elaboração própria (2024).}
 \end{figure}
 
+Também há flutuação entre os anos, porém ao correlacionar a série temporal integralmente (figura \ref{fig: matriz_corr_CLItotal}), os municípios de Itajaí (figura \ref{fig: corr_CLI_ITAtotal}) e Chapecó (figura \ref{fig: corr_CLI_CHAtotal}) apresentaram aumento na intensidade da correlação, atingindo correlação média negativa, quando se retrocede a temperatura média com os casos de dengue. \textcolor{red}{Por quê?} O município de Joinville (figura \ref{fig: corr_CLI_JOItotal}) é o único que apresenta correlação média positiva entre a precipitação e as temperaturas, mesmo quando pouco retroagidas. Sugere-se a própria conformação de relevo do município, onde a temperatura aumenta a evaporação, aumentando a precipitação da umidade suspensa represada na Serra do Mar. Em todos os municípios, as variáveis climatológicas entre si, em especial as temperaturas, apresentaram valores médios e altos de correlação. Esse fato sugere certa estabilidade no sistema climatológico catarinense, pouco evidenciado na precipitação por conta do agrupamento semanal.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Matriz de correlações entre focos de \latim{Aedes} sp., casos de dengue e variáveis climatológicas de alguns municípios catarinenses durante a série histórica, método de Spearman.}
+    \label{fig: matriz_corr_CLItotal}
+    \subfloat[Florianópolis \label{fig: corr_CLI_FLOtotal}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_FLORIANOPOLIS_r16s_total.pdf}
+        }
+    \subfloat[Itajaí \label{fig: corr_CLI_ITAtotal}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_ITAJAI_r16s_total.pdf}
+        }\hfill
+    \subfloat[Joinville \label{fig: corr_CLI_JOItotal}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_JOINVILLE_r16s_total.pdf}
+        }
+    \subfloat[Chapecó \label{fig: corr_CLI_CHAtotal}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/matriz_correlacao_spearman_CHAPECO_r16s_total.pdf}
+        }\hfill
+    \small{Fonte: Elaboração própria (2024).}
+\end{figure}
+
 % E entre os \acrshort{DEE} e limiares dos \acrshort{DEC}.
 \indent 
 
 
 
-
-
-
-% \begin{figure}[H]
-%     \centering
-%     \caption{Número de focos de \ingles{Aedes aegypti} e casos de dengue em Santa Catarina nos anos de 2020 e 2021, segundo o Boletim Epidemiológico nº 33 da \acrshort{Dive}.} %LEGENDA DA IMAGEM GLOBAL
-%     \label{fig:focoscasos20-21}
-%     \subfloat[Número de focos de \ingles{Aedes aegypti} em 2020 e 2021 no Estado de Santa Catarina. \label{fig:focos20-21}]{
-%     \includegraphics[width=0.8\textwidth]{figuras/focos_20-21.png}
-%     }\hfill
-%     \subfloat[Número de casos de dengue em 2020 e 2021 no Estado de Santa Catarina. \label{fig:casos20-21}]{
-%     \includegraphics[width=0.8\textwidth]{figuras/casos_20-21.png}
-%     }\\
-%     \small{Fonte: \cite{DiveDENGUE}.}
-% \end{figure}
-
-
-
-
+\newpage
 \indent A rede neural apresentou baixo ajuste frente ao comportamento dos fenômenos.
 
 \indent \textcolor{red}{explicar como evitar "double dipping".}
