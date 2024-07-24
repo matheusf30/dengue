@@ -319,17 +319,17 @@ Também há flutuação entre os anos, porém ao correlacionar a série temporal
 \end{figure}
 
 % E entre os \acrshort{DEE} e limiares dos \acrshort{DEC}.
-\indent Para lidar com as correlações de limiares climatológicos, analisaremos cada cidade separada. Começando pela capital do Estado, Florianópolis (figura \ref{fig: matriz_corr_LIM_FLOretro}), e analisando o ano de 2023, pode-se verificar que as maiores correlações em relação aos focos de \latim{Aedes} sp. ocorreram retrocedendo uma (1) semana epidemiológica (figura \ref{fig: corr_LIM_FLOretro1s}), em temperaturas máximas amenas. Enquanto as maiores intensidades de correlações, mesmo nagativas, em relação aos casos de dengue ocorreram retrocedendo oito (8) semanas epidemiológicas (figura \ref{fig: corr_LIM_FLOretro8s}), em temperaturas mínimas moderadas.
+\indent Para lidar com as correlações de limiares climatológicos, analisaremos cada cidade separada. Começando pela capital do Estado, Florianópolis (figura \ref{fig: matriz_corr_LIM_FLOretro}), e analisando o ano de 2023, pode-se verificar que as maiores correlações em relação aos focos de \latim{Aedes} sp. ocorreram retrocedendo uma (1) semana epidemiológica (figura \ref{fig: corr_LIM_FLOretro1s}), em temperaturas máximas amenas. \textcolor{red}{Uma possível explicação é essa temperatura máxima amena ser uma faixa de conforto para o pernilongo, como demonstrando em outros estudos.} Enquanto as maiores intensidades de correlações, mesmo nagativas, em relação aos casos de dengue ocorreram retrocedendo oito (8) semanas epidemiológicas (figura \ref{fig: corr_LIM_FLOretro8s}), em temperaturas mínimas e máximas moderadas, diminuindo a intensidade nos extremos. \textcolor{red}{Sugere-se o atraso por conta do tempo de incubação intrínsico. As temperaturas máxima e mínima aparentam faixas de temperaturas ótimas para a biologia do vetor, além de que os extremos para ambas as temperaturas podem estar ligados também ao comportamento humano, como no decréscimo das temperaturas, diminuir atividades ao ar livre e utilizar roupas que cubram mais o corpo.}
 
 \begin{figure}[htbp]
     \begin{center}
-    \caption{Matriz de correlações entre focos de \latim{Aedes} sp., casos de dengue e limiares de variáveis climatológicas em Florianópolis, durante o ano de 2023, método de Spearman.}
+    \caption{Matriz de correlações entre focos de \latim{Aedes} sp., casos de dengue e limiares de variáveis climatológicas em Florianópolis, durante o ano de 2023 retrocedendo semanas epidemiológicas, método de Spearman.}
     \label{fig: matriz_corr_LIM_FLOretro}
-    \subfloat[Retrocedendo uma (1) semana epidemiológica \label{fig: corr_LIM_FLOretro1s}]{
+    \subfloat[Uma semana epidemiológica \label{fig: corr_LIM_FLOretro1s}]{
         \centering
         \includegraphics[width=0.45\textwidth]{figuras/matriz_correlacao_spearman_retrolimiar_FLORIANOPOLIS_2023_r1s.pdf}
         }
-    \subfloat[Retrocedendo oito (8) semanas epidemiológicas \label{fig: corr_LIM_FLOretro8s}]{
+    \subfloat[Oito semanas epidemiológicas \label{fig: corr_LIM_FLOretro8s}]{
         \centering
         \includegraphics[width=0.45\textwidth]{figuras/matriz_correlacao_spearman_retrolimiar_FLORIANOPOLIS_2023_r8s.pdf}
         }
