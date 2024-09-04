@@ -34,6 +34,27 @@ def download_dengue():
 	Classificacao Nova: Dengue com complicações, Febre Hemorrágica do Dengue, Síndrome do Choque do Dengue, Dengue, Dengue com sinais de alarme, Dengre grave
 	Conf.Desc pos2010: Laboratórial, Clínico-epidemiológico
 	Período:2014
+
+	<!--
+	<TABELA>
+	Planilha=
+	Titulo=INVESTIGAÇÃO DENGUE A PARTIR DE 2014
+	Def=sinan/def/dengon.def
+	Varmunic=
+	Linha=Mun_infec_SC
+	Coluna=Sem.Epid.Sintomas
+	Incremento=Frequência
+	SClassificacao_Nova=2
+	SClassificacao_Nova=3
+	SClassificacao_Nova=4
+	SClassificacao_Nova=7
+	SClassificacao_Nova=8
+	SClassificacao_Nova=9
+	SConf.Desc_pos2010=2
+	SConf.Desc_pos2010=3
+	Periodo=24
+	</TABELA>
+	-->
 	"""
 	form_data = {"Linha": "Mun infec SC", "Coluna": "Sem.Epid.Sintomas",
 				"Períodos Disponíveis": ano_atual,
