@@ -2,6 +2,8 @@
 >>> crontab -e
 >>> 0 0 * * 0 /usr/bin/python3 /home/yourusername/dengue_download.py >> /home/yourusername/dengue_download.log 2>&1
 >>> crontab -l
+
+ImportError: Missing optional dependency 'lxml', 'html5lib'.  Use pip or conda to install lxml html5lib
 """
 
 # Bibliotecas correlatas
@@ -12,13 +14,16 @@ import schedule
 import time
 from datetime import datetime
 
-# Definindo Função
+# Definindo Variáveis
 url = "http://200.19.223.105/cgi-bin/dh?sinan/def/dengon.def"
 url1 = "http://200.19.223.105/cgi-bin/tabnet?sinan/def/dengon.def"
+ano_atual = str(datetime.today().year)
+hoje = datetime.today().strftime("%Y-%m-%d")
+caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+
+# Definindo Função
 
 def download_dengue():
-	ano_atual = str(datetime.today().year)
-	hoje = datetime.today().strftime("%Y-%m-%d")
 	resposta = requests.get(url)
 	soup = BeautifulSoup(resposta.text, "html.parser")
 	form = soup.find("form")
@@ -41,16 +46,16 @@ def download_dengue():
 		df = pd.read_html(resposta.text)
 		#df = df[0]
 		arquivo = f"dengue_dive_{hoje}.csv"
-		df.to_csv(file_name, index=False)
+		df.to_csv(f"{caminho_dados}{arquivo}", index=False)
 		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
 	else:
 		print(f"Falha ao realizar download do arquivo diretamente de:\n{url}")
 
 #Automatizando aos Domingos e Verificando 2x/dia
-schedule.every().sunday.at("00:00").do(download_dengue)
+schedule.every().sunday.at("00:00").do(download_dengue) #.sunday.at("00:00") # .wednesday.at("12:03")
 print(f"\nTarefa Automatizada\nDownload de dados sobre dengue semanalmente (domingo)\nHoje: {hoje}\nDisponível em: {url}\n")
 while True:
     schedule.run_pending()
-    time.sleep(43200) # BID (12h/12h)
+    time.sleep(1) # BID (12h/12h)(43200s)
 
 
