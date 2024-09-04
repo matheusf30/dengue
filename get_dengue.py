@@ -1,4 +1,8 @@
-
+"""
+>>> crontab -e
+>>> 0 0 * * 0 /usr/bin/python3 /home/yourusername/dengue_download.py >> /home/yourusername/dengue_download.log 2>&1
+>>> crontab -l
+"""
 
 # Bibliotecas correlatas
 import requests
