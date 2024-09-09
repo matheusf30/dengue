@@ -124,6 +124,13 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				#timeindex = timeindex.set_index("data")
 				timeindex["semana"] = timeindex.index.dayofyear
 				# df['Epidemic Week'] = df['Date'].apply(lambda x: x.isocalendar()[1])
+				"""
+				# Convert the string date to a datetime object
+date = datetime.strptime(date_str, '%Y-%m-%d')
+
+# Get the week number of the year using %U
+week_number = date.strftime('%U')
+				"""
 				#timeindex["mes_dia"] = timeindex.index.to_period('M').astype(str) + '-' + timeindex.index.day.astype(str)
 				print("\ntimeindex\n", timeindex, timeindex.info())
 				#sys.exit()
