@@ -4,6 +4,7 @@
 >>> crontab -l
 
 ImportError: Missing optional dependency 'lxml', 'html5lib'.  Use pip or conda to install lxml html5lib
+Selenium -- CSS Selectors
 """
 
 # Bibliotecas correlatas
@@ -67,7 +68,7 @@ def download_dengue():
 		df = pd.read_html(resposta.text)
 		#df = df[0]
 		arquivo = f"dengue_dive_{hoje}.csv"
-		df.to_csv(f"{caminho_dados}{arquivo}", index=False)
+		df.to_csv(f"{caminho_dados}{arquivo}", index = False)
 		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
 	else:
 		print(f"Falha ao realizar download do arquivo diretamente de:\n{url}")
