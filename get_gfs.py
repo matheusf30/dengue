@@ -23,16 +23,47 @@ import time
 from datetime import datetime
 
 # Definindo Variáveis
-url = "http://200.19.223.105/cgi-bin/dh?sinan/def/dengon.def"
-url1 = "http://200.19.223.105/cgi-bin/tabnet?sinan/def/dengon.def"
+url_ncep = "https://nomads.ncep.noaa.gov/cgi-bin/"
+filtro_gfs = "filter_gfs_0p25_1hr.pl?dir=%2Fgfs."
+hoje = datetime.today().strftime("%Y%m%d")
+recorte_atual = "20240917%2F00%2Fatmos&file="
+zulu = "t00z" # t18z | t12z | t06z | t00z
+tempo = "f000" # anl | f000 | f001 | ... | f384
+arquivo = f"gfs.{zulu}.pgrb2.0p25.{tempo}"
+precipitacao = "var_PRATE=on"
+tmax = "var_TMAX=on"
+tmin = "var_TMIN=on"
+tmed = "var_TMP=on"
+superficie = "lev_surface=on"
+variaveis = f"&{precipitacao}&{tmax}&{tmin}&{tmed}&{superficie}"
+lat_max = 15
+lat_min = -60
+lon_max = -30
+lon_min = -90
+recorte_regiao = f"&subregion=&toplat={lat_max}&leftlon={lon_min}&rightlon={lon_max}&bottomlat={lat_min}"
+url_gfs = f"{url_ncep}{filtro_gfs}{recorte_atual}{arquivo}{variaveis}{recorte_regiao}"
 ano_atual = str(datetime.today().year)
 hoje = datetime.today().strftime("%Y-%m-%d")
 caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-
+arquivo = f"
 # Definindo Função
 
-def download_dengue():
-	resposta = requests.get(url)
+def download_gfs():
+	resposta = requests.get(url_gfs, stream = True))
+	if resposta.status_code == 200:
+		with open(
+		df = pd.read_html(resposta.text)
+		#df = df[0]
+		arquivo = f"dengue_dive_{hoje}.csv"
+		df.to_csv(f"{caminho_dados}{arquivo}", index = False)
+		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
+	else:
+		print(f"Falha ao realizar download do arquivo diretamente de:\n{url_gfs}")
+
+
+
+
+
 	soup = BeautifulSoup(resposta.text, "html.parser")
 	form = soup.find("form")
 	form_action = form["action"]
@@ -78,11 +109,11 @@ def download_dengue():
 		df.to_csv(f"{caminho_dados}{arquivo}", index = False)
 		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
 	else:
-		print(f"Falha ao realizar download do arquivo diretamente de:\n{url}")
+		print(f"Falha ao realizar download do arquivo diretamente de:\n{url_gfs}")
 
 #Automatizando aos Domingos e Verificando 2x/dia
 schedule.every().sunday.at("00:00").do(download_dengue) #.sunday.at("00:00") # .wednesday.at("12:03")
-print(f"\nTarefa Automatizada\nDownload de dados sobre dengue semanalmente (domingo)\nHoje: {hoje}\nDisponível em: {url}\n")
+print(f"\nTarefa Automatizada\nDownload de dados sobre dengue semanalmente (domingo)\nHoje: {hoje}\nDisponível em: {url_gfs}\n")
 while True:
     schedule.run_pending()
     time.sleep(1) # BID (12h/12h)(43200s)
