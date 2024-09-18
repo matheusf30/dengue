@@ -1,10 +1,7 @@
 """
 >>> crontab -e
->>> 0 0 * * 0 /usr/bin/python3 /home/yourusername/dengue_download.py >> /home/yourusername/dengue_download.log 2>&1
+>>> 0 0 * * 0 /usr/bin/python3 /home/sifapsc/scripts/matheus/dengue/get_dengue.py >> /home/sifapsc/scripts/matheus/dengue/get_dengue.log 2>&1
 >>> crontab -l
-
-ImportError: Missing optional dependency 'lxml', 'html5lib'.  Use pip or conda to install lxml html5lib
-Selenium -- CSS Selectors
 
 # cfs press
 https://nomads.ncep.noaa.gov/gribfilter.php?ds=cfs_pgb
@@ -14,108 +11,103 @@ https://nomads.ncep.noaa.gov/gribfilter.php?ds=cfs_flx
 https://nomads.ncep.noaa.gov/gribfilter.php?ds=gfs_0p25_1hr
 """
 
-# Bibliotecas correlatas
-from bs4 import BeautifulSoup
-import requests
-import pandas as pd
-import schedule
+##### Bibliotecas correlatas ####################################################
+#from bs4 import BeautifulSoup
+#import pandas as pd
+#import schedule
+import os
 import time
 from datetime import datetime
+import requests
+import cfgrib
+import xarray as xr
+import netCDF4
 
-# Definindo Variáveis
-url_ncep = "https://nomads.ncep.noaa.gov/cgi-bin/"
-filtro_gfs = "filter_gfs_0p25_1hr.pl?dir=%2Fgfs."
-hoje = datetime.today().strftime("%Y%m%d")
-recorte_atual = "20240917%2F00%2Fatmos&file="
-zulu = "t00z" # t18z | t12z | t06z | t00z
-tempo = "f000" # anl | f000 | f001 | ... | f384
-arquivo = f"gfs.{zulu}.pgrb2.0p25.{tempo}"
-precipitacao = "var_PRATE=on"
-tmax = "var_TMAX=on"
-tmin = "var_TMIN=on"
-tmed = "var_TMP=on"
-superficie = "lev_surface=on"
-variaveis = f"&{precipitacao}&{tmax}&{tmin}&{tmed}&{superficie}"
-lat_max = 15
-lat_min = -60
-lon_max = -30
-lon_min = -90
-recorte_regiao = f"&subregion=&toplat={lat_max}&leftlon={lon_min}&rightlon={lon_max}&bottomlat={lat_min}"
-url_gfs = f"{url_ncep}{filtro_gfs}{recorte_atual}{arquivo}{variaveis}{recorte_regiao}"
-ano_atual = str(datetime.today().year)
-hoje = datetime.today().strftime("%Y-%m-%d")
-caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
-arquivo = f"
-# Definindo Função
+##### Padrão ANSI ###############################################################
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
+reset = "\033[0m"
+#################################################################################
 
+#### Definindo Função ###########################################################
 def download_gfs():
-	resposta = requests.get(url_gfs, stream = True))
+
+	#### Definindo Variáveis
+	url_ncep = "https://nomads.ncep.noaa.gov/cgi-bin/"
+	filtro_gfs = "filter_gfs_0p25_1hr.pl?dir=%2Fgfs."
+	data = datetime.today().strftime("%Y%m%d") #20240917
+	#data = "20240910"
+	recorte_atual = f"{data}%2F{zulu}%2Fatmos&file="
+	#zulu = "t00z" # t18z | t12z | t06z | t00z
+	#tempo = "f000" # anl | f000 | f001 | ... | f384 (anl = análise; não necessário)
+	arquivo = f"gfs.t{zulu}z.pgrb2.0p25.{tempo}"
+	precipitacao = "var_PRATE=on"
+	tmax = "var_TMAX=on"
+	tmin = "var_TMIN=on"
+	tmed = "var_TMP=on"
+	superficie = "lev_surface=on"
+	variaveis = f"&{precipitacao}&{tmax}&{tmin}&{tmed}&{superficie}"
+	#variaveis = f"&{precipitacao}&{tmax}&{tmin}&{tmed}" # Em todos os níveis
+	lat_max = 15
+	lat_min = -60
+	lon_max = -30
+	lon_min = -90
+	recorte_regiao = f"&subregion=&toplat={lat_max}&leftlon={lon_min}&rightlon={lon_max}&bottomlat={lat_min}"
+	url_gfs = f"{url_ncep}{filtro_gfs}{recorte_atual}{arquivo}{variaveis}{recorte_regiao}"
+	ano_atual = str(datetime.today().year)
+	hoje = datetime.today().strftime("%Y-%m-%d")
+	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	nome_arquivo = f"{arquivo}_{data}.grib2"
+	caminho_arquivo = f"{caminho_dados}{nome_arquivo}"
+	nome_arquivo_nc = f"{arquivo}_{data}.nc"
+	caminho_arquivo_nc = f"{caminho_dados}{nome_arquivo_nc}"
+	caminho_arquivo_idx = f"{caminho_dados}{nome_arquivo}.5b7b6.idx"
+
+	#### Response/Request
+	resposta = requests.get(url_gfs, stream = True)
 	if resposta.status_code == 200:
-		with open(
-		df = pd.read_html(resposta.text)
-		#df = df[0]
-		arquivo = f"dengue_dive_{hoje}.csv"
-		df.to_csv(f"{caminho_dados}{arquivo}", index = False)
-		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
+		with open(caminho_arquivo, "wb") as file:
+			for chunk in resposta.iter_content(chunk_size = 999999999):
+				file.write(chunk)
+			ds = xr.open_dataset(caminho_arquivo, engine = "cfgrib",
+								filter_by_keys = {"stepType" : "instant"},
+								errors = "ignore")
+			ds.to_netcdf(caminho_arquivo_nc)
+		print(f"{green}\nDownload realizado com sucesso e salvo como:\n{nome_arquivo}\n{nome_arquivo_nc}\n{reset}")
+		os.remove(caminho_arquivo)
+		os.remove(caminho_arquivo_idx)
+		print(f"{cyan}\nRemoção realizada com sucesso e salvo como:\n{nome_arquivo}\n{reset}")
 	else:
-		print(f"Falha ao realizar download do arquivo diretamente de:\n{url_gfs}")
+		print(f"""
+{red}Falha ao realizar download do arquivo diretamente de: {url_gfs}
+{resposta.status_code}
+{resposta.text}
+{nome_arquivo}
+{nome_arquivo_nc}\n{reset}""")
 
+#################################################################################
 
+#### Automatizando toatais de arquivos do dia ###################################
+lista_zulu = ["00", "06", "12", "18"]
+lista_tempo = [f"f{str(n).zfill(3)}" for n in range(385)]
+for zulu in lista_zulu:
+	for tempo in lista_tempo:
+		download_gfs()
 
+#################################################################################
 
-
-	soup = BeautifulSoup(resposta.text, "html.parser")
-	form = soup.find("form")
-	form_action = form["action"]
-	"""
-	INVESTIGAÇÃO DENGUE A PARTIR DE 2014
-	Frequência por Mun infec SC e Sem.Epid.Sintomas
-	Classificacao Nova: Dengue com complicações, Febre Hemorrágica do Dengue, Síndrome do Choque do Dengue, Dengue, Dengue com sinais de alarme, Dengre grave
-	Conf.Desc pos2010: Laboratórial, Clínico-epidemiológico
-	Período:2014
-
-	<!--
-	<TABELA>
-	Planilha=
-	Titulo=INVESTIGAÇÃO DENGUE A PARTIR DE 2014
-	Def=sinan/def/dengon.def
-	Varmunic=
-	Linha=Mun_infec_SC
-	Coluna=Sem.Epid.Sintomas
-	Incremento=Frequência
-	SClassificacao_Nova=2
-	SClassificacao_Nova=3
-	SClassificacao_Nova=4
-	SClassificacao_Nova=7
-	SClassificacao_Nova=8
-	SClassificacao_Nova=9
-	SConf.Desc_pos2010=2
-	SConf.Desc_pos2010=3
-	Periodo=24
-	</TABELA>
-	-->
-	"""
-	form_data = {"Linha": "Mun infec SC", "Coluna": "Sem.Epid.Sintomas",
-				"Períodos Disponíveis": ano_atual,
-				"Classificacao Nova" : ["Dengue com complicações", "Febre Hemorrágica do Dengue",
-										"Síndrome do Choque do Dengue", "Dengue",
-										"Dengue com sinais de alarme", "Dengre grave"],
-				"Conf.Desc pos2010" : ["Laboratórial", "Clínico-epidemiológico"]}
-	resposta = requests.post(f"http://200.19.223.105{form_action}", data = form_data)
-	if resposta.status_code == 200:
-		df = pd.read_html(resposta.text)
-		#df = df[0]
-		arquivo = f"dengue_dive_{hoje}.csv"
-		df.to_csv(f"{caminho_dados}{arquivo}", index = False)
-		print(f"Download realizado com sucesso e salvo como:\n{arquivo}")
-	else:
-		print(f"Falha ao realizar download do arquivo diretamente de:\n{url_gfs}")
-
+"""
 #Automatizando aos Domingos e Verificando 2x/dia
 schedule.every().sunday.at("00:00").do(download_dengue) #.sunday.at("00:00") # .wednesday.at("12:03")
 print(f"\nTarefa Automatizada\nDownload de dados sobre dengue semanalmente (domingo)\nHoje: {hoje}\nDisponível em: {url_gfs}\n")
 while True:
     schedule.run_pending()
     time.sleep(1) # BID (12h/12h)(43200s)
-
+"""
 
