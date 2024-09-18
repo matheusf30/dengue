@@ -5,6 +5,13 @@
 
 ImportError: Missing optional dependency 'lxml', 'html5lib'.  Use pip or conda to install lxml html5lib
 Selenium -- CSS Selectors
+
+# cfs press
+https://nomads.ncep.noaa.gov/gribfilter.php?ds=cfs_pgb
+# cfs fluxo
+https://nomads.ncep.noaa.gov/gribfilter.php?ds=cfs_flx
+#gfs 
+https://nomads.ncep.noaa.gov/gribfilter.php?ds=gfs_0p25_1hr
 """
 
 # Bibliotecas correlatas
