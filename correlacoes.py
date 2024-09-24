@@ -176,8 +176,8 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				media_semana = timeindex.groupby("semana_epi")[["FOCOS", "CASOS", "PREC", "TMIN", "TMED", "TMAX"]].mean().round(2)
 				media_semana.reset_index(inplace = True)
 				print(f"\n{green}media_semana\n{reset}{media_semana}\n{green}media_semana.index\n{reset}{media_semana.index}")
-				media_semana[[ "PREC", "CASOS", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
-				media_semana[[ "PREC", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
+				#media_semana[[ "PREC", "CASOS", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
+				#media_semana[[ "PREC", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
 				#plt.show()
 				#sys.exit()
 				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
@@ -200,14 +200,14 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 								color = "orange", linewidth = 1.5, label = "Temperatura Média")
 				sns.lineplot(x = media_semana.index, y = media_semana["TMAX"],
 								color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
-				plt.title(f"CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+				plt.title(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
 				ax2.set_ylabel("Temperaturas (C)")
 				ax2.legend(loc = "upper right")
 				ax2.grid(False)
 				plt.show()
 				#sys.exit()
 				_cidade = _CIDADE
-				nome_arquivo = f"distribuicao_media_semanal_{_cidade}.pdf"
+				nome_arquivo = f"distribuicao_sazonalidade_semanal_{_cidade}.pdf"
 				if _SALVAR == True:
 					for velho, novo in troca.items():
 						_cidade = _cidade.replace(velho, novo)
@@ -244,32 +244,32 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				#sem_sazonal[["tmin","tmax", "obito"]].plot()
 				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
 				plt.gca().patch.set_facecolor("honeydew") #.gcf()
-				sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
+				sns.barplot(x = sem_sazonal["semana"], y = sem_sazonal["PREC"],
 								color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação") #"cornflowerblue"
-				sns.lineplot(x = media_semana.index, y = media_semana["CASOS"],
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["CASOS"],
 								color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
-				plt.fill_between(media_semana.index, media_semana["CASOS"], color = "purple", alpha = 0.3)
-				sns.lineplot(x = media_semana.index, y = media_semana["FOCOS"],
+				plt.fill_between(sem_sazonal.index, sem_sazonal["CASOS"], color = "purple", alpha = 0.3)
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["FOCOS"],
 								color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
-				plt.fill_between(media_semana.index, media_semana["FOCOS"], color = "darkgreen", alpha = 0.35)
+				plt.fill_between(sem_sazonal.index, sem_sazonal["FOCOS"], color = "darkgreen", alpha = 0.35)
 				plt.xlabel("Semanas Epidemiológicas")
 				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
 				plt.legend(loc = "upper center")
 				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
-				sns.lineplot(x = media_semana.index, y = media_semana["TMIN"],
-								color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
-				sns.lineplot(x = media_semana.index, y = media_semana["TMED"],
-								color = "orange", linewidth = 1.5, label = "Temperatura Média")
-				sns.lineplot(x = media_semana.index, y = media_semana["TMAX"],
-								color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
-				plt.title(f"CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMIN"],
+								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMED"],
+								color = "orange", linewidth = 1, label = "Temperatura Média")
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMAX"],
+								color = "red", linewidth = 1, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+				plt.title(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSEM SAZONALIDADE, SÉRIE HISTÓRICA PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
 				ax2.set_ylabel("Temperaturas (C)")
 				ax2.legend(loc = "upper right")
 				ax2.grid(False)
-				plt.show()
+				#plt.show()
 				#sys.exit()
 				_cidade = _CIDADE
-				nome_arquivo = f"distribuicao_media_semanal_{_cidade}.pdf"
+				nome_arquivo = f"distribuicao_sem_sazonal_{_cidade}.pdf"
 				if _SALVAR == True:
 					for velho, novo in troca.items():
 						_cidade = _cidade.replace(velho, novo)
@@ -286,83 +286,14 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 
 
 
-				for _LIMIAR in limiares_tmin:
-					print(_LIMIAR)
-					limite = tmin_sem.copy()
-					limite.set_index("Data", inplace = True)
-					limite.drop(columns = "tmin", inplace = True)
-					print(f"{ansi['red']}\nLIMIAR TMIN > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
-					limite.reset_index(inplace = True)
-					print(f"{ansi['yellow']}\nLIMIAR TMIN > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite["Data"] = pd.to_datetime(limite["Data"])
-					limite = limite.sort_values(by = ["Data"])
-					limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
-					limite = limite.groupby(["Semana"]).sum(numeric_only = True)
-					limite.reset_index(inplace = True)
-					limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
-					dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-					dataset.rename(columns = {f"{_CIDADE}" : f"L{_LIMIAR}_TMIN"}, inplace = True)
-					dataset[f"L{_LIMIAR}_TMIN_r{r}"] = dataset[f"L{_LIMIAR}_TMIN"].shift(-r)
-					dataset.drop(columns = f"L{_LIMIAR}_TMIN", inplace = True)
-					print(f"{ansi['green']}\nLIMIAR TMIN > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-				for _LIMIAR in limiares_tmax:
-					print(_LIMIAR)
-					limite = tmax_sem.copy()
-					limite.set_index("Data", inplace = True)
-					limite.drop(columns = "tmax", inplace = True)
-					print(f"{ansi['red']}\nLIMIAR TMAX > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
-					limite.reset_index(inplace = True)
-					print(f"{ansi['yellow']}\nLIMIAR TMAX > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite["Data"] = pd.to_datetime(limite["Data"])
-					limite = limite.sort_values(by = ["Data"])
-					limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
-					limite = limite.groupby(["Semana"]).sum(numeric_only = True)
-					limite.reset_index(inplace = True)
-					limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
-					dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-					dataset.rename(columns = {f"{_CIDADE}" : f"L{_LIMIAR}_TMAX"}, inplace = True)
-					dataset[f"L{_LIMIAR}_TMAX_r{r}"] = dataset[f"L{_LIMIAR}_TMAX"].shift(-r)
-					dataset.drop(columns = f"L{_LIMIAR}_TMAX", inplace = True)
-					print(f"{ansi['green']}\nLIMIAR TMAX > {_LIMIAR} C\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-				for _LIMIAR in limiares_prec:
-					print(_LIMIAR)
-					limite = prec_sem.copy()
-					limite.set_index("Data", inplace = True)
-					limite.drop(columns = "prec", inplace = True)
-					limite.dropna(inplace = True)
-					print(f"{ansi['red']}\nLIMIAR PREC > {_LIMIAR} mm\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite.dropna(inplace = True)
-					limite = limite.applymap(lambda x: 1 if x > _LIMIAR else 0)
-					limite.reset_index(inplace = True)
-					print(f"{ansi['yellow']}\nLIMIAR PREC > {_LIMIAR} mm\n{limite}\n{ansi['reset']}")
-					print(limite.info())
-					limite["Data"] = pd.to_datetime(limite["Data"])
-					limite = limite.sort_values(by = ["Data"])
-					limite["Semana"] = limite["Data"].dt.to_period("W-SAT").dt.to_timestamp()
-					limite = limite.groupby(["Semana"]).sum(numeric_only = True)
-					limite.reset_index(inplace = True)
-					limite["Semana"] = limite["Semana"].dt.strftime("%Y-%m-%d")
-					limite.drop([0], axis = 0, inplace = True)
-					dataset = dataset.merge(limite[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
-					dataset.rename(columns = {f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}, inplace = True)
-					dataset[f"L{_LIMIAR}_PREC_r{r}"] = dataset[f"L{_LIMIAR}_PREC"].shift(-r)
-					dataset.drop(columns = f"L{_LIMIAR}_PREC", inplace = True)
-					print(f"{ansi['green']}\nLIMIAR PREC > {_LIMIAR} mm\n{limite}\n{ansi['reset']}")
-					print(limite.info())
+
+
+
 				dataset.dropna(axis = 0, inplace = True)
 				dataset = dataset.iloc[:, :].copy()
-				print(dataset)
+				print(f"\n{green}dataset\n{reset}{dataset}\n{green}dataset.info()\n{reset}{dataset.info()}")
 				print(dataset.info())
-				#sys.exit()
+				sys.exit()
 				if _ANO == "2023":
 					dataset = dataset.iloc[-53:, :].copy()
 					print("\n\n2023\n\n")
