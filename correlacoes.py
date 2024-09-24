@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt 
 import matplotlib as mpl             
 import pandas as pd
+from datetime import timedelta
 import numpy as np
 import seaborn as sns
 import statsmodels as sm
@@ -33,11 +34,23 @@ _CIDADE = "Florianópolis" #"Florianópolis"#"Itajaí"#"Joinville"#"Chapecó"
 _METODO = "spearman" # "pearson" # "spearman" # "kendall"
 
 _CIDADE = _CIDADE.upper()
+
 ##### Padrão ANSI ##################################
 ansi = {"bold" : "\033[1m", "red" : "\033[91m",
         "green" : "\033[92m", "yellow" : "\033[33m",
         "blue" : "\033[34m", "magenta" : "\033[35m",
         "cyan" : "\033[36m", "white" : "\033[37m", "reset" : "\033[0m"}
+##### Padrão ANSI ###############################################################
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
+reset = "\033[0m"
+#################################################################################
 #################################################################################
 
 ### Encaminhamento aos Diretórios
@@ -82,7 +95,19 @@ tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}", low_memory = False)
 tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}", low_memory = False)
 tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 
+#################################################################################
+### Função Semana Epidemiológica (Semana que acabe no sábado tendo 4 dias iniciando no ano)
+#################################################################################
 
+def semana_epidemio(data):
+    jan1sab = pd.Timestamp(year = data.year, month=1, day=1)
+    sab1 = jan1sab + timedelta(days = (5 - jan1sab.weekday() + 7) % 7)
+    if sab1.day >= 4:
+        dias_inicio = (data - jan1sab).days
+        semana_epi = (dias_inicio + 1) // 7 + 1
+    else:
+        semana_epi = (data - jan1sab).days // 7 + 1
+    return semana_epi
 
 #################################################################################
 ### Correlacionando (Anomalias Estacionárias)
@@ -105,57 +130,78 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 			for r in lista_retro:
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
+				dataset["TMIN"] = tmin[_CIDADE].copy()
+				dataset["TMED"] = tmed[_CIDADE].copy()
+				dataset["TMAX"] = tmax[_CIDADE].copy()
 				dataset = dataset.merge(focos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset = dataset.merge(casos[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				dataset = dataset.merge(prec[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				#dataset = dataset.merge(tmin[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				#dataset = dataset.merge(tmed[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
+				#dataset = dataset.merge(tmax[["Semana", _CIDADE]], how = "left", on = "Semana").copy()
 				dataset.dropna(axis = 0, inplace = True)
-				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS"}#,  f"{_CIDADE}" : f"L{_LIMIAR}_PREC"}
+				print(f"{green}\ndataset\n{reset}{dataset}\n")
+				#sys.exit()
+				troca_nome = {f"{_CIDADE}_x" : "FOCOS", f"{_CIDADE}_y" : "CASOS",  f"{_CIDADE}" : "PREC"}
 				dataset.rename(columns = troca_nome, inplace = True)
 				dataset.set_index("Semana", inplace = True)
 				dataset.columns.name = f"{_CIDADE}"
-				print(f"\n \n DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}) \n")
-				print(dataset.info())
+				print(f"\n \n {cyan}DATASET PARA INICIAR MATRIZ DE CORRELAÇÃO ({_METODO.title()}{reset}) \n")
+				print(f"\n{green}dataset.info()\n{reset}{dataset.info()}\n")
 				print("~"*80)
-				print(dataset.dtypes)
+				print(f"\n{green}dataset.dtypes\n{reset}{dataset.dtypes}\n")
 				print("~"*80)
-				print(dataset)
-				sys.exit()
+				print(f"\n{green}dataset\n{reset}{dataset}\n")
+				#sys.exit()
 				### Tratando Sazonalidade
 				timeindex = dataset.copy()
-				#timeindex = timeindex.set_index("data")
-				timeindex["semana"] = timeindex.index.dayofyear
-				# df['Epidemic Week'] = df['Date'].apply(lambda x: x.isocalendar()[1])
-				"""
-				# Convert the string date to a datetime object
-date = datetime.strptime(date_str, '%Y-%m-%d')
-
-# Get the week number of the year using %U
-week_number = date.strftime('%U')
-				"""
-				#timeindex["mes_dia"] = timeindex.index.to_period('M').astype(str) + '-' + timeindex.index.day.astype(str)
-				print("\ntimeindex\n", timeindex, timeindex.info())
-				#sys.exit()
+				print(f"\n{green}timeindex\n{reset}{timeindex}\n{green}timeindex.info()\n{reset}{timeindex.info()}")
+				timeindex.reset_index(inplace = True)
+				print(f"\n{green}timeindex\n{reset}{timeindex}\n")#{green}timeindex.info()\n{reset}{timeindex.info()}")
+				timeindex["semana"] = pd.to_datetime(timeindex["Semana"]).dt.date
+				timeindex = timeindex.astype({"semana": "datetime64[ns]", "FOCOS" : "int64", "CASOS" : "int64"})
+				timeindex.drop(columns = "Semana", inplace = True)
+				timeindex["semana_epi"] = timeindex['semana'].apply(semana_epidemio)
+				print(f"\n{green}timeindex\n{reset}{timeindex}\n{green}timeindex.info()\n{reset}{timeindex.info()}")
+				print(f"\n{green}timeindex\n{reset}{timeindex}\n{green}timeindex.info()\n{reset}{timeindex.info()}\n{green}timeindex.dtypes\n{reset}{timeindex.dtypes}\n")
 				print("="*80)
-				media_dia = timeindex.groupby("dia").mean().round(2)
-				media_dia.reset_index(inplace = True)
-				print(media_dia)
-				print(media_dia.index)
-				plt.figure(figsize = (10, 6), layout = "tight", frameon = False)
-				sns.lineplot(x = media_dia["dia"], y = media_dia["obito"],
-								color = "black", linewidth = 1, label = "Óbito")
-				sns.lineplot(x = media_dia["dia"], y = media_dia["tmin"],
+				media_semana = timeindex.groupby("semana_epi")[["FOCOS", "CASOS", "PREC", "TMIN", "TMED", "TMAX"]].mean().round(2)
+				media_semana.reset_index(inplace = True)
+				print(f"\n{green}media_semana\n{reset}{media_semana}\n{green}media_semana.index\n{reset}{media_semana.index}")
+				media_semana[[ "PREC", "CASOS", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
+				media_semana[[ "PREC", "FOCOS", "TMIN", "TMED", "TMAX"]].plot()
+				#plt.show()
+				#sys.exit()
+				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
+				plt.gcf().patch.set_facecolor("honeydew")
+				sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
+								color = "lightblue", linewidth = 1, alpha = 0.5, label = "Precipitação")
+				sns.lineplot(x = media_semana.index, y = media_semana["CASOS"],
+								color = "purple", linewidth = 1.5, linestyle = "--", label = "Casos de Dengue")
+				sns.lineplot(x = media_semana.index, y = media_semana["FOCOS"],
+								color = "darkgreen", linewidth = 1.5, linestyle = "-.", label = "Focos de _Aedes_ sp.")
+				plt.xlabel("Semanas Epidemiológicas")
+				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
+				plt.legend(loc = "upper center")
+				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
+				sns.lineplot(x = media_semana.index, y = media_semana["TMIN"],
 								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
-				sns.lineplot(x = media_dia["dia"], y = media_dia["tmax"],
+				sns.lineplot(x = media_semana.index, y = media_semana["TMED"],
+								color = "orange", linewidth = 1, label = "Temperatura Média")
+				sns.lineplot(x = media_semana.index, y = media_semana["TMAX"],
 								color = "red", linewidth = 1, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
-				plt.title("DISTRIBUIÇÃO DE TEMPERATURA MÍNIMA, TEMPERATURA MÁXIMA E ÓBITOS CARDIOVASCULARES.\nMÉDIAS ANUAIS PARA O MUNICÍPIO DE PORTO ALEGRE, RIO GRANDE DO SUL.")
-				plt.xlabel("Série Histórica (Observação Diária)")
-				plt.ylabel("Número de Óbitos Cardiovasculares X Temperaturas (C)")
-				#media_dia[["obito","tmin","tmax"]].plot()
+				plt.title(f"DISTRIBUIÇÃO DE CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS MÍNIMA, MÉDIA E MÁXIMA\n E PRECIPITAÇÃO. MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+				ax2.set_ylabel("Temperaturas (C)")
+				ax2.legend(loc = "upper right")
+				ax2.grid(False)
+				plt.show()
+				sys.exit()
 				if _SALVAR == "True":
 					caminho_correlacao = "/home/sifapsc/scripts/matheus/RS_saude_precisao/resultados/porto_alegre/descritiva/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
 					plt.savefig(f'{caminho_correlacao}distibuicao_medianual_tmin_tmax_obitos_Porto_Alegre.pdf',
 								format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
+					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\2
 					{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
 					NOME DO ARQUIVO: {caminho_correlacao}distibuicao_medianual_tmin_tmax_obitos_Porto_Alegre.pdf{ansi['reset']}\n""")
 				if _VISUALIZAR == "True":
