@@ -95,6 +95,14 @@ tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}", low_memory = False)
 tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}", low_memory = False)
 tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 
+############### Base para Troca de Caracteres
+troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
+		'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
+		'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
+		'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
+		'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
+		'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+
 #################################################################################
 ### Função Semana Epidemiológica (Semana que acabe no sábado tendo 4 dias iniciando no ano)
 #################################################################################
@@ -173,42 +181,49 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				#plt.show()
 				#sys.exit()
 				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
-				plt.gcf().patch.set_facecolor("honeydew")
+				plt.gca().patch.set_facecolor("honeydew") #.gcf()
 				sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
-								color = "cornflowerblue", linewidth = 1, alpha = 0.5, label = "Precipitação")
+								color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação") #"cornflowerblue"
 				sns.lineplot(x = media_semana.index, y = media_semana["CASOS"],
-								color = "purple", linewidth = 1.5, linestyle = "--", label = "Casos de Dengue")
+								color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+				plt.fill_between(media_semana.index, media_semana["CASOS"], color = "purple", alpha = 0.3)
 				sns.lineplot(x = media_semana.index, y = media_semana["FOCOS"],
-								color = "darkgreen", linewidth = 1.5, linestyle = "-.", label = "Focos de _Aedes_ sp.")
+								color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+				plt.fill_between(media_semana.index, media_semana["FOCOS"], color = "darkgreen", alpha = 0.35)
 				plt.xlabel("Semanas Epidemiológicas")
 				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
 				plt.legend(loc = "upper center")
 				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
 				sns.lineplot(x = media_semana.index, y = media_semana["TMIN"],
-								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
+								color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
 				sns.lineplot(x = media_semana.index, y = media_semana["TMED"],
-								color = "orange", linewidth = 1, label = "Temperatura Média")
+								color = "orange", linewidth = 1.5, label = "Temperatura Média")
 				sns.lineplot(x = media_semana.index, y = media_semana["TMAX"],
-								color = "red", linewidth = 1, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
-				plt.title(f"DISTRIBUIÇÃO DE CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS MÍNIMA, MÉDIA E MÁXIMA\n E PRECIPITAÇÃO. MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+								color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+				plt.title(f"CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
 				ax2.set_ylabel("Temperaturas (C)")
 				ax2.legend(loc = "upper right")
 				ax2.grid(False)
 				plt.show()
-				sys.exit()
-				if _SALVAR == "True":
-					caminho_correlacao = "/home/sifapsc/scripts/matheus/RS_saude_precisao/resultados/porto_alegre/descritiva/"
+				#sys.exit()
+				_cidade = _CIDADE
+				nome_arquivo = f"distribuicao_media_semanal_{_cidade}.pdf"
+				if _SALVAR == True:
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
-					plt.savefig(f'{caminho_correlacao}distibuicao_medianual_tmin_tmax_obitos_Porto_Alegre.pdf',
-								format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\2
-					{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
-					NOME DO ARQUIVO: {caminho_correlacao}distibuicao_medianual_tmin_tmax_obitos_Porto_Alegre.pdf{ansi['reset']}\n""")
-				if _VISUALIZAR == "True":
-					print(f"{ansi['green']}Exibindo a distribuição de tmin, tmax e óbitos do município de Porto Alegre. Média Anual. {ansi['reset']}")
+					plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{green}SALVO COM SUCESSO!\n
+	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+				if _VISUALIZAR == True:
+					print(f"\n{cyan}Visualizando:\n{caminho_correlacao}{nome_arquivo}\n{reset}")
 					plt.show()
-				componente_sazonal = timeindex.merge(media_dia, left_on = "dia", how = "left", suffixes = ("", "_media"), right_index = True)
+				componente_sazonal = timeindex.merge(media_semana, left_on = "semana_epi", how = "left", suffixes = ("", "_media"), right_index = True)
 				sem_sazonal = pd.DataFrame(index = timeindex.index)
+				semanas  = componente_sazonal["semana"]
+				componente_sazonal.drop(columns = "semana", inplace = True)
 				print(componente_sazonal)
 				for coluna in timeindex.columns:
 					if coluna in componente_sazonal.columns:
@@ -216,35 +231,57 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 						if media_coluna in componente_sazonal.columns:
 							sem_sazonal[coluna] = timeindex[coluna] - componente_sazonal[media_coluna]
 						else:
-							print(f"{ansi['red']}Coluna {media_coluna} não encontrada no componente sazonal!{ansi['reset']}")
+							print(f"{red}Coluna {media_coluna} não encontrada no componente sazonal!{reset}")
 					else:
-						print(f"{ansi['red']}Coluna {coluna} não encontrada no timeindex!{ansi['reset']}")
-				sem_sazonal.drop(columns = "dia", inplace = True)
-				print(sem_sazonal)
-				print(sem_sazonal.columns)
+						print(f"{red}Coluna {coluna} não encontrada no timeindex!{reset}")
+				sem_sazonal.drop(columns = "semana_epi", inplace = True)
+				sem_sazonal["semana"] = semanas
+				sem_sazonal.dropna(inplace = True)
+				sem_sazonal = sem_sazonal[['semana', 'FOCOS', 'CASOS', 'PREC', 'TMIN', 'TMED', 'TMAX']]
+				print(f"\n{green}sem_sazonal\n{reset}{sem_sazonal}\n")
+				print(f"\n{green}sem_sazonal.columns\n{reset}{sem_sazonal.columns}\n")
+				#sys.exit()
 				#sem_sazonal[["tmin","tmax", "obito"]].plot()
-				plt.figure(figsize = (10, 6), layout = "tight", frameon = False)
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["tmin"],
-								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["tmax"],
-								color = "red", linewidth = 1, label = "Temperatura Máxima", alpha = 0.7)#, linewidth = 3
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["obito"],
-								color = "black", linewidth = 1, label = "Óbito", alpha = 0.7)
-				plt.title("DISTRIBUIÇÃO DE TEMPERATURA MÍNIMA, TEMPERATURA MÁXIMA E ÓBITOS CARDIOVASCULARES.\nSEM SAZONALIDADE AO LONGO DOS ANOS PARA O MUNICÍPIO DE PORTO ALEGRE, RIO GRANDE DO SUL.")
-				plt.xlabel("Série Histórica (Observação Diária)")
-				plt.ylabel("Número de Óbitos Cardiovasculares X Temperaturas (C)")
-				if _SALVAR == "True":
-					caminho_correlacao = "/home/sifapsc/scripts/matheus/RS_saude_precisao/resultados/porto_alegre/descritiva/"
+				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
+				plt.gca().patch.set_facecolor("honeydew") #.gcf()
+				sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
+								color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação") #"cornflowerblue"
+				sns.lineplot(x = media_semana.index, y = media_semana["CASOS"],
+								color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+				plt.fill_between(media_semana.index, media_semana["CASOS"], color = "purple", alpha = 0.3)
+				sns.lineplot(x = media_semana.index, y = media_semana["FOCOS"],
+								color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+				plt.fill_between(media_semana.index, media_semana["FOCOS"], color = "darkgreen", alpha = 0.35)
+				plt.xlabel("Semanas Epidemiológicas")
+				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
+				plt.legend(loc = "upper center")
+				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
+				sns.lineplot(x = media_semana.index, y = media_semana["TMIN"],
+								color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
+				sns.lineplot(x = media_semana.index, y = media_semana["TMED"],
+								color = "orange", linewidth = 1.5, label = "Temperatura Média")
+				sns.lineplot(x = media_semana.index, y = media_semana["TMAX"],
+								color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+				plt.title(f"CASOS DE DENDUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+				ax2.set_ylabel("Temperaturas (C)")
+				ax2.legend(loc = "upper right")
+				ax2.grid(False)
+				plt.show()
+				#sys.exit()
+				_cidade = _CIDADE
+				nome_arquivo = f"distribuicao_media_semanal_{_cidade}.pdf"
+				if _SALVAR == True:
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
-					plt.savefig(f'{caminho_correlacao}distibuicao_seriehistorica_semsazonal_tmin_tmax_obitos_Porto_Alegre.pdf',
-								format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
-					{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
-					NOME DO ARQUIVO: {caminho_correlacao}distibuicao_seriehistorica_semsazonal_tmin_tmax_obitos_Porto_Alegre.pdf{ansi['reset']}\n""")
-				if _VISUALIZAR == "True":
-					print(f"{ansi['green']}Exibindo a distribuição de tmin, tmax e óbitos do município de Porto Alegre. Série histórica.{ansi['reset']}")
+					plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{green}SALVO COM SUCESSO!\n
+	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+				if _VISUALIZAR == True:
+					print(f"\n{cyan}Visualizando:\n{caminho_correlacao}{nome_arquivo}\n{reset}")
 					plt.show()
-
 
 
 
