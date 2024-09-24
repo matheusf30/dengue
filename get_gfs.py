@@ -62,7 +62,7 @@ def download_gfs():
 	url_gfs = f"{url_ncep}{filtro_gfs}{recorte_atual}{arquivo}{variaveis}{recorte_regiao}"
 	ano_atual = str(datetime.today().year)
 	hoje = datetime.today().strftime("%Y-%m-%d")
-	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	caminho_dados = f"/media/dados/operacao/gfs/0p25/{data}/"
 	nome_arquivo = f"{arquivo}_{data}.grib2"
 	caminho_arquivo = f"{caminho_dados}{nome_arquivo}"
 	nome_arquivo_nc = f"{arquivo}_{data}.nc"
@@ -72,6 +72,7 @@ def download_gfs():
 	#### Response/Request
 	resposta = requests.get(url_gfs, stream = True)
 	if resposta.status_code == 200:
+		os.makedirs(caminho_dados, exist_ok = True)
 		with open(caminho_arquivo, "wb") as file:
 			for chunk in resposta.iter_content(chunk_size = 999999999):
 				file.write(chunk)
