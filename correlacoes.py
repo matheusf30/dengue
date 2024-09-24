@@ -175,11 +175,11 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
 				plt.gcf().patch.set_facecolor("honeydew")
 				sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
-								color = "lightblue", linewidth = 1, alpha = 0.5, label = "Precipitação")
-				sns.lineplot(x = media_semana.index, y = media_semana["CASOS"],
-								color = "purple", linewidth = 1.5, linestyle = "--", label = "Casos de Dengue")
-				sns.lineplot(x = media_semana.index, y = media_semana["FOCOS"],
-								color = "darkgreen", linewidth = 1.5, linestyle = "-.", label = "Focos de _Aedes_ sp.")
+								color = "cornflowerblue", linewidth = 1, alpha = 0.5, label = "Precipitação")
+				sns.lineplot(data = media_semana, x = media_semana.index, y = media_semana["CASOS"],
+								color = "purple", linewidth = 1.5, style = "event", markers = True, label = "Casos de Dengue")
+				sns.lineplot(data = media_semana, x = media_semana.index, y = media_semana["FOCOS"],
+								color = "darkgreen", linewidth = 1.5, style = "event", markers = True, label = "Focos de _Aedes_ sp.") #linestyle = "-."
 				plt.xlabel("Semanas Epidemiológicas")
 				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
 				plt.legend(loc = "upper center")
