@@ -80,10 +80,10 @@ def download_gfs():
 								filter_by_keys = {"stepType" : "instant"},
 								errors = "ignore")
 			ds.to_netcdf(caminho_arquivo_nc)
-		print(f"{green}\nDownload realizado com sucesso e salvo como:\n{nome_arquivo}\n{nome_arquivo_nc}\n{reset}")
+		print(f"{green}\nDownload realizado com sucesso e salvo como:\n{caminho_dados}\n{nome_arquivo}\n{nome_arquivo_nc}\n{reset}")
 		os.remove(caminho_arquivo)
 		os.remove(caminho_arquivo_idx)
-		print(f"{cyan}\nRemoção realizada com sucesso e salvo como:\n{nome_arquivo}\n{reset}")
+		print(f"{cyan}\nRemoção realizada com sucesso:\n{nome_arquivo}\n{reset}")
 	else:
 		print(f"""
 {red}Falha ao realizar download do arquivo diretamente de: {url_gfs}
