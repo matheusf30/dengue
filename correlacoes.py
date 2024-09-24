@@ -6,6 +6,8 @@ from datetime import timedelta
 import numpy as np
 import seaborn as sns
 import statsmodels as sm
+import pymannkendall as mk
+import xarray as xr
 ### Suporte
 import sys
 import os
@@ -252,9 +254,13 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["FOCOS"],
 								color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
 				plt.fill_between(sem_sazonal.index, sem_sazonal["FOCOS"], color = "darkgreen", alpha = 0.35)
-				plt.xlabel("Semanas Epidemiológicas")
+				plt.xlabel("Semanas Epidemiológicas na Série Histórica")
+				ano_serie = sem_sazonal["semana"].dt.year.unique()
+				print(f"{green}sem_sazonal['semana'].dt.year.unique()\n{reset}{sem_sazonal['semana'].dt.year.unique()}")
+				plt.xticks([sem_sazonal[sem_sazonal["semana"].dt.year == ano].index[0] for ano in ano_serie],
+							[str(ano) for ano in ano_serie], rotation = "horizontal")
 				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
-				plt.legend(loc = "upper center")
+				plt.legend(loc = "upper left")
 				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
 				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMIN"],
 								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
@@ -282,6 +288,34 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				if _VISUALIZAR == True:
 					print(f"\n{cyan}Visualizando:\n{caminho_correlacao}{nome_arquivo}\n{reset}")
 					plt.show()
+				### Verificando Tendência
+				colunas = ['FOCOS', 'CASOS', 'PREC', 'TMIN', 'TMED', 'TMAX']
+				for c in colunas:
+					tendencia = mk.original_test(sem_sazonal[c])
+					if tendencia.trend == "decreasing":
+						print(f"\n{ansi['red']}{c}\n{tendencia.trend}{ansi['reset']}\n")
+					if tendencia.trend == "no trend":
+						print(f"\n{ansi['cyan']}{c}\n{tendencia.trend}{ansi['reset']}\n")
+					elif tendencia.trend == "increasing":
+						print(f"\n{ansi['green']}{c}\n{tendencia.trend}{ansi['reset']}\n")
+				#	else:
+				#		print(f"\n{ansi['magenta']}NÃO EXECUTANDO\n{c}{ansi['reset']}\n")
+				# Tratando Tendência
+				# anomalia_estacionaria = dados - ( a + b * x )
+				#sys.exit()
+				anomalia_estacionaria = pd.DataFrame()
+				for c in colunas:
+					print(f"{cyan}\nVARIÁVEL\n\n{c}{reset}\n")
+					print(f"\n{green}sem_sazonal[c]\n{reset}{sem_sazonal[c]}\n")
+					tendencia = mk.original_test(sem_sazonal[c])
+					print(f"\n{green}tendencia\n{reset}{tendencia}\n")
+					sem_tendencia = sem_sazonal[c] -(tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
+					anomalia_estacionaria[c] = sem_tendencia
+				print(f"{ansi['green']}\nsem_sazonal\n{ansi['reset']}", sem_sazonal)
+				print(f"{ansi['green']}\nanomalia_estacionaria\n{ansi['reset']}", anomalia_estacionaria)
+				#sys.exit()
+				sys.exit()
+
 
 
 
