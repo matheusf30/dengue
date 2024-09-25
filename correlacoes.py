@@ -17,8 +17,8 @@ import os
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
 _AUTOMATIZA = True
-_SALVAR = False
-_VISUALIZAR = True
+_SALVAR = True
+_VISUALIZAR = False
 
 _LIMIAR_RETRO = False
 _CLIMA = False
@@ -97,9 +97,6 @@ tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}", low_memory = False)
 tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}", low_memory = False)
 tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 
-print(prec.iloc["Semana"])
-sys.exit()
-
 
 ############### Base para Troca de Caracteres
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
@@ -118,7 +115,7 @@ def semana_epidemio(data):
     sab1 = jan1sab + timedelta(days = (5 - jan1sab.weekday() + 7) % 7)
     if sab1.day >= 4:
         dias_inicio = (data - jan1sab).days
-        semana_epii = (dias_inicio + 1) // 7 + 1
+        semana_epi = (dias_inicio + 1) // 7 + 1
     else:
         semana_epi = (data - jan1sab).days // 7 + 1
     return semana_epi
@@ -137,7 +134,7 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 		print(_CIDADE)
 		for _METODO in lista_metodo:
 			print(_METODO)
-			for r in lista_retro:
+			for _ANO in lista_anos:
 				### Montando dataset
 				dataset = tmin[["Semana"]].copy()
 				dataset["TMIN"] = tmin[_CIDADE].copy()
@@ -206,7 +203,7 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				ax2.set_ylabel("Temperaturas (C)")
 				ax2.legend(loc = "upper right")
 				ax2.grid(False)
-				plt.show()
+				#plt.show()
 				#sys.exit()
 				_cidade = _CIDADE
 				nome_arquivo = f"distribuicao_sazonalidade_semanal_{_cidade}.pdf"
@@ -262,11 +259,11 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
 				plt.legend(loc = "upper left")
 				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMIN"],
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMIN"], alpha = 0.5,
 								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMED"],
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMED"], alpha = 0.5,
 								color = "orange", linewidth = 1, label = "Temperatura Média")
-				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMAX"],
+				sns.lineplot(x = sem_sazonal.index, y = sem_sazonal["TMAX"], alpha = 0.5,
 								color = "red", linewidth = 1, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
 				plt.title(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSEM SAZONALIDADE, SÉRIE HISTÓRICA PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
 				ax2.set_ylabel("Temperaturas (C)")
@@ -311,40 +308,42 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 					print(f"\n{green}tendencia\n{reset}{tendencia}\n")
 					sem_tendencia = sem_sazonal[c] -(tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
 					anomalia_estacionaria[c] = sem_tendencia
-				print(f"{ansi['green']}\nsem_sazonal\n{ansi['reset']}", sem_sazonal)
-				print(f"{ansi['green']}\nanomalia_estacionaria\n{ansi['reset']}", anomalia_estacionaria)
+				print(f"{green}\nsem_sazonal\n{reset}{sem_sazonal}\n")
+				print(f"{green}\nanomalia_estacionaria\n{reset}{anomalia_estacionaria}\n")
 				#sys.exit()
-				sys.exit()
-
-
-
-
-
-
-
-
+				dataset = anomalia_estacionaria.copy()
 				dataset.dropna(axis = 0, inplace = True)
-				dataset = dataset.iloc[:, :].copy()
 				print(f"\n{green}dataset\n{reset}{dataset}\n{green}dataset.info()\n{reset}{dataset.info()}")
-				print(dataset.info())
-				sys.exit()
+				print(f"\n{green}2023\ndataset.iloc[-52:, :]\n{reset}{dataset.iloc[-52:, :]}\n")
+				print(f"\n{green}2022\ndataset.iloc[-104:-52, :]\n{reset}{dataset.iloc[-104:-52, :]}\n")
+				print(f"\n{green}2021\ndataset.iloc[-156:-104, :]\n{reset}{dataset.iloc[-156:-104, :]}\n")
+				print(f"\n{green}2020\ndataset.iloc[-208:-156, :]\n{reset}{dataset.iloc[-208:-156, :]}\n")
+				#sys.exit()
 				if _ANO == "2023":
-					dataset = dataset.iloc[-53:, :].copy()
+					dataset = dataset.iloc[-52:, :].copy()
 					print("\n\n2023\n\n")
 				elif _ANO == "2022":
-					dataset = dataset.iloc[-105:-53, :].copy()
+					dataset = dataset.iloc[-104:-52, :].copy()
 					print("\n\n2022\n\n")
 				elif _ANO == "2021":
-					dataset = dataset.iloc[-157:-105, :].copy()
+					dataset = dataset.iloc[-156:-104, :].copy()
 					print("\n\n2021\n\n")
 				elif _ANO == "2020":
-					dataset = dataset.iloc[-209:-157, :].copy()
+					dataset = dataset.iloc[-208:-156, :].copy()
 					print("\n\n2020\n\n")
 				else:
-					print(f"{ansi['red']}{_ANO} fora da abordagem desse roteiro!\n\n{ansi['cyan']}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{ansi['green']}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {ansi['magenta']} intencionalmente!{ansi['reset']}")
+					print(f"{red}{_ANO} fora da abordagem desse roteiro!\n\n{cyan}Por favor, recodifique-o ou utilize um dos seguintes anos:\n{green}\n2020\n2021\n2022\n2023\n\nA correlação será realizada pela SÉRIE HISTÓRICA {magenta} intencionalmente!{reset}")
+				dataset = dataset[["FOCOS", "CASOS", "TMIN", "TMED", "TMAX", "PREC"]]
+				for r in range(1, _RETROAGIR + 1):
+					#dataset[f"TMIN_r{r}"] = dataset[f"TMIN"].shift(-r)
+					dataset[f"TMED_r{r}"] = dataset[f"TMED"].shift(-r)
+					#dataset[f"TMAX_r{r}"] = dataset[f"TMAX"].shift(-r)
+					dataset[f"PREC_r{r}"] = dataset[f"PREC"].shift(-r)
 				dataset.dropna(inplace = True)
-				dataset.drop(columns = "Semana", inplace = True)
+				#dataset.drop(columns = "Semana", inplace = True)
 				dataset.columns.name = f"{_CIDADE}"
+				print(f"\n{green}dataset\n{reset}{dataset}\n")
+				#sys.exit()
 				### Matriz de Correlações
 				correlacao_dataset = dataset.corr(method = f"{_METODO}")
 				print("="*80)
@@ -356,41 +355,25 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				fig, ax = plt.subplots(figsize = (18, 8), layout = "constrained", frameon = False)
 				filtro = np.triu(np.ones_like(correlacao_dataset, dtype = bool), k = 1)
 				sns.heatmap(correlacao_dataset, annot = True, cmap = "Spectral",
-                            vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
+		                    vmin = -1, vmax = 1, linewidth = 0.5, mask = filtro)
 				ax.set_yticklabels(ax.get_yticklabels(), rotation = "horizontal")
 				ax.set_xticklabels(ax.get_xticklabels(), rotation = 75)
 				if _ANO == "total":
-					if r == 0:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; sem retroagir)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
-					elif r == 1:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {r} semana epidemiológica)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
-					else:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {r} semanas epidemiológicas)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre ANOMALIAS ESTACIONÁRIAS** EM {_CIDADE}\n*(Método de {_METODO.title()}; durante a série histórica; retroagindo {_RETROAGIR} semanas epidemiológicas)\n**(Casos de Dengue, Focos de _Aedes_ sp., Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
 				else:
-					if r == 0:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; sem retroagir)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
-					elif r == 1:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {r} semana epidemiológica)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
-					else:
-						fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre FOCOS, CASOS e LIMIARES CLIMATOLÓGICOS** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {r} semanas epidemiológicas)\n**(Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
-					_cidade = _CIDADE
-					troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
-							'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
-							'Í': 'I', 'Î': 'I', 'Ì': 'I', 'Ĩ': 'I', 'Ï': 'I',
-							'Ó': 'O', 'Ô': 'O', 'Ò': 'O', 'Õ': 'O', 'Ö': 'O',
-							'Ú': 'U', 'Û': 'U', 'Ù': 'U', 'Ũ': 'U', 'Ü': 'U',
-							'Ç': 'C', " " : "_", "'" : "_", "-" : "_"}
+					fig.suptitle(f"MATRIZ DE CORRELAÇÃO* entre ANOMALIAS ESTACIONÁRIAS** EM {_CIDADE}\n*(Método de {_METODO.title()}; em {_ANO}; retroagindo {_RETROAGIR} semanas epidemiológicas)\n**(Casos de Dengue, Focos de _Aedes_ sp., Temperatura Mínima (C), Temperatura Máxima (C) e Precipitação(mm))", weight = "bold", size = "medium")
+				nome_arquivo = f"matriz_correlacao_{_METODO}_anomaliaestacionaria_{_cidade}_{_ANO}_r{_RETROAGIR}s.pdf"
 				if _SALVAR == True:
 					for velho, novo in troca.items():
 						_cidade = _cidade.replace(velho, novo)
-					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/retrolimiar/"
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
-					plt.savefig(f'{caminho_correlacao}matriz_correlacao_{_METODO}_retrolimiar_{_cidade}_{_ANO}_r{r}s.pdf', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
-					print(f"""\n{ansi['green']}SALVO COM SUCESSO!\n
-	{ansi['cyan']}ENCAMINHAMENTO: {caminho_correlacao}\n
-	NOME DO ARQUIVO: matriz_correlacao_{_METODO}_retrolimiar_{_cidade}_{_ANO}_r{r}s.pdf{ansi['reset']}\n""")
+					plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{green}SALVO COM SUCESSO!\n
+	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
 				if _VISUALIZAR == True:
-					print(f"{ansi['cyan']} Visualizando: matriz_correlacao_{_METODO}_retrolimiar_{_cidade}_{_ANO}_r{r}s.pdf{ansi['reset']}\n")
+					print(f"{cyan} Visualizando: {nome_arquivo}{reset}\n")
 					plt.show()
 
 
