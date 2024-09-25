@@ -670,7 +670,7 @@ for i in range(1, total_semana + 1):
     chave_semana = f"Semana {n_semana}"
     lista_str_semanas.append(chave_semana)
 inicio = datetime(ano, 1, 1)
-fim = datetime(ano, 12, 24)
+fim = datetime(ano, 12, 31)
 lista_semanas = []
 semana_corrente = inicio
 while semana_corrente <= fim:
@@ -715,8 +715,8 @@ for i in range(1, total_semana + 1):
     n_semana = str(i).zfill(2)
     chave_semana = f"Semana {n_semana}"
     lista_str_semanas.append(chave_semana)
-inicio = datetime(ano, 1, 1)
-fim = datetime(ano, 12, 23)
+inicio = datetime(ano, 1, 7)
+fim = datetime(ano, 12, 30)
 lista_semanas = []
 semana_corrente = inicio
 while semana_corrente <= fim:
