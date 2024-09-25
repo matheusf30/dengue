@@ -156,7 +156,7 @@ else:
 	print("REAVALIAR FONTE DOS DADOS BRUTOS!")
 
 ### Renomeação variáveis pelos arquivos
-municipios = "SC_Municipios_2022.shp"
+municipios = "shapefiles/SC_Municipios_2022.shp"
 # Fonte: TABNET/DATASUS - SINAN/SC
 if _fonte == "DATASUS":
 	casos14 = "sinannet_denguebsc_2014.csv"
