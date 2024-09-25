@@ -16,9 +16,14 @@ import os
 
 _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
 
-_AUTOMATIZA = True
-_SALVAR = True
-_VISUALIZAR = False
+##################### Valores Booleanos ############ # sys.argv[0] is the script name itself and can be ignored!
+_AUTOMATIZAR = sys.argv[1]   # True|False                    #####
+_AUTOMATIZA = True if _AUTOMATIZAR == "True" else False      #####
+_VISUALIZAR = sys.argv[2]    # True|False                    #####
+_VISUALIZAR = True if _VISUALIZAR == "True" else False       #####
+_SALVAR = sys.argv[3]        # True|False                    #####
+_SALVAR = True if _SALVAR == "True" else False               #####
+##################################################################
 
 _LIMIAR_RETRO = False
 _CLIMA = False
@@ -206,10 +211,10 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				#plt.show()
 				#sys.exit()
 				_cidade = _CIDADE
+				for velho, novo in troca.items():
+					_cidade = _cidade.replace(velho, novo)
 				nome_arquivo = f"distribuicao_sazonalidade_semanal_{_cidade}.pdf"
 				if _SALVAR == True:
-					for velho, novo in troca.items():
-						_cidade = _cidade.replace(velho, novo)
 					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
 					os.makedirs(caminho_correlacao, exist_ok = True)
 					plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
@@ -271,7 +276,6 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 				ax2.grid(False)
 				#plt.show()
 				#sys.exit()
-				_cidade = _CIDADE
 				nome_arquivo = f"distribuicao_sem_sazonal_{_cidade}.pdf"
 				if _SALVAR == True:
 					for velho, novo in troca.items():
@@ -310,6 +314,48 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 					anomalia_estacionaria[c] = sem_tendencia
 				print(f"{green}\nsem_sazonal\n{reset}{sem_sazonal}\n")
 				print(f"{green}\nanomalia_estacionaria\n{reset}{anomalia_estacionaria}\n")
+				plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
+				plt.gca().patch.set_facecolor("honeydew") #.gcf()
+				sns.barplot(x = sem_sazonal["semana"], y = anomalia_estacionaria["PREC"],
+								color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação") #"cornflowerblue"
+				sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["CASOS"],
+								color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+				plt.fill_between(anomalia_estacionaria.index, anomalia_estacionaria["CASOS"], color = "purple", alpha = 0.3)
+				sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["FOCOS"],
+								color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+				plt.fill_between(anomalia_estacionaria.index, anomalia_estacionaria["FOCOS"], color = "darkgreen", alpha = 0.35)
+				plt.xlabel("Semanas Epidemiológicas na Série Histórica")
+				ano_serie = sem_sazonal["semana"].dt.year.unique()
+				print(f"{green}sem_sazonal['semana'].dt.year.unique()\n{reset}{sem_sazonal['semana'].dt.year.unique()}")
+				plt.xticks([sem_sazonal[sem_sazonal["semana"].dt.year == ano].index[0] for ano in ano_serie],
+							[str(ano) for ano in ano_serie], rotation = "horizontal")
+				plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
+				plt.legend(loc = "upper left")
+				ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
+				sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["TMIN"], alpha = 0.5,
+								color = "darkblue", linewidth = 1, label = "Temperatura Mínima")
+				sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["TMED"], alpha = 0.5,
+								color = "orange", linewidth = 1, label = "Temperatura Média")
+				sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["TMAX"], alpha = 0.5,
+								color = "red", linewidth = 1, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+				plt.title(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nANOMALIA ESTACIONÁRIA, SÉRIE HISTÓRICA PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+				ax2.set_ylabel("Temperaturas (C)")
+				ax2.legend(loc = "upper right")
+				ax2.grid(False)
+				#plt.show()
+				nome_arquivo = f"distribuicao_anomaliaestacionaria_{_cidade}.pdf"
+				if _SALVAR == True:
+					for velho, novo in troca.items():
+						_cidade = _cidade.replace(velho, novo)
+					caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
+					os.makedirs(caminho_correlacao, exist_ok = True)
+					plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+					print(f"""\n{green}SALVO COM SUCESSO!\n
+	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
+	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+				if _VISUALIZAR == True:
+					print(f"\n{cyan}Visualizando:\n{caminho_correlacao}{nome_arquivo}\n{reset}")
+					plt.show()
 				#sys.exit()
 				dataset = anomalia_estacionaria.copy()
 				dataset.dropna(axis = 0, inplace = True)
