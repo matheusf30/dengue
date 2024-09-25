@@ -97,6 +97,10 @@ tmax_sem = pd.read_csv(f"{caminho_dados}{tmax_sem}", low_memory = False)
 tmed_sem = pd.read_csv(f"{caminho_dados}{tmed_sem}", low_memory = False)
 tmin_sem = pd.read_csv(f"{caminho_dados}{tmin_sem}", low_memory = False)
 
+print(prec.iloc["Semana"])
+sys.exit()
+
+
 ############### Base para Troca de Caracteres
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 		'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
@@ -114,7 +118,7 @@ def semana_epidemio(data):
     sab1 = jan1sab + timedelta(days = (5 - jan1sab.weekday() + 7) % 7)
     if sab1.day >= 4:
         dias_inicio = (data - jan1sab).days
-        semana_epi = (dias_inicio + 1) // 7 + 1
+        semana_epii = (dias_inicio + 1) // 7 + 1
     else:
         semana_epi = (data - jan1sab).days // 7 + 1
     return semana_epi
@@ -128,10 +132,6 @@ if _AUTOMATIZA == True and _ANOMALIA_ESTACIONARIA == True:
 	lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó"]
 	lista_anos = ["2023", "2022", "2021", "2020", "total"]
 	lista_metodo = ["pearson", "spearman"]
-	limiares_tmax = [22, 24, 26, 28, 30, 32]
-	limiares_tmin = [14, 16, 18, 20, 22, 24]
-	limiares_prec = [5, 20, 35, 50, 65, 80, 95]
-	lista_retro = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 	for _CIDADE in lista_cidades:
 		_CIDADE = _CIDADE.upper()
 		print(_CIDADE)
