@@ -179,6 +179,7 @@ elif _fonte == "DIVESC":
 	casos21 = "dive_dengue_2021.csv"
 	casos22 = "dive_dengue_2022.csv"
 	casos23 = "dive_dengue_2023.csv"
+	casos24 = "A225323200_135_184_113.csv"
 else:
 	print("Favor, revalidar a fonte dos dados brutos!")
 
@@ -221,6 +222,8 @@ elif _fonte == "DIVESC":
 	casos22 = pd.read_csv(f"{caminho_dados}{casos22}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
 	casos23 = pd.read_csv(f"{caminho_dados}{casos23}", skiprows = 5,
+                          sep = ";", encoding = "latin1", engine = "python")
+	casos24 = pd.read_csv(f"{caminho_dados}{casos24}", skiprows = 5,
                           sep = ";", encoding = "latin1", engine = "python")
 
 ### Pré-Processamento
@@ -984,8 +987,54 @@ print(casos23.info())
 print(casos23.columns.drop("Semana"))
 print("="*80)
 
+# 2024
+ano = 2024
+total_semana = 52
+lista_str_semanas = []
+for i in range(1, total_semana + 1):
+    n_semana = str(i).zfill(2)
+    chave_semana = f"Semana {n_semana}"
+    lista_str_semanas.append(chave_semana)
+inicio = datetime(ano-1, 12, 31)
+fim = datetime(ano, 12, 28)
+lista_semanas = []
+semana_corrente = inicio
+while semana_corrente <= fim:
+    lista_semanas.append(semana_corrente)
+    semana_corrente += timedelta(weeks = 1)
+dict_semanas = dict(zip(lista_str_semanas, [date.strftime("%Y-%m-%d") for date in lista_semanas]))
+if _fonte == "DATASUS":
+	casos24.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+elif _fonte == "DIVESC":
+	casos24.rename(columns = {"Mun infec SC" : "Município"}, inplace = True)
+casos24.rename(columns = {"Município infecção" : "Município"}, inplace = True)
+casos24.rename(columns = dict_semanas, inplace = True)
+casos24["Município"] = casos24["Município"].str.replace("\d+ ", "", regex = True)
+casos24["Município"] = casos24["Município"].str.upper()
+casos24.drop(columns = "Total", inplace = True)
+if _fonte == "DATASUS":
+	casos24.drop(casos24.index[-2:], axis = 0, inplace = True)
+elif _fonte == "DIVESC":
+	casos24.drop(casos24.index[-1:], axis = 0, inplace = True)
+casos24.set_index("Município", inplace = True)
+casos24 = casos24.T
+casos24.reset_index(inplace=True)
+casos24 = casos24.rename(columns = {"index" : "Semana"})
+casos24.rename(columns = lista_municipio, inplace = True)
+colunas = casos24.columns.drop("Semana")
+semanas = pd.DataFrame(lista_semanas, columns=["Semana"])
+casos24["Semana"] = pd.to_datetime(casos24["Semana"])
+casos24 = pd.merge(semanas, casos24, on = "Semana", how = "left").fillna(0)
+casos24[colunas] = casos24[colunas].astype(int)
+casos24 = pd.melt(casos24, id_vars = "Semana", var_name = "Município", value_name = "Casos", ignore_index = True)
+casos24.sort_values(by = "Semana",  ignore_index = True, inplace = True)
+print("="*80, f"\n{ano}\n\n", casos24)
+print(casos24.info())
+print(casos24.columns.drop("Semana"))
+print("="*80)
+
 prepandemia = pd.concat([casos14, casos15, casos16, casos17, casos18, casos19], ignore_index = True)
-pospandemia = pd.concat([casos20, casos21, casos22, casos23], ignore_index = True)
+pospandemia = pd.concat([casos20, casos21, casos22, casos23, casos24], ignore_index = True)
 casostotal = pd.concat([prepandemia, pospandemia], ignore_index = True)
 casos_pivot = pd.pivot_table(casostotal, index = "Semana", columns = "Município", values = "Casos", fill_value = 0)
 casos_pivot.reset_index(inplace = True)
