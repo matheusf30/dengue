@@ -179,7 +179,7 @@ elif _fonte == "DIVESC":
 	casos21 = "dive_dengue_2021.csv"
 	casos22 = "dive_dengue_2022.csv"
 	casos23 = "dive_dengue_2023.csv"
-	casos24 = "A225323200_135_184_113.csv"
+	casos24 = "dive_dengue_2024.csv"
 else:
 	print("Favor, revalidar a fonte dos dados brutos!")
 
