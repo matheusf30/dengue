@@ -124,7 +124,7 @@ def sazonalidade(csv, str_var):
 		nome_arquivo = f"sazonalidade_semanal_{str_var}.csv"
 		caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 		os.makedirs(caminho_dados, exist_ok = True)
-		media_semana.to_csv(f"{caminho_dados}casos_dive_pivot_total.csv", index = False)
+		media_semana.to_csv(f"{caminho_dados}{nome_arquivo}", index = False)
 		#plt.savefig(f"{caminho_dados}{nome_arquivo}", format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
@@ -177,7 +177,21 @@ def tratando_sazonalidade(csv, str_var):
 def tendencia(csv): # sem_sazonalidade.csv
 	colunas_csv = csv.drop(columns = ["semana"])#, "semana_epi"])
 	colunas = colunas_csv.columns
+	#csv = np.array(csv)
 	for c in colunas:
+		if len(csv[c]) < 2:
+			print(f"{red}\n{c}\nSem dados suficientes para avaliar Tendência de Mann-Kendall.{reset}\n")
+			return None
+		if np.any(np.isnan(csv[c])):
+			print(f"{red}\n{c}\nDados insuficientes (NaN) para avaliar Tendência de Mann-Kendall.{reset}\n")
+			return None
+		"""
+		try:
+			csv = csv.astype(float)
+		except ValueError:
+			print(f"{red}\n{c}\nDados insuficientes (NaN) para avaliar Tendência de Mann-Kendall.{reset}\n")
+			return None
+		"""
 		tendencia = mk.original_test(csv[c])
 		if tendencia.trend == "decreasing":
 			print(f"\n{red}{c}\n{tendencia.trend}{reset}\n")
@@ -202,7 +216,7 @@ def anomalia_estacionaria(csv, str_var): #sem_sazonalidade.csv
 	print(f"{green}\n{str_var.upper()} sem_sazonal\n{reset}{csv}\n")
 	print(f"{green}\n{str_var.upper()} anomalia_estacionaria\n{reset}{anomalia_estacionaria}\n")
 	if _SALVAR == True:
-		nome_arquivo = f"sem_sazonalidade_{str_var}.csv"
+		nome_arquivo = f"anomalia_estacionaria_{str_var}.csv"
 		caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 		os.makedirs(caminho_dados, exist_ok = True)
 		sem_sazonal.to_csv(f"{caminho_dados}{nome_arquivo}", index = False)
@@ -219,28 +233,31 @@ tmin_sazonal = sazonalidade(tmin, "tmin")
 tmed_sazonal = sazonalidade(tmed, "tmed")
 tmax_sazonal = sazonalidade(tmax, "tmax")
 
+#sys.exit()
+
 focos_sem_sazonal = tratando_sazonalidade(focos, "focos")
-tendencia(focos_sem_sazonal)
-focos_anomalia_estacionaria = anomalia_estacionaria(focos_sem_sazonal, "focos")
-
 casos_sem_sazonal = tratando_sazonalidade(casos, "casos")
-tendencia(casos_sem_sazonal)
-casos_anomalia_estacionaria = anomalia_estacionaria(casos_sem_sazonal, "casos")
-
 prec_sem_sazonal = tratando_sazonalidade(prec, "prec")
-tendencia(prec_sem_sazonal)
-prec_anomalia_estacionaria = anomalia_estacionaria(prec_sem_sazonal, "prec")
-
 tmin_sem_sazonal = tratando_sazonalidade(tmin, "tmin")
-tendencia(tmin_sem_sazonal)
-tmin_anomalia_estacionaria = anomalia_estacionaria(tmin_sem_sazonal, "tmin")
-
 tmed_sem_sazonal = tratando_sazonalidade(tmed, "tmed")
-tendencia(tmed_sem_sazonal)
-tmed_anomalia_estacionaria = anomalia_estacionaria(tmed_sem_sazonal, "tmed")
-
 tmax_sem_sazonal = tratando_sazonalidade(tmax, "tmax")
+
+#sys.exit()
+
+tendencia(focos_sem_sazonal)
+tendencia(casos_sem_sazonal)
+tendencia(prec_sem_sazonal)
+tendencia(tmin_sem_sazonal)
+tendencia(tmed_sem_sazonal)
 tendencia(tmax_sem_sazonal)
+
+#sys.exit()
+
+focos_anomalia_estacionaria = anomalia_estacionaria(focos_sem_sazonal, "focos")
+casos_anomalia_estacionaria = anomalia_estacionaria(casos_sem_sazonal, "casos")
+prec_anomalia_estacionaria = anomalia_estacionaria(prec_sem_sazonal, "prec")
+tmin_anomalia_estacionaria = anomalia_estacionaria(tmin_sem_sazonal, "tmin")
+tmed_anomalia_estacionaria = anomalia_estacionaria(tmed_sem_sazonal, "tmed")
 tmax_anomalia_estacionaria = anomalia_estacionaria(tmax_sem_sazonal, "tmax")
 
 sys.exit()
