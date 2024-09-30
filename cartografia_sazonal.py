@@ -49,13 +49,14 @@ elif _LOCAL == "CASA":
 	caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
 elif _LOCAL == "IFSC":
 	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
+	caminho_shp = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
 	caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 	caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/"
 	caminho_cartografia = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
 else:
-	print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
-print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
+	print(f"\n{red}CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!{reset}")
+print(f"\n{green}OS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n{reset}\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
 casos = "sazonalidade_semanal_casos.csv"
@@ -64,6 +65,8 @@ prec = "sazonalidade_semanal_prec.csv"
 tmin = "sazonalidade_semanal_tmin.csv"
 tmed = "sazonalidade_semanal_tmed.csv"
 tmax = "sazonalidade_semanal_tmax.csv"
+municipios = "SC_Municipios_2022.shp"
+br = "BR_UF_2022.shp"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -72,6 +75,8 @@ prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
 tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
+municipios = gpd.read_file(f"{caminho_shp}{municipios}")
+br = gpd.read_file(f"{caminho_shp}{br}")
 
 print(f"\n{green}SAZONALIDADE DE CASOS\n{reset}{casos}\n")
 print(f"\n{green}SAZONALIDADE DE FOCOS\n{reset}{focos}\n")
@@ -79,7 +84,8 @@ print(f"\n{green}SAZONALIDADE DE PRECIPITAÇÃO\n{reset}{prec}\n")
 print(f"\n{green}SAZONALIDADE DE TEMPERATURA MÍNIMA\n{reset}{tmin}\n")
 print(f"\n{green}SAZONALIDADE DE TEMPERATURA MÉDIA\n{reset}{tmed}\n")
 print(f"\n{green}SAZONALIDADE DE TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
-
+print(f"\n{green}GEODATAFRAME MUNICÍPIOS CATARINENSES\n{reset}{municipios}\n")
+print(f"\n{green}GEODATAFRAME ESTADOS BRASILEIROS\n{reset}{br}\n")
 ############### Base para Troca de Caracteres
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 		'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
