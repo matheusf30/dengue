@@ -5,7 +5,8 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point, Polygon
 import matplotlib.patches as mpatches
-from matplotlib import cm      
+from matplotlib import cm
+import matplotlib.colors as cls     
 import cmocean
 from datetime import timedelta
 import numpy as np
@@ -117,19 +118,258 @@ def csv_melt(csv, str_var):
 	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
 	return csv_melt
 
-def cartografia_sazonal(csv, str_var):
-	# SC_Coroplético
-	semana_epidemio = 10
+def cartografia_sazonal_entomoepidemio_total(csv_melt, str_var):
 	xy = municipios.copy()
 	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 	xy = xy.rename(columns = {"NM_MUN" : "Município"})
 	xy["Município"] = xy["Município"].str.upper()
 	print(f"\n{green}xy\n\n{reset}{xy}")
-	media = csv.mean()
-	media_linha = pd.DataFrame(media).T
-	csv = pd.concat([csv, media_linha], ignore_index = True)
-	csv.at[len(csv) - 1, "semana_epi"] = 500
-	csv["semana_epi"] = csv["semana_epi"].astype(int) 	
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	csv_melt = csv_melt.groupby("Município").mean()
+	csv_melt.drop(columns = "semana_epi", inplace = True)
+	csv_melt.reset_index(inplace = True)
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	#sys.exit()
+	csv_poli = pd.merge(csv_melt, xy, on = "Município", how = "right").fillna(0)
+	csv_poligeo = gpd.GeoDataFrame(csv_poli, geometry = "geometry", crs = "EPSG:4674")
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+	coord_atlantico = [(-54, -30),(-48, -30),
+		               (-48, -25),(-54, -25),
+		               (-54, -30)]
+	atlantico_poly = Polygon(coord_atlantico)
+	atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
+	atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
+	ax.set_aspect("auto")
+	coord_arg = [(-55, -30),(-52, -30),
+		         (-52, -25),(-55, -25),
+		         (-55, -30)]
+	arg_poly = Polygon(coord_arg)
+	argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+	argentina.plot(ax = ax, color = "tan")
+	br.plot(ax = ax, color = "tan", edgecolor = "black")
+	municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
+	csv_poligeo.plot(ax = ax, column = f"{str_var}",  legend = True,
+								label = f"{str_var}", cmap = "YlOrRd")
+	zero = csv_poligeo[csv_poligeo[f"{str_var}"] == 0]
+	zero.plot(ax = ax, column = f"{str_var}", legend = False,
+				label = f"{str_var}", color = "lightgray")
+	ax.text(-52.5, -28.25, """LEGENDA
+
+▢           Sem registro*
+
+*Não há registro sazonal.""",
+			color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = 14)
+	plt.xlim(-54, -48)
+	plt.ylim(-29.5, -25.75)
+	x_tail = -48.5
+	y_tail = -29.25
+	x_head = -48.5
+	y_head = -28.75
+	arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+		                             mutation_scale = 50, color = "darkblue")
+	ax.add_patch(arrow)
+	mid_x = (x_tail + x_head) / 2
+	mid_y = (y_tail + y_head) / 2
+	ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+		    fontsize = "large", fontweight = "bold")
+	ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+		    color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
+	plt.xlabel("Longitude")
+	plt.ylabel("Latitude")
+	if str_var == "casos":
+		plt.title(f"Sazonalidade de Casos de Dengue em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	elif str_var == "focos":
+		plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	plt.grid(True)
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.pdf"
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
+	if _AUTOMATIZA == True and _SALVAR == True:
+		os.makedirs(caminho_resultados, exist_ok = True)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 1200)
+		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
+	if _AUTOMATIZA == True and _VISUALIZAR == True:	
+		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+		plt.show()
+		print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+
+def cartografia_sazonal_meteoro_total(csv_melt, str_var):
+	xy = municipios.copy()
+	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
+	xy = xy.rename(columns = {"NM_MUN" : "Município"})
+	xy["Município"] = xy["Município"].str.upper()
+	print(f"\n{green}xy\n\n{reset}{xy}")
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	csv_melt = csv_melt.groupby("Município").mean()
+	csv_melt.drop(columns = "semana_epi", inplace = True)
+	csv_melt.reset_index(inplace = True)
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	#sys.exit()
+	csv_poli = pd.merge(csv_melt, xy, on = "Município", how = "right").fillna(0)
+	csv_poligeo = gpd.GeoDataFrame(csv_poli, geometry = "geometry", crs = "EPSG:4674")
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv_melt}\n")
+	fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+	coord_atlantico = [(-54, -30),(-48, -30),
+		               (-48, -25),(-54, -25),
+		               (-54, -30)]
+	atlantico_poly = Polygon(coord_atlantico)
+	atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
+	atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
+	ax.set_aspect("auto")
+	coord_arg = [(-55, -30),(-52, -30),
+		         (-52, -25),(-55, -25),
+		         (-55, -30)]
+	arg_poly = Polygon(coord_arg)
+	argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+	argentina.plot(ax = ax, color = "tan")
+	br.plot(ax = ax, color = "tan", edgecolor = "black")
+	municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
+	if str_var == "prec":
+		csv_poligeo.plot(ax = ax, column = f"{str_var}",  legend = True,
+									label = f"{str_var}", cmap = cmocean.cm.rain)
+	elif str_var == "tmin" or "tmed" or "tmax":
+		csv_poligeo.plot(ax = ax, column = f"{str_var}",  legend = True,
+									label = f"{str_var}", cmap = cmocean.cm.thermal)
+	plt.xlim(-54, -48)
+	plt.ylim(-29.5, -25.75)
+	x_tail = -48.5
+	y_tail = -29.25
+	x_head = -48.5
+	y_head = -28.75
+	arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+		                             mutation_scale = 50, color = "darkblue")
+	ax.add_patch(arrow)
+	mid_x = (x_tail + x_head) / 2
+	mid_y = (y_tail + y_head) / 2
+	ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+		    fontsize = "large", fontweight = "bold")
+	ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+		    color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
+	plt.xlabel("Longitude")
+	plt.ylabel("Latitude")
+	if str_var == "prec":
+		plt.title(f"Sazonalidade de Precipitação (mm) em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	elif str_var == "tmin":
+		plt.title(f"Sazonalidade de Temperatura Mínima (C) em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	elif str_var == "tmed":
+		plt.title(f"Sazonalidade de Temperatura Média (C) em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	elif str_var == "tmax":
+		plt.title(f"Sazonalidade de Temperatura Máxima (C) em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
+	plt.grid(True)
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.pdf"
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
+	if _AUTOMATIZA == True and _SALVAR == True:
+		os.makedirs(caminho_resultados, exist_ok = True)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 1200)
+		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
+	if _AUTOMATIZA == True and _VISUALIZAR == True:	
+		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+		plt.show()
+		print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+
+def cartografia_sazonal_entomoepidemio(csv, str_var, semana_epidemio = None):
+	# SC_Coroplético
+	#semana_epidemio = 20
+	xy = municipios.copy()
+	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
+	xy = xy.rename(columns = {"NM_MUN" : "Município"})
+	xy["Município"] = xy["Município"].str.upper()
+	print(f"\n{green}xy\n\n{reset}{xy}")	
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv}\n")
+	csv_melt = pd.melt(csv, id_vars = ["semana_epi"], 
+		                    var_name = "Município", value_name = f"{str_var}")
+	csv_melt.sort_values(["semana_epi"], inplace = True)
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()} - csv_melt\n{reset}{csv_melt}\n")
+	#sys.exit()
+	csv_poli = pd.merge(csv_melt, xy, on = "Município", how = "left")
+	csv_poligeo = gpd.GeoDataFrame(csv_poli, geometry = "geometry", crs = "EPSG:4674")
+	print(f"\n{green}SAZONALIDADE DE {str_var.upper()} - csv_poligeo\n{reset}{csv_poligeo}\n")
+	fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+	coord_atlantico = [(-54, -30),(-48, -30),
+		               (-48, -25),(-54, -25),
+		               (-54, -30)]
+	atlantico_poly = Polygon(coord_atlantico)
+	atlantico = gpd.GeoDataFrame(geometry = [atlantico_poly])
+	atlantico.plot(ax = ax, color = "lightblue") # atlantico ~ base
+	ax.set_aspect("auto")
+	coord_arg = [(-55, -30),(-52, -30),
+		         (-52, -25),(-55, -25),
+		         (-55, -30)]
+	arg_poly = Polygon(coord_arg)
+	argentina = gpd.GeoDataFrame(geometry = [arg_poly])
+	argentina.plot(ax = ax, color = "tan")
+	br.plot(ax = ax, color = "tan", edgecolor = "black")
+	municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
+	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
+	print(f"\n{green}RECORTE TEMPORAL DE {str_var.upper()}\n{reset}{recorte_temporal}\n")
+	v_max = csv_melt[str_var].max()
+	v_min = csv_melt[str_var].min()
+	if str_var == "casos":
+		intervalo = 100
+	elif str_var == "focos":
+		intervalo = 20
+	levels = np.arange(v_min, v_max + intervalo, intervalo)
+	print(f"\n{green}v_min\n{reset}{v_min}\n")
+	print(f"\n{green}v_max\n{reset}{v_max}\n")
+	print(f"\n{green}levels\n{reset}{levels}\n")
+	recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
+							label = f"{str_var}", cmap = "YlOrRd")#, add_colorbar = False,
+												#levels = levels, add_labels = False,
+												#norm = cls.Normalize(vmin = v_min, vmax = v_max))
+	"""
+	plt.colorbar(figura, pad = 0.02, fraction = 0.05, extend = "both",
+			ticks = np.linspace(int(v_min), int(v_max), 10), orientation = "vertical",
+			label = str_var)
+	"""
+	zeros = recorte_temporal[recorte_temporal[str_var] == 0]
+	zeros.plot(ax = ax, legend = False, color = "lightgray")
+	ax.text(-52.5, -28.25, """LEGENDA
+
+▢           Sem registro*
+
+*Não há registro sazonal.""",
+			color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = 14)
+	plt.xlim(-54, -48)
+	plt.ylim(-29.5, -25.75)
+	x_tail = -48.5
+	y_tail = -29.25
+	x_head = -48.5
+	y_head = -28.75
+	arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head),
+		                             mutation_scale = 50, color = "darkblue")
+	ax.add_patch(arrow)
+	mid_x = (x_tail + x_head) / 2
+	mid_y = (y_tail + y_head) / 2
+	ax.text(mid_x, mid_y, "N", color = "white", ha = "center", va = "center",
+		    fontsize = "large", fontweight = "bold")
+	ax.text(-52.5, -29, "Sistema de Referência de Coordenadas\nDATUM: SIRGAS 2000/22S.\nBase Cartográfica: IBGE, 2022.",
+		    color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
+	plt.xlabel("Longitude")
+	plt.ylabel("Latitude")
+	if str_var == "casos":
+		plt.title(f"Sazonalidade de Casos de Dengue em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+	elif str_var == "focos":
+		plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+	plt.grid(True)
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.pdf"
+	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
+	if _AUTOMATIZA == True and _SALVAR == True:
+		os.makedirs(caminho_resultados, exist_ok = True)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 1200)
+		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
+	if _AUTOMATIZA == True and _VISUALIZAR == True:	
+		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+		plt.show()
+		print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
+
+def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
+	# SC_Coroplético
+	#semana_epidemio = 10
+	xy = municipios.copy()
+	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
+	xy = xy.rename(columns = {"NM_MUN" : "Município"})
+	xy["Município"] = xy["Município"].str.upper()
+	print(f"\n{green}xy\n\n{reset}{xy}")
 	print(f"\n{green}SAZONALIDADE DE {str_var.upper()}\n{reset}{csv}\n")
 	csv_melt = pd.melt(csv, id_vars = ["semana_epi"], 
 		                    var_name = "Município", value_name = f"{str_var}")
@@ -153,30 +393,22 @@ def cartografia_sazonal(csv, str_var):
 	argentina.plot(ax = ax, color = "tan")
 	br.plot(ax = ax, color = "tan", edgecolor = "black")
 	municipios.plot(ax = ax, color = "lightgray", edgecolor = "lightgray")
-	if str_var == "casos" or "focos":
-		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
-		                                                                           label = f"{str_var}", cmap = "YlOrRd")
-		zero = csv_poligeo[csv_poligeo[f"{str_var}"] == 0]
-		zero[zero["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}", legend = False,
-				                                     label = f"{str_var}", cmap = "YlOrBr")
-		ax.text(-52.5, -28.25, """LEGENDA
-
-▢           Sem registro*
-
-*Não há registro oficial.""",
-				color = "black", backgroundcolor = "lightgray", ha = "center", va = "center", fontsize = 14)
+	v_max = csv_melt[str_var].max()
+	v_min = csv_melt[str_var].min()
 	if str_var == "prec":
-		cmap = cmocean.cm.rain
-		cmap.set_over("#00022e")
-		cmap.set_under("#3c0008") 
+		intervalo = 10
+	elif str_var == "tmin" or "tmed" or "tmax":
+		intervalo = 5
+	levels = np.arange(v_min, v_max + intervalo, intervalo)
+	print(f"\n{green}v_min\n{reset}{v_min}\n")
+	print(f"\n{green}v_max\n{reset}{v_max}\n")
+	print(f"\n{green}levels\n{reset}{levels}\n")
+	if str_var == "prec":
 		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
-		                                                                           label = f"{str_var}", cmap = cmap)
-	if str_var == "tmin" or "tmed" or "tmax":
-		cmap = cmocean.cm.thermal
-		cmap.set_over("#ffff7e")
-		cmap.set_under("#00022e") 
+		                                                                           label = f"{str_var}", cmap = cmocean.cm.rain)
+	elif str_var == "tmin" or "tmed" or "tmax":
 		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
-		                                                                           label = f"{str_var}", cmap = cmap)
+		                                                                           label = f"{str_var}", cmap = cmocean.cm.thermal)
 	plt.xlim(-54, -48)
 	plt.ylim(-29.5, -25.75)
 	x_tail = -48.5
@@ -194,36 +426,14 @@ def cartografia_sazonal(csv, str_var):
 		    color = "white", backgroundcolor = "darkgray", ha = "center", va = "center", fontsize = 14)
 	plt.xlabel("Longitude")
 	plt.ylabel("Latitude")
-	if str_var == "casos":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Casos de Dengue em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Casos de Dengue em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
-	elif str_var == "focos":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
-	elif str_var == "prec":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Precipitação em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Precipitação em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+	if str_var == "prec":
+		plt.title(f"Sazonalidade de Precipitação (mm) em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	elif str_var == "tmin":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Temperatura Mínima em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Temperatura Mínima em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+		plt.title(f"Sazonalidade de Temperatura Mínima (C) em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	elif str_var == "tmed":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Temperatura Média em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Temperatura Média em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+		plt.title(f"Sazonalidade de Temperatura Média (C) em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	elif str_var == "tmax":
-		if semana_epidemio == 500:
-			plt.title(f"Sazonalidade de Temperatura Máxima em Santa Catarina.", fontsize = 18)
-		else:
-			plt.title(f"Sazonalidade de Temperatura Máxima em Santa Catarina na Semana Epidemiológica: {semana_epidemio}.", fontsize = 18)
+		plt.title(f"Sazonalidade de Temperatura Máxima (C) em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	plt.grid(True)
 	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.pdf"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
@@ -237,16 +447,44 @@ def cartografia_sazonal(csv, str_var):
 		print(f"{cyan}\nENCERRADO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
 
 
-casos = cartografia_sazonal(casos, "casos")
-#focos = csv_melt(focos, "focos")
-#prec = csv_melt(prec, "prec")
-#tmin = csv_melt(tmin, "tmin")
-#tmed = csv_melt(tmed, "tmed")
-#tmax = csv_melt(tmax, "tmax")
+##########################################################################################################
 """
 for semana_epidemio in csv_melt["semana_epi"].unique():
 	print(semana_epidemio)
 """
+# Sazonalidade por Semana Epidemiológica
+
+for semana_epidemio in range(1,54):
+	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
+	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
+	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
+	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
+	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
+	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
+
+# Sazonalidade Média Total
+
+casos_melt = csv_melt(casos, "casos")
+cartografia_sazonal_entomoepidemio_total(casos_melt, "casos")
+
+focos_melt = csv_melt(focos, "focos")
+cartografia_sazonal_entomoepidemio_total(focos_melt, "focos")
+
+prec_melt = csv_melt(prec, "prec")
+cartografia_sazonal_meteoro_total(prec_melt, "prec")
+
+tmin_melt = csv_melt(tmin, "tmin")
+cartografia_sazonal_meteoro_total(tmin_melt, "tmin")
+
+tmin_melt = csv_melt(tmin, "tmin")
+cartografia_sazonal_meteoro_total(tmin_melt, "tmin")
+
+tmed_melt = csv_melt(tmed, "tmed")
+cartografia_sazonal_meteoro_total(tmed_melt, "tmed")
+
+tmax_melt = csv_melt(tmax, "tmax")
+cartografia_sazonal_meteoro_total(tmin_melt, "tmax")
 
 
 
