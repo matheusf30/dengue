@@ -477,9 +477,6 @@ cartografia_sazonal_meteoro_total(prec_melt, "prec")
 tmin_melt = csv_melt(tmin, "tmin")
 cartografia_sazonal_meteoro_total(tmin_melt, "tmin")
 
-tmin_melt = csv_melt(tmin, "tmin")
-cartografia_sazonal_meteoro_total(tmin_melt, "tmin")
-
 tmed_melt = csv_melt(tmed, "tmed")
 cartografia_sazonal_meteoro_total(tmed_melt, "tmed")
 
