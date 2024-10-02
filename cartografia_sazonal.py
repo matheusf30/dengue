@@ -448,21 +448,6 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 
 
 ##########################################################################################################
-"""
-for semana_epidemio in csv_melt["semana_epi"].unique():
-	print(semana_epidemio)
-"""
-# Sazonalidade por Semana Epidemiológica
-
-for semana_epidemio in range(1,54):
-	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
-	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
-	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
-	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
-	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
-	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
-	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
-
 # Sazonalidade Média Total
 
 casos_melt = csv_melt(casos, "casos")
@@ -481,7 +466,26 @@ tmed_melt = csv_melt(tmed, "tmed")
 cartografia_sazonal_meteoro_total(tmed_melt, "tmed")
 
 tmax_melt = csv_melt(tmax, "tmax")
-cartografia_sazonal_meteoro_total(tmin_melt, "tmax")
+cartografia_sazonal_meteoro_total(tmax_melt, "tmax")
+
+# Sazonalidade por Semana Epidemiológica
+
+"""
+for semana_epidemio in csv_melt["semana_epi"].unique():
+	print(semana_epidemio)
+"""
+
+#for semana_epidemio in range(1,54):
+for semana_epidemio in range(38,54):
+	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
+	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
+	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
+	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
+	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
+	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
+
+
 
 
 
