@@ -476,7 +476,7 @@ for semana_epidemio in csv_melt["semana_epi"].unique():
 """
 
 #for semana_epidemio in range(1,54):
-for semana_epidemio in range(38,54):
+for semana_epidemio in range(1,54):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
 	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
