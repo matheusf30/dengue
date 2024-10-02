@@ -449,7 +449,7 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 
 ##########################################################################################################
 # Sazonalidade Média Total
-
+"""
 casos_melt = csv_melt(casos, "casos")
 cartografia_sazonal_entomoepidemio_total(casos_melt, "casos")
 
@@ -467,7 +467,7 @@ cartografia_sazonal_meteoro_total(tmed_melt, "tmed")
 
 tmax_melt = csv_melt(tmax, "tmax")
 cartografia_sazonal_meteoro_total(tmax_melt, "tmax")
-
+"""
 # Sazonalidade por Semana Epidemiológica
 
 """
@@ -475,7 +475,7 @@ for semana_epidemio in csv_melt["semana_epi"].unique():
 	print(semana_epidemio)
 """
 
-for semana_epidemio in range(1,54):
+for semana_epidemio in range(15,54):
 #for semana_epidemio in range(50,54):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
