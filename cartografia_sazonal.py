@@ -284,7 +284,7 @@ def cartografia_sazonal_entomoepidemio(csv, str_var, semana_epidemio = None):
 	csv_poli = pd.merge(csv_melt, xy, on = "Município", how = "left")
 	csv_poligeo = gpd.GeoDataFrame(csv_poli, geometry = "geometry", crs = "EPSG:4674")
 	print(f"\n{green}SAZONALIDADE DE {str_var.upper()} - csv_poligeo\n{reset}{csv_poligeo}\n")
-	fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+	fig, ax = plt.subplots(figsize = (18, 12), layout = "constrained", frameon = False)
 	coord_atlantico = [(-54, -30),(-48, -30),
 		               (-48, -25),(-54, -25),
 		               (-54, -30)]
@@ -377,7 +377,7 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	#sys.exit()
 	csv_poli = pd.merge(csv_melt, xy, on = "Município", how = "left")
 	csv_poligeo = gpd.GeoDataFrame(csv_poli, geometry = "geometry", crs = "EPSG:4674")
-	fig, ax = plt.subplots(figsize = (20, 12), layout = "constrained", frameon = False)
+	fig, ax = plt.subplots(figsize = (18, 12), layout = "constrained", frameon = False)
 	coord_atlantico = [(-54, -30),(-48, -30),
 		               (-48, -25),(-54, -25),
 		               (-54, -30)]
