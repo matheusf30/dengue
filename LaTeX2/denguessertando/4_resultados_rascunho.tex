@@ -23,6 +23,8 @@
 \usepackage{subfig}
 \usepackage{url}
 
+\newcommand{\latim}[1]{{\textit{#1}}}
+
 \usepackage{glossaries}
 \makeglossaries
 \newacronym{GFS}{GFS}{Global Forecast System}
@@ -157,10 +159,102 @@
 
 \indent A precipitação na série histórica de \acrlong{SC} obteve seu maior valor em 261,25 mm diários e 478,25 mm semanais. O menor valor foi zero (0) mm e igual em ambos os períodos analisados, diários ou semanais. A média de precipitação para o Estado é de 4,3 mm diários e 30,07 mm semanais, tendo 12,68 mm e 43,05 mm como desvio padrão para dados diários e semanais, respectivamente.
 
-\indent O comportamento da precipitação é menos suave aos dados agrupados semanalmente, diferente das temperaturas. Porém, assim como as temperaturas, esse comportamento é por conta do método de agrupamento, baseado no somatório dos dias da semana. Logo, os valores semanais de precipitação são maiores, sejam eles médio, máximo ou desvio padrão. O valor mínimo diário e semanal é semelhante, zero (0) mm, pois há períodos em que não precipita em \acrlong{SC} por mais de sete (7) dias. Esse valor também diz respeito a característica do dado, sendo uma variável quantitativa de razão, em contraposição às temperaturas, que são variáveis quantitativas intervalares.
+\indent O comportamento da precipitação é menos suave aos dados agrupados semanalmente, diferente das temperaturas. Porém, assim como as temperaturas, esse comportamento é por conta do método de agrupamento, baseado no somatório dos dias da semana. Logo, os valores semanais de precipitação são maiores, sejam eles médio, máximo ou desvio padrão.
+
+\indent O valor mínimo diário e semanal é semelhante, zero (0) mm, pois há períodos em que não precipita em \acrlong{SC} por mais de sete (7) dias. Esse valor também diz respeito a característica do dado, sendo uma variável quantitativa de razão, em contraposição às temperaturas, que são variáveis quantitativas intervalares.
 
 \indent \textcolor{red}{Interessante Amplitude Térmica? (Debater com o Mário)\\
 Como aplicar Amplitude a esses dados?}
+
+\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas.
+
+\indent A distribuição sazonal de todas as variáveis seguiu cronologicamente as semanas epidemiológicas, dessa maneira há concordância temporal entre os elementos climatológicos (precipitação e temperaturas mínima, média e máxima) e variáveis entomológicas (focos de \latim{Aedes} sp.) e epidemiológicas (casos de dengue).
+
+\indent É possível perceber, em primeira análise (figura \ref{fig: distribuicao_sazonal}), que os picos de casos de dengue são atingidos algumas semanas epidemiológicas após os valores máximos de ambas as temperaturas, apresentando um hiato de 10 a 15 semanas entre esses picos.
+
+\indent Esses máximos valores de casos de dengue também precedem os mínimos registros de ambas as temperaturas, com hiato entre cinco e 10 semanas epidemiológicas. O que corrobora com o comportamento sazonal da doença, ocorrendo com maior incidência durante as semanas epidemiológias do outono austral. Ainda durante o inverno no hemisfério sul, pode-se perceber leve queda nos focos de \latim{Aedes} sp.
+
+\begin{figure}[htbp]
+    \begin{center}
+    \caption{Distribuições de sazonalidade de variáveis entomo-epidemiológicas (focos de \latim{Aedes} sp. e casos de dengue) e climatológicas (precipitação e temperaturas mínima, média e máxima) em alguns municípios catarinenses.}
+    \label{fig: distribuicao_sazonal}
+    \subfloat[Florianópolis \label{fig: distribuicao_sazonal_FLO}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/distribuicao_sazonalidade_semanal_FLORIANOPOLIS.pdf}
+        }
+    \subfloat[Itajaí \label{fig: distribuicao_sazonal_ITA}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/distribuicao_sazonalidade_semanal_ITAJAI.pdf}
+        }\hfill
+    \subfloat[Joinville \label{fig: distribuicao_sazonal_JOI}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/distribuicao_sazonalidade_semanal_JOINVILLE.pdf}
+        }
+    \subfloat[Chapecó \label{fig: distribuicao_sazonal_CHA}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/distribuicao_sazonalidade_semanal_CHAPECO.pdf}
+        }\hfill
+    \end{center}
+    \small{Fonte: Elaboração própria (2024).}
+\end{figure}
+
+\indent Pela de ocorrência de inflexão nas curvas de ambas as temperaturas coincidir com o aumento dos casos de dengue e por apresentar hiatos entre os picos, selecionou-se semanas epidemiológicas, especialmente entre a décima primeira (11ª) e a vigésima segunda (22ª) semanas. As sazonalidades apresentadas... (figura \ref{fig: distribuicao_sazonal_SC}) ...to be continued...
+
+\begin{figure}[htbp]
+    \begin{center}
+    \caption{Distribuições de sazonalidade de casos de dengue em Santa  durante algumas semanas epidemiológicas.}
+    \label{fig: distribuicao_sazonal_SC}
+    % \subfloat[Semana Epidemiológica: 11 \label{fig: casos_mapa_coropletico_sazonal_se11}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se11.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 12 \label{fig: casos_mapa_coropletico_sazonal_se12}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se12.pdf}
+        }\hfill
+    % \subfloat[Semana Epidemiológica: 13 \label{fig: casos_mapa_coropletico_sazonal_se13}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se13.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 14 \label{fig: casos_mapa_coropletico_sazonal_se14}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se14.pdf}
+        }\hfill
+    % \subfloat[Semana Epidemiológica: 15 \label{fig: casos_mapa_coropletico_sazonal_se15}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se15.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 16 \label{fig: casos_mapa_coropletico_sazonal_se16}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se16.pdf}
+        }\hfill
+    % \subfloat[Semana Epidemiológica: 17 \label{fig: casos_mapa_coropletico_sazonal_se17}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se17.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 18 \label{fig: casos_mapa_coropletico_sazonal_se18}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se18.pdf}
+        }\hfill
+    % \subfloat[Semana Epidemiológica: 19 \label{fig: casos_mapa_coropletico_sazonal_se19}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se19.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 20 \label{fig: casos_mapa_coropletico_sazonal_se20}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se20.pdf}
+        }\hfill
+    % \subfloat[Semana Epidemiológica: 21 \label{fig: casos_mapa_coropletico_sazonal_se21}]{
+    %     \centering
+    %     \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se21.pdf}
+    %     }
+    \subfloat[Semana Epidemiológica: 22 \label{fig: casos_mapa_coropletico_sazonal_se22}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se22.pdf}
+        }\hfill
+    \end{center}
+    \small{Fonte: Elaboração própria (2024).}
+\end{figure}
 
 \section{Modelagem Preditiva}
 
@@ -211,7 +305,7 @@ Valores positivos indicam relação linear positiva, onde as duas variáveis osc
 
 \indent Porém, antes de continuar, deve-se atentar ao comentário de \citeonline{espurioCorr}, que cita correlação como útil por conta de seu potencial poder preditivo e que, em geral, a correlação denota relação de modo covariante, onde o fenômeno varia preservando proximidade em valores de acordo com métricas pré-estabelecidas. Porém, o próprio autor enfatiza: " 'co-relação' é essencialmente 'co-incidência' " \cite{espurioCorr}. Por esses motivos, devem-se interpretar a correlação com seu poder e seu limite, por evidenciar relação, e não por causalidade.
 
-\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas. Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue. Foram analisados os anos de 2020, 2021, 2022 e 2023, assim como a própria série histórica. Logo, será apresentado o ano de 2023 (figura \ref{fig: matriz_corr_DEE}), por ser a análise anual mais recente. O município de Florianópolis (figura \ref{fig: corr_DEE_FLO}) apresentou correlação baixa entre as variáveis distintas dentro da mesma semana epidemiológica, mantendo-se baixa, mesmo negativamente, retrocedendo algumas semanas epidemiológicas. Itajaí (figura \ref{fig: corr_DEE_ITA}) apenas apresentou correlações médias entre as variáveis distintas quando retrocedidas muitas semanas epidemiológicas, sugerindo relação espúria. O município de Joinville (figura \ref{fig: corr_DEE_JOI}) apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, reduzindo gradualmente a medida que retrocede a ponto de aumentar a intensidade da correlação, negativamente. Chapecó (figura \ref{fig: corr_DEE_CHA}), por sua vez, apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, semelhante a Joinville, porém oscilando em redução gradual a medida que retrocede a ponto de ausentar correlação. \textcolor{red}{A que discussão chegamos?}
+\indent Sobre as correlações, realizadas pelo método de \textcolor{red}{Spearman}, o máximo de retroação foi em 16 semanas epidemiológicas entre focos de \latim{Aedes} sp. e casos de dengue. Foram analisados os anos de 2020, 2021, 2022 e 2023, assim como a própria série histórica. Logo, será apresentado o ano de 2023 (figura \ref{fig: matriz_corr_DEE}), por ser a análise anual mais recente. O município de Florianópolis (figura \ref{fig: corr_DEE_FLO}) apresentou correlação baixa entre as variáveis distintas dentro da mesma semana epidemiológica, mantendo-se baixa, mesmo negativamente, retrocedendo algumas semanas epidemiológicas. Itajaí (figura \ref{fig: corr_DEE_ITA}) apenas apresentou correlações médias entre as variáveis distintas quando retrocedidas muitas semanas epidemiológicas, sugerindo relação espúria. O município de Joinville (figura \ref{fig: corr_DEE_JOI}) apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, reduzindo gradualmente a medida que retrocede a ponto de aumentar a intensidade da correlação, negativamente. Chapecó (figura \ref{fig: corr_DEE_CHA}), por sua vez, apresentou correlação média entre as variáveis distintas dentro da mesma semana epidemiológica, semelhante a Joinville, porém oscilando em redução gradual a medida que retrocede a ponto de ausentar correlação. \textcolor{red}{A que discussão chegamos?}
 
 \begin{figure}[htbp]
     \begin{center}
@@ -237,7 +331,7 @@ Valores positivos indicam relação linear positiva, onde as duas variáveis osc
     \small{Fonte: Elaboração própria (2024).}
 \end{figure}
 
-Há flutuação entre os anos, porém ao correlacionar a série temporal integralmente (figura \ref{fig: matriz_corr_DEEtotal}), os municípios de Florianópolis (figura \ref{fig: corr_DEE_FLOtotal}) e Joinville (figura \ref{fig: corr_DEE_JOItotal}) apresentaram valores médios e altos de correlação em quase a totalidade da análise. Os municípios de Itajaí figura \ref{fig: corr_DEE_ITAtotal}) e Chapecó figura \ref{fig: corr_DEE_CHAtotal}) apresentaram valores baixos e médios, sendo apenas altos quando correlacionados com a própria variável pretérita.  \textcolor{red}{Por quê? Pode ser indicativo que esses municípios, Florianópolis e Joinville, apresentem relação de casos de dengue autóctones maior; enquanto outros municípios, como Chapecó e Itajaí, tenham importação de casos de dengue dentro da série temporal?}
+Há flutuação entre os anos, porém ao correlacionar a série temporal integralmente (figura \ref{fig: matriz_corr_DEEtotal}), os municípios de Florianópolis (figura \ref{fig: corr_DEE_FLOtotal}) e Joinville (figura \ref{fig: corr_DEE_JOItotal}) apresentaram valores médios e altos de correlação em quase a totalidade da análise. Os municípios de Itajaí (figura \ref{fig: corr_DEE_ITAtotal}) e Chapecó (figura \ref{fig: corr_DEE_CHAtotal}) apresentaram valores baixos e médios, sendo apenas altos quando correlacionados com a própria variável pretérita.  \textcolor{red}{Por quê? Pode ser indicativo que esses municípios, Florianópolis e Joinville, apresentem relação de casos de dengue autóctones maior; enquanto outros municípios, como Chapecó e Itajaí, tenham importação de casos de dengue dentro da série temporal?}
 
 
 
@@ -657,7 +751,7 @@ Finalmente, sobre o município de Chapecó, valores mais expressivos de correla�
 
 \indent A rede neural apresentou baixo ajuste frente ao comportamento dos fenômenos.
 
-% https://scholar.google.com.br/scholar?q=Breiman,+L.+(2001).+Random+forests.+Machine+Learning,+45(1),+5-32.+doi:10.1023/A:1010933404324&hl=en&as_sdt=0&as_vis=1&oi=scholart
+
 
 \indent Para o modelo \ingles{random forest}, utilizou-se o pacote \ingles{sklearn} e o mesmo conjunto de treino e teste das variáveis explicativas (x) e dependente (y). Ao compilar, foi atribuído um número total de árvores presentes (100) e o gerador de números aleatórios (previamente citado) para, então, ajustar aos conjuntos de treino das variáveis explicativas (x) e dependente (y).
 
