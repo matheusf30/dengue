@@ -182,11 +182,11 @@ def cartografia_sazonal_entomoepidemio_total(csv_melt, str_var):
 	elif str_var == "focos":
 		plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
 	plt.grid(True)
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 600)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -256,11 +256,11 @@ def cartografia_sazonal_meteoro_total(csv_melt, str_var):
 	elif str_var == "tmax":
 		plt.title(f"Sazonalidade de Temperatura Máxima (C) em Santa Catarina.\nMédias de Semanas Epidemiológicas.", fontsize = 18)
 	plt.grid(True)
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 600)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -351,11 +351,11 @@ def cartografia_sazonal_entomoepidemio(csv, str_var, semana_epidemio = None):
 	elif str_var == "focos":
 		plt.title(f"Sazonalidade de Focos de _Aedes_sp. em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	plt.grid(True)
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 600)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -435,11 +435,11 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	elif str_var == "tmax":
 		plt.title(f"Sazonalidade de Temperatura Máxima (C) em Santa Catarina.\nSemana Epidemiológica: {semana_epidemio}.", fontsize = 18)
 	plt.grid(True)
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 600)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -515,11 +515,11 @@ def cartografia_sazonal_entomoepidemio_total_dissertacao(csv_melt, str_var):
 	plt.xlabel("Longitude", fontsize = 16)
 	plt.ylabel("Latitude", fontsize = 16)
 	plt.grid(True, linestyle = ":")
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total_dissertacao.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total_dissertacao.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 300, bbox_inches = None)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200, bbox_inches = None)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -592,11 +592,11 @@ def cartografia_sazonal_meteoro_total_dissertacao(csv_melt, str_var):
 	plt.xlabel("Longitude", fontsize = 16)
 	plt.ylabel("Latitude", fontsize = 16)
 	plt.grid(True, linestyle = ":")
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total_dissertacao.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se_total_dissertacao.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 300)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -686,11 +686,11 @@ def cartografia_sazonal_pico_entomoepidemio(csv, str_var, semana_epidemio = None
 	plt.xlabel("Longitude", fontsize = 16)
 	plt.ylabel("Latitude", fontsize = 16)
 	plt.grid(True, linestyle = ":")
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}_dissertacao.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}_dissertacao.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 12)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -763,11 +763,11 @@ def cartografia_sazonal_pico_meteoro(csv, str_var, semana_epidemio = None):
 	plt.xlabel("Longitude", fontsize = 16)
 	plt.ylabel("Latitude", fontsize = 16)
 	plt.grid(True, linestyle = ":")
-	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}_dissertacao.pdf"
+	nome_arquivo = f"{str_var}_mapa_coropletico_sazonal_se{semana_epidemio}_dissertacao.png"
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 12)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "png", dpi = 1200)
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -777,7 +777,7 @@ def cartografia_sazonal_pico_meteoro(csv, str_var, semana_epidemio = None):
 
 ##########################################################################################################
 # Sazonalidade Média Total
-"""
+
 casos_melt = csv_melt(casos, "casos")
 cartografia_sazonal_entomoepidemio_total_dissertacao(casos_melt, "casos")
 
@@ -816,23 +816,12 @@ tmax_melt = csv_melt(tmax, "tmax")
 cartografia_sazonal_meteoro_total(tmax_melt, "tmax")
 
 # Sazonalidade por Semana Epidemiológica
-"""
+
 """
 for semana_epidemio in csv_melt["semana_epi"].unique():
 	print(semana_epidemio)
 """
-
-for semana_epidemio in range(23,24):
-	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
-	cartografia_sazonal_pico_entomoepidemio(casos, "casos", semana_epidemio)
-	cartografia_sazonal_pico_entomoepidemio(focos, "focos", semana_epidemio)
-	cartografia_sazonal_pico_meteoro(prec, "prec", semana_epidemio)
-	cartografia_sazonal_pico_meteoro(tmin, "tmin", semana_epidemio)
-	cartografia_sazonal_pico_meteoro(tmed, "tmed", semana_epidemio)
-	cartografia_sazonal_pico_meteoro(tmax, "tmax", semana_epidemio)
-"""
-#for semana_epidemio in range(1,12):
-for semana_epidemio in range(1,54):
+for semana_epidemio in range(1,12):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
 	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
@@ -840,4 +829,22 @@ for semana_epidemio in range(1,54):
 	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
 	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
-"""
+
+for semana_epidemio in range(12,24):
+	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+	cartografia_sazonal_pico_entomoepidemio(casos, "casos", semana_epidemio)
+	cartografia_sazonal_pico_entomoepidemio(focos, "focos", semana_epidemio)
+	cartografia_sazonal_pico_meteoro(prec, "prec", semana_epidemio)
+	cartografia_sazonal_pico_meteoro(tmin, "tmin", semana_epidemio)
+	cartografia_sazonal_pico_meteoro(tmed, "tmed", semana_epidemio)
+	cartografia_sazonal_pico_meteoro(tmax, "tmax", semana_epidemio)
+
+#for semana_epidemio in range(1,12):
+for semana_epidemio in range(24,54):
+	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
+	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
+	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
+	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
+	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
+	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
