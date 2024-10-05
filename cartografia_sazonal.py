@@ -690,7 +690,7 @@ def cartografia_sazonal_pico_entomoepidemio(csv, str_var, semana_epidemio = None
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 50)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = "figure")
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
@@ -767,7 +767,7 @@ def cartografia_sazonal_pico_meteoro(csv, str_var, semana_epidemio = None):
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/sazonalidade/"
 	if _AUTOMATIZA == True and _SALVAR == True:
 		os.makedirs(caminho_resultados, exist_ok = True)
-		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = 50)
+		plt.savefig(f"{caminho_resultados}{nome_arquivo}", format = "pdf", dpi = "figure")
 		print(f"\n\n{green}{caminho_resultados}\n{nome_arquivo}\nSALVO COM SUCESSO!{reset}\n\n")
 	if _AUTOMATIZA == True and _VISUALIZAR == True:	
 		print(f"{cyan}\nVISUALIZANDO:\n{caminho_resultados}\n{nome_arquivo}\n{reset}\n\n")
