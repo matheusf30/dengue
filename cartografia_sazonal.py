@@ -841,7 +841,7 @@ for semana_epidemio in range(19,24):
 	cartografia_sazonal_pico_meteoro(tmax, "tmax", semana_epidemio)
 """
 #for semana_epidemio in range(1,12):
-for semana_epidemio in range(24,54):
+for semana_epidemio in range(37,54):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
 	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
