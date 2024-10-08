@@ -22,6 +22,8 @@
 \usepackage{float}
 \usepackage{subfig}
 \usepackage{url}
+% \usepackage{pdflscape}
+\usepackage{lscape}
 
 \newcommand{\latim}[1]{{\textit{#1}}}
 
@@ -102,7 +104,6 @@
 \newacronym{r2}{R²}{Coeficiente de Determinação}
 \newacronym{r}{r}{Coeficiente de Correlação}
 
-
 \title{4_resultados_rascunho}
 \author{Matheus Ferreira de Souza}
 \date{July 2024}
@@ -114,6 +115,13 @@
 \newpage
 
 \chapter{Apresentação dos Resultados}
+
+\begin{figure}
+    \centering
+    \caption{Enter Caption}
+    \label{fig:area_estudo}
+    \includegraphics[width=0.5\linewidth]{figuras/area_de_estudo_SC_MATHEUS.png}
+\end{figure}
 
 \section{Análise e discussão dos resultados}
 
@@ -166,9 +174,45 @@
 \indent \textcolor{red}{Interessante Amplitude Térmica? (Debater com o Mário)\\
 Como aplicar Amplitude a esses dados?}
 
-\indent As quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó; por apresentarem frequência e volume de dados, além de representarem regiões populosas e distintas.
-
 \indent A distribuição sazonal de todas as variáveis seguiu cronologicamente as semanas epidemiológicas, dessa maneira há concordância temporal entre os elementos climatológicos (precipitação e temperaturas mínima, média e máxima) e variáveis entomológicas (focos de \latim{Aedes} sp.) e epidemiológicas (casos de dengue).
+
+\indent Também foi realizada a distribuição sazonal total, com a média das semanas epidemiológicas de todas as variáveis (figura \ref{fig: distribuicao_sazonal_SC_total}). Percebe-se que tanto para focos de \latim{Aedes} sp. quanto para casos de dengue há concentrações sazonais regionalizadas, principalmente: Oeste Catarinense, nas proximidades dos municípios de Chapecó e Concórdia; Norte Catarinense, com especial destaque para o município de Joinville; Vale do Itajaí, nas proximidades dos municípios de Itajaí e Blumenau; e Grande Florianópolis.
+
+\indent Por esses comportamentos regionalizados na sazonalidade, as quatro (4) cidades elencadas nos estudos foram: Florianópolis, Itajaí, Joinville e Chapecó. Também po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r apresentarem frequência e volume de dados, além de representarem municípios populosos e distintos.
+
+\begin{landscape}
+\begin{figure}[htbp]
+    \begin{center}
+    \caption{Distribuições de sazonalidade de variváveis entomo-epidemiológicas (focos de \latim{Aedes} sp. e casos de dengue) e climatológicas (precipitação e temperaturas mínima, média e máxima) em Santa Catarina.}
+    \label{fig: distribuicao_sazonal_SC_total}
+    \subfloat[Casos de Dengue \label{fig: casos_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/casos_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }
+    \subfloat[Focos de \latim{Aedes} sp. \label{fig: focos_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/focos_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }
+    \subfloat[Precipitação (mm) \label{fig: prec_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/prec_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }\hfill
+    \subfloat[Temperatura Mínima (C) \label{fig: tmin_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/tmin_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }
+    \subfloat[Temperatura Média (C) \label{fig: tmed_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/tmed_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }
+    \subfloat[Temperatura Máxima (C) \label{fig: tmax_mapa_coropletico_sazonal_se_total}]{
+        \centering
+        \includegraphics[width=0.47\textwidth]{figuras/tmax_mapa_coropletico_sazonal_se_total_dissertacao_compressed.pdf}
+        }\hfill
+    \end{center}
+    \small{Fonte: Elaboração própria (2024).}
+\end{figure}
+\end{landscape}
 
 \indent É possível perceber, em primeira análise (figura \ref{fig: distribuicao_sazonal}), que os picos de casos de dengue são atingidos algumas semanas epidemiológicas após os valores máximos de ambas as temperaturas, apresentando um hiato de 10 a 15 semanas entre esses picos.
 
