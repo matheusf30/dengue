@@ -830,7 +830,7 @@ for semana_epidemio in range(1,12):
 	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
 	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
-
+"""
 for semana_epidemio in range(12,24):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_pico_entomoepidemio(casos, "casos", semana_epidemio)
@@ -850,3 +850,4 @@ for semana_epidemio in range(12,24):
 	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
 	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
+"""
