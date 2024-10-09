@@ -109,6 +109,8 @@ def semana_epidemio(data):
     return semana_epi
 
 def sazonalidade(csv, str_var):
+	if str_var == "tmin" or "tmed" or "tmax":
+		csv.drop(columns = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"], inplace = True)
 	csv["semana"] = pd.to_datetime(csv["Semana"]).dt.date
 	csv = csv.astype({"semana": "datetime64[ns]"})
 	csv.drop(columns = "Semana", inplace = True)
@@ -116,8 +118,6 @@ def sazonalidade(csv, str_var):
 	print(f"\n{green}{str_var.upper()}\n{reset}{csv}\n{green}{str_var.upper()}.info\n{reset}{csv.info()}\n{green}{str_var.upper()}.dtypes\n{reset}{csv.dtypes}\n")
 	print("="*80)
 	colunas_csv = csv.drop(columns = ["semana", "semana_epi"])
-	if str_var == "tmin" or "tmed" or "tmax":
-		csv.drop(columns = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"], inplace = True)
 	colunas = colunas_csv.columns
 	media_semana = csv.groupby("semana_epi")[colunas].mean().round(2)
 	media_semana.reset_index(inplace = True)
@@ -225,7 +225,7 @@ def anomalia_estacionaria(csv, str_var): #sem_sazonalidade.csv
 		nome_arquivo = f"anomalia_estacionaria_{str_var}.csv"
 		caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 		os.makedirs(caminho_dados, exist_ok = True)
-		sem_sazonal.to_csv(f"{caminho_dados}{nome_arquivo}", index = False)
+		anomalia_estacionaria.to_csv(f"{caminho_dados}{nome_arquivo}", index = False)
 		#plt.savefig(f"{caminho_dados}{nome_arquivo}", format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_correlacao}\n
