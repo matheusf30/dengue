@@ -116,6 +116,8 @@ def sazonalidade(csv, str_var):
 	print(f"\n{green}{str_var.upper()}\n{reset}{csv}\n{green}{str_var.upper()}.info\n{reset}{csv.info()}\n{green}{str_var.upper()}.dtypes\n{reset}{csv.dtypes}\n")
 	print("="*80)
 	colunas_csv = csv.drop(columns = ["semana", "semana_epi"])
+	if str_var == "tmin" or "tmed" or "tmax":
+		csv.drop(columns = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"], inplace = True)
 	colunas = colunas_csv.columns
 	media_semana = csv.groupby("semana_epi")[colunas].mean().round(2)
 	media_semana.reset_index(inplace = True)
@@ -203,16 +205,20 @@ def tendencia(csv): # sem_sazonalidade.csv
 def anomalia_estacionaria(csv, str_var): #sem_sazonalidade.csv
 	semanas = csv["semana"]
 	colunas_csv = csv.drop(columns = ["semana"])
+	#csv.dropna(axis = 1, inplace = True)
 	colunas = colunas_csv.columns
 	anomalia_estacionaria = pd.DataFrame()
 	anomalia_estacionaria["semana"] = semanas
 	for c in colunas:
-		print(f"{cyan}\nVARIÁVEL\n\n{str_var.upper()} - {c}{reset}\n")
-		print(f"\n{green}sem_sazonal[c]\n{reset}{csv[c]}\n")
-		tendencia = mk.original_test(csv[c])
-		print(f"\n{green}tendencia\n{reset}{tendencia}\n")
-		sem_tendencia = csv[c] -(tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
-		anomalia_estacionaria[c] = sem_tendencia
+		if len(csv[c]) > 1:
+			tendencia = mk.original_test(csv[c])
+			print(f"{cyan}\nVARIÁVEL\n\n{str_var.upper()} - {c}{reset}\n")
+			print(f"\n{green}sem_sazonal[c]\n{reset}{csv[c]}\n")
+			print(f"\n{green}tendencia\n{reset}{tendencia}\n")
+			sem_tendencia = csv[c] -(tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
+			anomalia_estacionaria[c] = sem_tendencia
+		else:
+			print(f"{red}Coluna Faltante: {c}\nINSUFICIÊNCIA DE DADOS!\n(Tamanho: {len(csv[c])}).{reset}")
 	print(f"{green}\n{str_var.upper()} sem_sazonal\n{reset}{csv}\n")
 	print(f"{green}\n{str_var.upper()} anomalia_estacionaria\n{reset}{anomalia_estacionaria}\n")
 	if _SALVAR == True:
@@ -352,10 +358,11 @@ if _VISUALIZAR == True:
 # Tratando Tendência
 # anomalia_estacionaria = dados - ( a + b * x )
 #sys.exit()
-
 plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
+#fig, axs = plt.subplots(2, 1, figsize = (12, 6), gridspec_kw = {"height_ratios": [5, 5]},
+#								 sharex = True, layout = "constrained", frameon = False)
 plt.gca().patch.set_facecolor("honeydew") #.gcf()
-sns.barplot(x = sem_sazonal["semana"], y = anomalia_estacionaria["PREC"],
+plt.barplot(x = sem_sazonal["semana"], y = anomalia_estacionaria["PREC"],
 				color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação") #"cornflowerblue"
 sns.lineplot(x = anomalia_estacionaria.index, y = anomalia_estacionaria["CASOS"],
 				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
