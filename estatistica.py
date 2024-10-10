@@ -220,6 +220,7 @@ class Descritiva:
 		axs[1].set_facecolor("honeydew")
 		axs[1].grid(True)
 		fig.suptitle(f"Distribuição: {cidade} - {str_var.upper()}")
+			caminho_estatistica = f"{caminho_estatistica}histograma/"
 		if _SALVAR == True:
 			_cidade = csv.normalizando_nome_cidade(cidade)
 			plt.savefig(f"{caminho_estatistica}histograma_{str_var.upper()}_{_cidade}.pdf", format = "pdf", dpi = 1200)
@@ -306,6 +307,7 @@ class Descritiva:
 		fig.suptitle(f"Decomposição Sazonal: {cidade} - {str_var.upper()}")
 		plt.xlabel("Semanas Epidemiológicas")
 		plt.tight_layout()
+		caminho_estatistica = f"{caminho_estatistica}decomposicao_sazonal/"
 		if _SALVAR == True:
 			troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
 				     'É': 'E', 'Ê': 'E', 'È': 'E', 'Ẽ': 'E', 'Ë': 'E',
