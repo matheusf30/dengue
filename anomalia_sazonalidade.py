@@ -87,6 +87,34 @@ def abrir_anomalia_estacionaria(str_var):
 	print(f"\n{green}ANOMALIA ESTACIONÁRIA: {str_var.upper()}\n{reset}{arq}\n")
 	return arq
 
+def grafico_sazonalidade(csv_casos, csv_focos, csv_prec, csv_tmin, csv_tmed, csv_tmax, str_cidade):
+	_CIDADE = str_cidade.upper()
+	plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
+	plt.gca().patch.set_facecolor("honeydew") #.gcf()
+	sns.barplot(x = csv_prec["semana_epi"], y = csv_prec[_CIDADE],
+					color = "royalblue", linewidth = 1.5, alpha = 1, label = "Precipitação")
+	sns.lineplot(x = csv_casos.index, y = csv_casos[_CIDADE],
+					color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+	plt.fill_between(csv_casos.index, csv_casos[_CIDADE], color = "purple", alpha = 0.3)
+	sns.lineplot(x = csv_focos.index, y = csv_focos[_CIDADE],
+					color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+	plt.fill_between(csv_focos.index, csv_focos[_CIDADE], color = "darkgreen", alpha = 0.35)
+	plt.xlabel("Semanas Epidemiológicas")
+	plt.ylabel("Número de Casos e Focos X Precipitação (mm)")
+	plt.legend(loc = "upper center")
+	ax2 = plt.gca().twinx()#.set_facecolor("honeydew")
+	sns.lineplot(x = csv_tmin.index, y = csv_tmin[_CIDADE],
+					color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
+	sns.lineplot(x = csv_tmed.index, y = csv_tmed[_CIDADE],
+					color = "orange", linewidth = 1.5, label = "Temperatura Média")
+	sns.lineplot(x = csv_tmax.index, y = csv_tmax[_CIDADE],
+					color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+	plt.title(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE {_CIDADE}, SANTA CATARINA.")
+	ax2.set_ylabel("Temperaturas (C)")
+	ax2.legend(loc = "upper right")
+	ax2.grid(False)
+	plt.show()
+
 ### Execução
 
 sazonal_casos = abrir_sazonalidade("casos")
@@ -114,6 +142,8 @@ sem_sazonal_tmax = abrir_sem_sazonalidade("tmax")
 anomalia_estacionaria_tmax = abrir_anomalia_estacionaria("tmax")
 
 
+grafico_sazonalidade(sazonal_casos, sazonal_focos, sazonal_prec,
+						sazonal_tmin, sazonal_tmed, sazonal_tmax, "Florianópolis")
 
 
 
@@ -121,8 +151,7 @@ anomalia_estacionaria_tmax = abrir_anomalia_estacionaria("tmax")
 
 
 
-
-#sys.exit()
+sys.exit()
 plt.figure(figsize = (12, 6), layout = "tight", frameon = False)
 plt.gca().patch.set_facecolor("honeydew") #.gcf()
 sns.barplot(x = media_semana["semana_epi"], y = media_semana["PREC"],
@@ -185,10 +214,11 @@ ax2.grid(False)
 #plt.show()
 #sys.exit()
 nome_arquivo = f"distribuicao_sem_sazonal_{_cidade}.pdf"
+caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
 if _SALVAR == True:
 	for velho, novo in troca.items():
 		_cidade = _cidade.replace(velho, novo)
-	caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/anomalia_estacionaria/"
+
 	os.makedirs(caminho_correlacao, exist_ok = True)
 	plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 	print(f"""\n{green}SALVO COM SUCESSO!\n
