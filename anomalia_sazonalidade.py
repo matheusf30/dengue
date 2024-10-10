@@ -125,7 +125,7 @@ def grafico_sazonalidade(csv_casos, csv_focos, csv_prec, csv_tmin, csv_tmed, csv
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 	if _SALVAR == True:
 		os.makedirs(caminho_correlacao, exist_ok = True)
-		plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
@@ -171,7 +171,7 @@ def grafico_sazonalidade_subplots(csv_casos, csv_focos, csv_prec, csv_tmin, csv_
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 	if _SALVAR == True:
 		os.makedirs(caminho_correlacao, exist_ok = True)
-		plt.savefig(f'{caminho_correlacao}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
