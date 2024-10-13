@@ -21,6 +21,18 @@ diretorio_dados = os.path.sep.join(diretorios[:-6])
 print(diretorio_dados)
 """
 
+##### Padrão ANSI ###############################################################
+bold = "\033[1m"
+red = "\033[91m"
+green = "\033[92m"
+yellow = "\033[33m"
+blue = "\033[34m"
+magenta = "\033[35m"
+cyan = "\033[36m"
+white = "\033[37m"
+reset = "\033[0m"
+#################################################################################
+
 ### Encaminhamento aos Diretórios
 try:
     _LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
@@ -29,6 +41,7 @@ try:
     elif _LOCAL == "CASA":
         caminho_shape = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     elif _LOCAL == "IFSC":
+        caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/"
         caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
         caminho_samet = "/dados/operacao/samet/clima/"
@@ -67,22 +80,14 @@ tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
 tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
 municipios = gpd.read_file(f"{caminho_shape}{municipios}")
 
-print(tmin.variables["tmin"][:])
-print(tmin.variables["time"][:])
-print(tmin.variables["nobs"][:])
-print(tmin)
+print(f'\n{green}tmin.variables["tmin"][:]\n{reset}{tmin.variables["tmin"][:]}\n')
+print(f'\n{green}tmin.variables["time"][:]\n{reset}{tmin.variables["tmin"][:]}\n')
+print(f'\n{green}tmin.variables["nobs"][:]\n{reset}{tmin.variables["nobs"][:]}\n')
+print(f"{green}tmin\n{reset}{tmin}\n")
+print(f"{green}municipios\n{reset}{municipios}\n")
 
 
 ### Pré-processamento e Definição de Função
-bold = "\033[1m"
-red = "\033[91m"
-green = "\033[92m"
-yellow = "\033[33m"
-blue = "\033[34m"
-magenta = "\033[35m"
-cyan = "\033[36m"
-white = "\033[37m"
-reset = "\033[0m"
 
 def verifica_nan(valores_centroides):
 	"""
@@ -148,6 +153,9 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides = []
 	for idx, linha in shapefile.iterrows():
 		lon, lat = linha["centroide"].x, linha["centroide"].y
+		if shapefile["NM_MUN"].isin(["Balneário Camboriú", "Bombinhas", "Porto Belo"]).any():
+			if str_var == "tmax" or "tmed" or "tmin":
+				lon -= 0.5
 		valor = netcdf4.sel(lon = lon, lat = lat, method = "nearest")
 		valores_centroides.append(valor)
 	valores_centroides = pd.DataFrame(data = valores_centroides)
@@ -164,7 +172,8 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 		if isinstance(linha[str_var], xr.DataArray):
 			var_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha[str_var]]
 			var_valores.append(var_valor)
-			print(f"\n---{str_var}---\n{bold}{valores_centroides['Municipio'][i]}{bold}: Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
+			print(f"\n{green}---{str_var}---\n{bold}{valores_centroides['Municipio'][i]}{bold}: Finalizado!\n")
+			print(f"\n{reset}{i + 1} de {len(valores_centroides['Municipio'])}.\n")
 		else:
 			var_valores.append([np.nan] * len(valores_tempo))
 			print(f"\n{valores_centroides['Municipio'][i]}: NaN... Finalizado!\n{i + 1} de {len(valores_centroides['Municipio'])}.")
@@ -181,7 +190,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 	valores_centroides.rename(columns = {"index" : str_var}, inplace = True)
 	valores_centroides.to_csv(f"{caminho_dados}{str_var}_diario_ate_{_ANO_FINAL}.csv", index = False)
 	print("="*80)
-	print(f"\n\n{caminho_shape}{str_dados}_diario_ate_{_ANO_FINAL}.csv\n\n{green}{bold}ARQUIVO SALVO COM SUCESSO!{bold}{reset}\n\n")
+	print(f"\n\n{green}{caminho_shape}{str_var}_diario_ate_{_ANO_FINAL}.csv\n\n{green}{bold}ARQUIVO SALVO COM SUCESSO!{reset}\n\n")
 	print("="*80)
 	print(netcdf4.variables[str_var][:])
 	print(netcdf4.variables["time"][:])
@@ -205,6 +214,8 @@ tmin = extrair_centroides(municipios, tmin, "tmin")
 tmed = extrair_centroides(municipios, tmed, "tmed")
 tmax = extrair_centroides(municipios, tmax, "tmax")
 prec = extrair_centroides(municipios, prec, "prec")
+
+print(tmin[["Balneário Camboriú", "Bombinhas", "Porto Belo"]])
 
 
 print("!!"*80)
