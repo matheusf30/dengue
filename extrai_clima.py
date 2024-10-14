@@ -41,7 +41,7 @@ try:
     elif _LOCAL == "CASA":
         caminho_shape = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
     elif _LOCAL == "IFSC":
-        caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/"
+        caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
         caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
         caminho_samet = "/dados/operacao/samet/clima/"
@@ -172,7 +172,7 @@ def extrair_centroides(shapefile, netcdf4, str_var):
 		if isinstance(linha[str_var], xr.DataArray):
 			var_valor = [x.item() if not np.isnan(x.item()) else np.nan for x in linha[str_var]]
 			var_valores.append(var_valor)
-			print(f"\n{green}---{str_var}---\n{bold}{valores_centroides['Municipio'][i]}{bold}: Finalizado!\n")
+			print(f"\n{green}---{str_var}---\n\n{bold}{valores_centroides['Municipio'][i]}{bold}: Finalizado!\n")
 			print(f"\n{reset}{i + 1} de {len(valores_centroides['Municipio'])}.\n")
 		else:
 			var_valores.append([np.nan] * len(valores_tempo))
