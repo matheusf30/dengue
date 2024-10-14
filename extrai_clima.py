@@ -44,7 +44,7 @@ try:
         caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
         caminho_shape = "/home/sifapsc/scripts/matheus/dados_dengue/shapefiles/"
         caminho_merge = "/dados/operacao/merge/CDO.MERGE/"
-        caminho_samet = "/dados/operacao/samet/clima/"
+        caminho_samet = "/dados/operacao/samet/CDO.SAMET/"
     else:
         print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 except:
@@ -52,7 +52,7 @@ except:
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_shape}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
-_ANO_FINAL = "2024" # Até quando os produtos de reanálise foram compilados
+_ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
 
 ### Renomeação variáveis pelos arquivos
 """
@@ -61,16 +61,17 @@ merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
 samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_2022.nc"
 samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_2022.nc"
 samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_2022.nc"
-
-samet_tmax = f"TMAX/SAMeT_CPTEC_DAILY_TMAX_SB_2000_{_ANO_FINAL}.nc"
-samet_tmed = f"TMED/SAMeT_CPTEC_DAILY_TMED_SB_2000_{_ANO_FINAL}.nc"
-samet_tmin = f"TMIN/SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
+"""
+samet_tmax = f"SAMeT_CPTEC_DAILY_TMAX_SB_2000_{_ANO_FINAL}.nc"
+samet_tmed = f"SAMeT_CPTEC_DAILY_TMED_SB_2000_{_ANO_FINAL}.nc"
+samet_tmin = f"SAMeT_CPTEC_DAILY_TMIN_SB_2000_{_ANO_FINAL}.nc"
+merge = f"MERGE_CPTEC_DAILY_SB_2000_{_ANO_FINAL}.nc"
 """
 merge = "MERGE_CPTEC_DAILY_SB_2024_2024.nc"
 samet_tmax = "TMAX/SAMeT_CPTEC_DAILY_TMAX_2024.nc"
 samet_tmed = "TMED/SAMeT_CPTEC_DAILY_TMED_2024.nc"
 samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_2024.nc"
-
+"""
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivos
