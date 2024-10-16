@@ -106,8 +106,6 @@ def semana_epidemio(data):
     return semana_epi
 
 def sazonalidade(csv, str_var):
-	if str_var == "tmin" or "tmed" or "tmax":
-		csv.drop(columns = ["BALNEÁRIO CAMBORIÚ", "BOMBINHAS", "PORTO BELO"], inplace = True)
 	csv["semana"] = pd.to_datetime(csv["Semana"]).dt.date
 	csv = csv.astype({"semana": "datetime64[ns]"})
 	csv.drop(columns = "Semana", inplace = True)
