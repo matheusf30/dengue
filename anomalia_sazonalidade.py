@@ -14,7 +14,7 @@ import os
 
 ### Condições para Variar #######################################################
 
-_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "IFSC"
 
 ##################### Valores Booleanos ############ # sys.argv[0] is the script name itself and can be ignored!
 _AUTOMATIZAR = sys.argv[1]   # True|False                    #####
@@ -52,10 +52,6 @@ reset = "\033[0m"
 ### Encaminhamento aos Diretórios
 if _LOCAL == "GH": # _ = Variável Privada
 	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
-	caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _LOCAL == "CASA":
-	caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
-	caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
 elif _LOCAL == "IFSC":
 	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 	caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
@@ -344,7 +340,8 @@ anomalia_estacionaria_tmax = abrir_anomalia_estacionaria("tmax")
 
 ### Visualizações
 
-lista_cidades = ["Florianópolis", "Itajaí", "Joinville", "Chapecó",
+lista_cidades = ["Balneário Camboriú", "Bombinhas", "Porto Belo", "Imbituba",
+					"Florianópolis", "Itajaí", "Joinville", "Chapecó",
 					"Blumenau", "Criciúma", "Concórdia", "Xanxerê",
 					"Jaraguá do Sul", "Palhoça", "São José", "Biguaçu"]
 for str_cidade in lista_cidades:
