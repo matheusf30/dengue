@@ -14,7 +14,7 @@ import os
 
 ### Condições para Variar #######################################################
 
-_LOCAL = "IFSC" # OPÇÕES>>> "GH" "CASA" "IFSC"
+_LOCAL = "IFSC" # OPÇÕES>>> "GH" "IFSC"
 
 ##################### Valores Booleanos ############ # sys.argv[0] is the script name itself and can be ignored!
 _AUTOMATIZAR = sys.argv[1]   # True|False                    #####
@@ -48,9 +48,6 @@ reset = "\033[0m"
 if _LOCAL == "GH": # _ = Variável Privada
 	caminho_dados = "https://raw.githubusercontent.com/matheusf30/dados_dengue/main/"
 	caminho_modelos = "https://github.com/matheusf30/dados_dengue/tree/main/modelos"
-elif _LOCAL == "CASA":
-	caminho_dados = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\"
-	caminho_modelos = "C:\\Users\\Desktop\\Documents\\GitHub\\dados_dengue\\modelos\\"
 elif _LOCAL == "IFSC":
 	caminho_dados = "/home/sifapsc/scripts/matheus/dados_dengue/"
 	caminho_modelos = "/home/sifapsc/scripts/matheus/dados_dengue/modelos/"
@@ -64,10 +61,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos
 casos = "casos_dive_pivot_total.csv"  # TabNet/DiveSC
 focos = "focos_pivot.csv"
-prec = "prec_semana_ate_2023.csv"
-tmin = "tmin_semana_ate_2023.csv"
-tmed = "tmed_semana_ate_2023.csv"
-tmax = "tmax_semana_ate_2023.csv"
+prec = "prec_semana_ate_2024.csv"
+tmin = "tmin_semana_ate_2024.csv"
+tmed = "tmed_semana_ate_2024.csv"
+tmax = "tmax_semana_ate_2024.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
