@@ -366,6 +366,8 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	# SC_Coroplético
 	#semana_epidemio = 10
 	xy = municipios.copy()
+	xy["latitude"] = xy.centroid.y
+	xy["longitude"] = xy.centroid.x
 	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 	xy = xy.rename(columns = {"NM_MUN" : "Município"})
 	xy["Município"] = xy["Município"].str.upper()
@@ -403,6 +405,7 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	print(f"\n{green}v_min\n{reset}{v_min}\n")
 	print(f"\n{green}v_max\n{reset}{v_max}\n")
 	print(f"\n{green}levels\n{reset}{levels}\n")
+	print(f"\n{green}csv_poligeo\n{reset}{csv_poligeo}\n")
 	if str_var == "prec":
 		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
                                                                        label = f"{str_var}", cmap = cmocean.cm.rain)
@@ -777,7 +780,7 @@ def cartografia_sazonal_pico_meteoro(csv, str_var, semana_epidemio = None):
 
 ##########################################################################################################
 # Sazonalidade Média Total
-
+"""
 casos_melt = csv_melt(casos, "casos")
 cartografia_sazonal_entomoepidemio_total_dissertacao(casos_melt, "casos")
 
@@ -814,7 +817,7 @@ cartografia_sazonal_meteoro_total(tmed_melt, "tmed")
 
 tmax_melt = csv_melt(tmax, "tmax")
 cartografia_sazonal_meteoro_total(tmax_melt, "tmax")
-
+"""
 # Sazonalidade por Semana Epidemiológica
 """
 for semana_epidemio in csv_melt["semana_epi"].unique():
@@ -829,9 +832,9 @@ for semana_epidemio in range(1,12):
 	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
 	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
-"""
-#for semana_epidemio in range(11,23):
+
 for semana_epidemio in range(11,23):
+#for semana_epidemio in range(19,23):
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
 	cartografia_sazonal_pico_entomoepidemio(casos, "casos", semana_epidemio)
 	cartografia_sazonal_pico_entomoepidemio(focos, "focos", semana_epidemio)
@@ -839,7 +842,7 @@ for semana_epidemio in range(11,23):
 	cartografia_sazonal_pico_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_pico_meteoro(tmed, "tmed", semana_epidemio)
 	cartografia_sazonal_pico_meteoro(tmax, "tmax", semana_epidemio)
-
+"""
 #for semana_epidemio in range(1,54):
 for semana_epidemio in range(1,54):
 
