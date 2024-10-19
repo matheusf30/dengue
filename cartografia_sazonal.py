@@ -410,16 +410,23 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	print(f"\n{green}csv_poligeo[csv_poligeo['semana_epi'] == 2]\n{reset}{csv_poligeo[csv_poligeo['semana_epi'] == 2]}")
 	print(f"\n{green}csv_poligeo['semana_epi'].unique()\n{reset}{csv_poligeo['semana_epi'].unique()}")
 	print(f"\n{green}semana_epidemio in csv_poligeo['semana_epi'].unique()\n{reset}{semana_epidemio in csv_poligeo['semana_epi'].unique()}")
-
+	v_max = csv_melt[str_var].max()
+	v_min = csv_melt[str_var].min()
 	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
-	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
-	print(f"\n{green}RECORTE TEMPORAL DE {str_var.upper()}\n{reset}{recorte_temporal}\n")
 	if str_var == "prec":
-		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = False,
 							label = f"{str_var}", cmap = cmocean.cm.rain)
+		sm = plt.cm.ScalarMappable(norm = plt.Normalize(vmin = v_min,
+													vmax = v_max), cmap = cmocean.cm.rain)
 	elif str_var == "tmin" or "tmed" or "tmax":
-		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = False,
 							label = f"{str_var}", cmap = cmocean.cm.thermal)
+		sm = plt.cm.ScalarMappable(norm = plt.Normalize(vmin = v_min,
+													vmax = v_max), cmap = cmocean.cm.thermal)
+	sm.set_array([])
+	cbar = plt.colorbar(sm, ax = ax)	
+	cbar.set_label(str_var, fontsize = 16)
+	cbar.ax.tick_params(labelsize = 16)
 	plt.xlim(-54, -48)
 	plt.ylim(-29.5, -25.75)
 	x_tail = -48.5
@@ -853,12 +860,22 @@ for semana_epidemio in range(11,23):
 """
 #for semana_epidemio in range(1,54):
 for semana_epidemio in range(1,54):
-
-	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
-	#cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
-	#cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
-	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
-	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
-	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
-	cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
+	try:
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		cartografia_sazonal_meteoro(tmax, "tmax", semana_epidemio)
+		print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+	except ValueError as e:
+		print(f"\n{red}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
+		print(f"\n{red}ERRO: {e}{reset}\n")
+		
 
