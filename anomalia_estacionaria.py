@@ -61,10 +61,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos
 casos = "casos_dive_pivot_total.csv"  # TabNet/DiveSC
 focos = "focos_pivot.csv"
-prec = "prec_semana_ate_2024.csv"
-tmin = "tmin_semana_ate_2024.csv"
-tmed = "tmed_semana_ate_2024.csv"
-tmax = "tmax_semana_ate_2024.csv"
+prec = "prec_semana_ate_2023.csv"
+tmin = "tmin_semana_ate_2023.csv"
+tmed = "tmed_semana_ate_2023.csv"
+tmax = "tmax_semana_ate_2023.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -74,6 +74,8 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
+casos = casos.iloc[ : 522, : ] # Selecionando até ao final de 2023
+
 print(f"\n{green}CASOS\n{reset}{casos}\n")
 print(f"\n{green}FOCOS\n{reset}{focos}\n")
 print(f"\n{green}PRECIPITAÇÃO\n{reset}{prec}\n")
@@ -81,7 +83,7 @@ print(f"\n{green}TEMPERATURA MÍNIMA\n{reset}{tmin}\n")
 print(f"\n{green}TEMPERATURA MÉDIA\n{reset}{tmed}\n")
 print(f"\n{green}TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
 
-
+#sys.exit()
 
 ############### Base para Troca de Caracteres
 troca = {'Á': 'A', 'Â': 'A', 'À': 'A', 'Ã': 'A', 'Ä': 'A',
