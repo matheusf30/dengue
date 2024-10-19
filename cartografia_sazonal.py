@@ -414,19 +414,13 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	v_min = csv_melt[str_var].min()
 	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
 	if str_var == "prec":
-		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = False,
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
 							label = f"{str_var}", cmap = cmocean.cm.rain)
 		sm = plt.cm.ScalarMappable(norm = plt.Normalize(vmin = v_min,
 													vmax = v_max), cmap = cmocean.cm.rain)
 	elif str_var == "tmin" or "tmed" or "tmax":
-		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = False,
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
 							label = f"{str_var}", cmap = cmocean.cm.thermal)
-		sm = plt.cm.ScalarMappable(norm = plt.Normalize(vmin = v_min,
-													vmax = v_max), cmap = cmocean.cm.thermal)
-	sm.set_array([])
-	cbar = plt.colorbar(sm, ax = ax)	
-	cbar.set_label(str_var, fontsize = 16)
-	cbar.ax.tick_params(labelsize = 16)
 	plt.xlim(-54, -48)
 	plt.ylim(-29.5, -25.75)
 	x_tail = -48.5
