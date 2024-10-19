@@ -133,7 +133,9 @@ def tratando_sazonalidade(csv, str_var):
 	csv = csv.astype({"semana": "datetime64[ns]"})
 	csv.drop(columns = "Semana", inplace = True)
 	csv["semana_epi"] = csv['semana'].apply(semana_epidemio)
-	print(f"\n{green}{str_var.upper()}\n{reset}{csv}\n{green}{str_var.upper()}.info()\n{reset}{csv.info()}\n{green}{str_var.upper()}.dtypes\n{reset}{csv.dtypes}\n")
+	print(f"\n{green}{str_var.upper()}\n{reset}{csv}\n")
+	print(f"\n{green}{str_var.upper()}.info()\n{reset}{csv.info()}\n")
+	print(f"\n{green}{str_var.upper()}.dtypes\n{reset}{csv.dtypes}\n")
 	print("="*80)
 	colunas_csv = csv.drop(columns = ["semana", "semana_epi"])
 	colunas = colunas_csv.columns
