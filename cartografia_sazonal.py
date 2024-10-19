@@ -366,8 +366,6 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	# SC_Coroplético
 	#semana_epidemio = 10
 	xy = municipios.copy()
-	xy["latitude"] = xy.centroid.y
-	xy["longitude"] = xy.centroid.x
 	xy.drop(columns = ["CD_MUN", "SIGLA_UF", "AREA_KM2"], inplace = True)
 	xy = xy.rename(columns = {"NM_MUN" : "Município"})
 	xy["Município"] = xy["Município"].str.upper()
@@ -406,12 +404,14 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	print(f"\n{green}v_max\n{reset}{v_max}\n")
 	print(f"\n{green}levels\n{reset}{levels}\n")
 	print(f"\n{green}csv_poligeo\n{reset}{csv_poligeo}\n")
+	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
+	print(f"\n{green}RECORTE TEMPORAL DE {str_var.upper()}\n{reset}{recorte_temporal}\n")
 	if str_var == "prec":
-		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
-                                                                       label = f"{str_var}", cmap = cmocean.cm.rain)
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
+							label = f"{str_var}", cmap = cmocean.cm.rain)
 	elif str_var == "tmin" or "tmed" or "tmax":
-		csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio].plot(ax = ax, column = f"{str_var}",  legend = True,
-                                                                       label = f"{str_var}", cmap = cmocean.cm.thermal)
+		recorte_temporal.plot(ax = ax, column = f"{str_var}",  legend = True,
+							label = f"{str_var}", cmap = cmocean.cm.thermal)
 	plt.xlim(-54, -48)
 	plt.ylim(-29.5, -25.75)
 	x_tail = -48.5
