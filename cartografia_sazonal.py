@@ -404,6 +404,14 @@ def cartografia_sazonal_meteoro(csv, str_var, semana_epidemio = None):
 	print(f"\n{green}v_max\n{reset}{v_max}\n")
 	print(f"\n{green}levels\n{reset}{levels}\n")
 	print(f"\n{green}csv_poligeo\n{reset}{csv_poligeo}\n")
+	print(f"\n{green}csv_poligeo['semana_epi'].dtype\n{reset}{csv_poligeo['semana_epi'].dtype}\n")
+	print(f"\n{green}type(semana_epidemio)\n{reset}{type(semana_epidemio)}\n")
+	print(f"\n{green}csv_poligeo[csv_poligeo['semana_epi'] == semana_epidemio]\n{reset}{csv_poligeo[csv_poligeo['semana_epi'] == semana_epidemio]}")
+	print(f"\n{green}csv_poligeo[csv_poligeo['semana_epi'] == 2]\n{reset}{csv_poligeo[csv_poligeo['semana_epi'] == 2]}")
+	print(f"\n{green}csv_poligeo['semana_epi'].unique()\n{reset}{csv_poligeo['semana_epi'].unique()}")
+	print(f"\n{green}semana_epidemio in csv_poligeo['semana_epi'].unique()\n{reset}{semana_epidemio in csv_poligeo['semana_epi'].unique()}")
+
+	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
 	recorte_temporal = csv_poligeo[csv_poligeo["semana_epi"] == semana_epidemio]
 	print(f"\n{green}RECORTE TEMPORAL DE {str_var.upper()}\n{reset}{recorte_temporal}\n")
 	if str_var == "prec":
@@ -847,8 +855,8 @@ for semana_epidemio in range(11,23):
 for semana_epidemio in range(1,54):
 
 	print(f"\n{green}SEMANA EPIDEMIOLÓGICA: {semana_epidemio}{reset}\n")
-	cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
-	cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
+	#cartografia_sazonal_entomoepidemio(casos, "casos", semana_epidemio)
+	#cartografia_sazonal_entomoepidemio(focos, "focos", semana_epidemio)
 	cartografia_sazonal_meteoro(prec, "prec", semana_epidemio)
 	cartografia_sazonal_meteoro(tmin, "tmin", semana_epidemio)
 	cartografia_sazonal_meteoro(tmed, "tmed", semana_epidemio)
