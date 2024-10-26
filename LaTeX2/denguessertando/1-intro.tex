@@ -2,19 +2,19 @@
 %Máximo 2pg:
 
 % Contextualizar o Clima de SC;
-\indent O clima é a composição do tempo meterológico ao longo de um período, pelo menos trinta anos, em um determinado território. (\acrlong{SC}, \citeyear{AtlasSCnatureza}, pg-75).
+\indent O clima é a composição do tempo meteorológico ao longo de um período, pelo menos trinta anos, em um determinado território. (\acrlong{SC}, \citeyear{AtlasSCnatureza}, pg-75).
 
-\indent O estado de \acrfull{SC} está localizado no sul do Brasil, região onde ocorrem totais pluviométricos elevados e precipitação bem distribuída ao longo do ano. Parte desse comportamento é devido a atuação sistemas meteorológicos como: \acrfull{FF}, Sistemas Frontais, Clicones Extratropicais, Vórtices Clicônicos em Altos Níveis, Bloqueios Atmosféricos e \acrfull{CCM}, além a influência indireta da \acrfull{ZCAS} \cite{reboita2010}.
+\indent O estado de \acrfull{SC} está localizado no sul do Brasil, região onde ocorrem totais pluviométricos elevados e precipitação bem distribuída ao longo do ano. Parte desse comportamento é devido a atuação sistemas meteorológicos como: \acrfull{FF}, Sistemas Frontais, Ciclones Extratropicais, Vórtices Ciclônicos em Altos Níveis, Bloqueios Atmosféricos e \acrfull{CCM}, além a influência indireta da \acrfull{ZCAS} \cite{reboita2010}.
 
 \indent Atualmente, \acrlong{SC} apresenta seis (6) mesorregiões climáticas, por similaridade no comportamento de temperatura, precipitação, umidade relativa do ar, intensidade e direção dos ventos, e são as seguintes: Oeste; Planalto Sul e Meio Oeste; Planalto Norte e Vale do Itajaí; Planalto Serrano; Litoral Norte; e Litoral Sul \cite{Guerra2023Regionalizacao}.
 
 %\textcolor{red}{(?) CONTEXTUALIZAR TEMPERATURA/CLIMA EM SC (?)}\\
 %Contextualizar Dengue;
-\indent Antes de mais nada, para a \acrfull{Cobrade} os desastres podem ser divididos em naturais ou tecnológicos. Ainda para a \acrshort{Cobrade}, as epidemias são classificadas como desatres naturais biológicos, podendo ser divididas quanto ao agente etiológico: viral, bacteriano, parasítico ou fúngico \cite{GIRD}.
+\indent Antes de mais nada, para a \acrfull{Cobrade} os desastres podem ser divididos em naturais ou tecnológicos. Ainda para a \acrshort{Cobrade}, as epidemias são classificadas como desastres naturais biológicos, podendo ser divididas quanto ao agente etiológico: viral, bacteriano, parasítico ou fúngico \cite{GIRD}.
 
 \indent Sobretudo, sendo expresso pelo \citeonline{GuiaVigSaúde22} no Guia de Vigilância em Saúde, o mosquito \latim{Aedes aegypti} (Linnaeus, 1762) pode comumente transmitir algumas arboviroses, como: Dengue, Zika e Chikungunya. A dengue possui como agente etiológico o vírus da dengue (\acrfull{DENV}), sendo agrupado em quatro sorotipos distintos (\acrshort{DENV}-1, \acrshort{DENV}-2, \acrshort{DENV}-3 e \acrshort{DENV}-4), e é uma das zoonoses vetorizadas por artrópodes mais relevantes nas Américas \cite{GuiaVigSaúde22}.
 
-\indent Para \citeonline{ClimateDengue2019} a expansão global da dengue segue a expansão global dos vetores (gênero \latim{Aedes} sp.), que geograficamente se distribuem conforme condições climáticas, em especial pela temperatura. Para esses autores, não somente a expansão geográfica se deva ao incremento de temperatura, como a própria alteração no tempo do ciclo de vida (fases larvar, pupa e adulto) e dos períodos de incubação do vírus (extrínsico e intrínsico).
+\indent Para \citeonline{ClimateDengue2019} a expansão global da dengue segue a expansão global dos vetores (gênero \latim{Aedes} sp.), que geograficamente se distribuem conforme condições climáticas, em especial pela temperatura. Para esses autores, não somente a expansão geográfica se deva ao incremento de temperatura, como a própria alteração no tempo do ciclo de vida (fases larvar, pupa e adulto) e dos períodos de incubação do vírus (extrínseco e intrínseco).
 
 \indent Em estudo realizado por \citeonline{Drumond2020Dinamica}, entre 2007 e 2017 no \acrfull{DF}, o número de casos foi maior nos primeiros semestres, particularmente entre o final do verão e o início do outono. Este período  coincide com o final do período chuvoso. Os autores também observaram que a dengue se manteve hiperendêmica no \acrlong{DF}, tendo casos registrados durante todos os meses do ano e circulação dos quatro sorotipos do vírus. Há forte evidência de correlação entre epidemias de dengue e clima em diferentes capitais (Manaus, São Luís, Recife, Aracajú, Salvador, Belo Horizonte e Rio de Janeiro), principalmente utilizando temperatura média e frequência de precipitação \cite{ForecastingDengueBrazil2019}.
 
@@ -47,11 +47,14 @@ maior incidência em fevereiro e março, quando as temperaturas são mais elevad
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \section{Objetivo Geral}
- Avaliar a relação entre os focos de \latim{Aedes} sp. e os casos de dengue e a condição climatológica predominante sobre o Estado de \acrlong{SC}, visando elaborar um modelo preditivo de proliferação do vetor biológico e da doença.
+ Analisar a relação entre os focos de \latim{Aedes} sp., os casos de dengue e a condição climatológica predominante sobre o Estado de \acrlong{SC}, provenientes de bases de dados oficiais da \acrlong{Dive}/\acrshort{SC} e produtos de reanálise do \acrlong{INPE}.
 
-\begin{center}
-\textcolor{red}{CONSIDERAÇÕES AQUI!}\\ 
-\end{center}
+ % titulo{Análise das Relações entre Produtos Meteorológicos de Reanálise,\\Focos de  \latim{Aedes} sp. e Casos de Dengue no Estado de Santa Catarina}
+ %visando elaborar um modelo preditivo de proliferação do vetor biológico e da doença.
+
+% \begin{center}
+% \textcolor{red}{CONSIDERAÇÕES AQUI!}\\ 
+% \end{center}
 
  % Elaborar um modelo preditivo para a proliferação do mosquito \latim{Aedes aegypti}, a partir de análise das condições meteorológicas do Estado de \acrlong{SC}.
 
@@ -62,10 +65,12 @@ maior incidência em fevereiro e março, quando as temperaturas são mais elevad
 As estratégias para atingir o objetivo geral são descritas como objetivos específicos abaixo:
 
 \begin{alineas}
-\item Analisar estatisticamente padrões das séries temporais, a partir das regiões climatológicas determinadas por \citeonline{Guerra2023Regionalizacao}, para modelagens futuras; \textcolor{red}{REFINAR!}
-\item Elaborar modelo preditivo para a proliferação dos mosquitos do gênero \latim{Aedes} sp. e os casos confirmados de dengue, a partir de análise das condições meteorológicas do Estado de \acrlong{SC}.
+\item Analisar médias anuais de semanas epidemiológicas dos elementos climáticos, assim como variáveis entomológicas e epidemiológicas, na distribuição geográfica dos municípios de \acrlong{SC};
+\item Avaliar intra-sazonalidades, tendências e anomalias estacionárias das séries temporais de alguns municípios catarinenses, tanto  variáveis climatológicas quanto entomo-epidemiológicas; \textcolor{red}{(Trocar tendências e anomalias estacionárias por padrões???)}
+%determinadas por \citeonline{Guerra2023Regionalizacao}, para modelagens futuras; \textcolor{red}{REFINAR!}
+\item Elaborar modelos preditivos para a proliferação dos mosquitos do gênero \latim{Aedes} sp. e os casos confirmados de dengue, a partir de análise das condições meteorológicas do Estado de \acrlong{SC}.
 \item Analisar estatisticamente as modelagens para validação das ferramentas;
-\item Realizar um estudo de caso para melhor entender o fenômeno a partir de um ciclo anual;
+%\item Realizar um estudo de caso para melhor entender o fenômeno a partir de um ciclo anual;
 \item Sintetizar o \acrfull{PTT}:
 \subitem Sistema Computacional;
 \subitem Visualização Cartográfica desses resultados.
