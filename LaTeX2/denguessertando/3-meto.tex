@@ -70,7 +70,7 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
 
 \indent Os \acrshort{DEC} foram previamente convertidos de \ingles{\acrshort{grib}} para \ingles{\acrshort{nc}}, por meio de \ingles{script} escrito em linguagem \ingles{shell} \cite{shell_1999_heroldlinux, bash_2007_gnu-free}. Após isso, foram tratados utilizando o \ingles{\acrfull{CDO}} \cite{CDO_2023_schulzweida}, assim, pôde-se unir dados diários para composição de meses e anos, por fim, sintetizando a série histórica. Com esse mesmo \ingles{software} se fez o primeiro recorte espacial (entre longitudes sul 63 e 45, e latitudes oeste 37 e 19), para o sul do Brasil (figura \ref{fig: sul_brasil}), diminuindo o tamanho do arquivo principal. Para abertura e manipulação dos arquivos climáticos, na extensão \ingles{\acrshort{nc} (.nc)}, utilizou-se a biblioteca \ingles{xarray} \cite{xarray_2016_v0_8_0, xarray_2017_hoyer}.
 
-\begin{figure}[htbp]Capítulo
+\begin{figure}[htbp]
     \centering
     \caption{Mapa evidenciando o recorte espacial dos dados relacionados à região sul do brasil. Visualização dos dados de temperatura mínima durante o solstício de inverno de 2023.}
     \includegraphics[scale=0.5]{climatologia_tmin_2023-06-21.pdf}
@@ -130,9 +130,9 @@ Em relação aos \acrshort{DEE}, devem ser orientados ao modo que possam ser con
   \item visualização cartográfica desses resultados.
 \end{itemize}
 
-\indent O limiar temporal estipulado para previsão de focos de \latim{Aedes} sp. será de 56 dias (8 semanas epidemiológicas). Os primeiros 28 dias (4 semanas epidemiológicas) serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias/semanas epidemilógicas serão determinados através do \textcolor{red}{modelo de previsão \acrshort{GFS}.}
+% \indent O limiar temporal estipulado para previsão de focos de \latim{Aedes} sp. será de 56 dias (8 semanas epidemiológicas). Os primeiros 28 dias (4 semanas epidemiológicas) serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias/semanas epidemilógicas serão determinados através do \textcolor{red}{modelo de previsão \acrshort{GFS}.}
 
-\indent O limiar temporal estipulado para previsão de casos de dengue será de 28 dias (4 semanas epidemiológicas). Os primeiros 14 dias (2 semanas epidemiológicas) serão determinados a partir do sistema \acrshort{SAMeT}-\acrshort{MERGE}. Os demais dias/semanas epidemiológicas serão determinados através do \textcolor{red}{modelo de previsão \acrshort{GFS}.}
+\indent O limiar temporal estipulado para previsão de casos de dengue será de 14 dias (2 semanas epidemiológicas). Durante a atual semana epidemiológica, será determinado a partir do sistema \ingles{\acrshort{SAMeT}-\acrshort{MERGE}}. Os demais dias/semanas epidemiológicas serão determinados através do modelo de previsão \ingles{\acrshort{GFS}}.
 
 
 %\section{Conjutos de Dados Utilizados}
