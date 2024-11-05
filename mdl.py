@@ -68,7 +68,7 @@ cidades = municipios["Município"].copy()
 
 _retroagir = 8 # Semanas Epidemiológicas
 
-cidade = "Chapecó"
+cidade = "Florianópolis"
 
 _automatiza = False
 
