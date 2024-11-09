@@ -68,7 +68,7 @@ cidades = municipios["Município"].copy()
 
 _retroagir = 8 # Semanas Epidemiológicas
 
-cidade = "Florianópolis"
+cidade = "Joinville"
 
 _automatiza = False
 
@@ -326,8 +326,9 @@ def grafico_previsao(previsao, teste, string_modelo, cidade):
     final = pd.DataFrame()
     final["Semana"] = focos["Semana"]
     final["Focos"] = focos[cidade]
-    final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-    final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    #final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+    #final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+    final.drop(final.index[-_retroagir-4:], axis=0, inplace = True)
     previsoes = previsao if string_modelo == "RF" else [np.argmax(p) for p in previsao]
     """
     lista_previsao = [previsoes[v] for v in range(len(previsoes))]
