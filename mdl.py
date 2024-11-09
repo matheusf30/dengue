@@ -68,7 +68,7 @@ cidades = municipios["Município"].copy()
 
 _retroagir = 8 # Semanas Epidemiológicas
 
-cidade = "Joinville"
+cidade = "Itajaí"
 
 _automatiza = False
 
