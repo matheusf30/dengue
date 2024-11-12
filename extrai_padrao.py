@@ -147,61 +147,109 @@ print(f"\n{ansi['green']}TMED{ansi['reset']}\n", tmed[["FLORIANÓPOLIS", "ITAJA�
 print(f"\n{ansi['green']}TMAX{ansi['reset']}\n", tmax[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}PREC{ansi['reset']}\n", prec[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 
-print(f"""{ansi['green']}TMIN ESTADUAL{ansi['reset']}
-Mínima: {round(tmin.min().min(), 2)} C
-Média: {round(tmin.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmin.std().max(), 2)} C
-Máxima: {round(tmin.max().max(), 2)} C""")
-
-print(f"""{ansi['green']}TMED ESTADUAL{ansi['reset']}
-Mínima: {round(tmed.min().min(), 2)} C
-Média: {round(tmed.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmed.std().max(), 2)} C
-Máxima: {round(tmed.max().max(), 2)} C""")
-
-print(f"""{ansi['green']}TMAX ESTADUAL{ansi['reset']}
-Mínima: {round(tmax.min().min(), 2)} C
-Média: {round(tmax.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmax.std().max(), 2)} C
-Máxima: {round(tmax.max().max(), 2)} C""")
-
-print(f"""{ansi['green']}PREC ESTADUAL{ansi['reset']}
-Mínima: {round(prec.min().min(), 2)} mm
-Média: {round(prec.mean().mean(), 2)} mm
-Desvio Padrão Máximo: {round(prec.std().max(), 2)} mm
-Máxima: {round(prec.max().max(), 2)} mm""")
-
 print(f"\n{ansi['green']}TMIN SEMANAL{ansi['reset']}\n", tmin_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}TMED SEMANAL{ansi['reset']}\n", tmed_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}TMAX SEMANAL{ansi['reset']}\n", tmax_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 print(f"\n{ansi['green']}PREC SEMANAL{ansi['reset']}\n", prec_sem[["FLORIANÓPOLIS", "ITAJAÍ", "JOINVILLE", "CHAPECÓ"]].describe())
 
+print(f"""{ansi['green']}TMIN ESTADUAL{ansi['reset']}
+Mínima: {round(tmin.min().min(), 1)} C
+Média: {round(tmin.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmin.std().max(), 1)} C
+Máxima: {round(tmin.max().max(), 1)} C""")
+
+print(f"""{ansi['green']}TMED ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {round(tmed.min().min(), 1)} C
+Média: {round(tmed.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmed.std().max(), 1)} C
+Máxima: {round(tmed.max().max(), 1)} C""")
+
+print(f"""{ansi['green']}TMAX ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {round(tmax.min().min(), 1)} C
+Média: {round(tmax.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmax.std().max(), 1)} C
+Máxima: {round(tmax.max().max(), 1)} C""")
+
+print(f"""{ansi['green']}PREC ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {round(prec.min().min(), 1)} mm
+Média: {round(prec.mean().mean(), 1)} mm
+Desvio Padrão Máximo: {round(prec.std().max(), 1)} mm
+Máxima: {round(prec.max().max(), 1)} mm""")
+
 print(f"""{ansi['green']}TMIN ESTADUAL SEMANAL{ansi['reset']}
-Mínima: {round(tmin_sem.min().min(), 2)} C
-Média: {round(tmin_sem.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmin_sem.std().max(), 2)} C
-Máxima: {round(tmin_sem.max().max(), 2)} C""")
+Mínima: {round(tmin_sem.min().min(), 1)} C
+Média: {round(tmin_sem.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmin_sem.std().max(), 1)} C
+Máxima: {round(tmin_sem.max().max(), 1)} C""")
 
 print(f"""{ansi['green']}TMED ESTADUAL SEMANAL{ansi['reset']}
-Mínima: {round(tmed_sem.min().min(), 2)} C
-Média: {round(tmed_sem.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmed_sem.std().max(), 2)} C
-Máxima: {round(tmed_sem.max().max(), 2)} C""")
+Mínima: {round(tmed_sem.min().min(), 1)} C
+Média: {round(tmed_sem.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmed_sem.std().max(), 1)} C
+Máxima: {round(tmed_sem.max().max(), 1)} C""")
 
 print(f"""{ansi['green']}TMAX ESTADUAL SEMANAL{ansi['reset']}
-Mínima: {round(tmax_sem.min().min(), 2)} C
-Média: {round(tmax_sem.mean().mean(), 2)} C
-Desvio Padrão Máximo: {round(tmax_sem.std().max(), 2)} C
-Máxima: {round(tmax_sem.max().max(), 2)} C""")
+Mínima: {round(tmax_sem.min().min(), 1)} C
+Média: {round(tmax_sem.mean().mean(), 1)} C
+Desvio Padrão Máximo: {round(tmax_sem.std().max(), 1)} C
+Máxima: {round(tmax_sem.max().max(), 1)} C""")
 
 print(f"""{ansi['green']}PREC ESTADUAL SEMANAL{ansi['reset']}
-Mínima: {round(prec_sem.min().min(), 2)} mm
-Média: {round(prec_sem.mean().mean(), 2)} mm
-Desvio Padrão Máximo: {round(prec_sem.std().max(), 2)} mm
-Máxima: {round(prec_sem.max().max(), 2)} mm""")
+Mínima: {round(prec_sem.min().min(), 1)} mm
+Média: {round(prec_sem.mean().mean(), 1)} mm
+Desvio Padrão Máximo: {round(prec_sem.std().max(), 1)} mm
+Máxima: {round(prec_sem.max().max(), 1)} mm""")
+
+###
+
+#min_columns = df.idxmin(axis=1)
+
+print(f"""{ansi['green']}TMIN ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {tmin.idxmin(axis=1).min()}
+Máxima: {tmin.idxmax(axis=1).max()}""")
+
+print(f"""{ansi['green']}TMED ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {tmed.idxmin(axis=1).min()}
+Máxima: {tmed.idxmax(axis=1).max()}""")
+
+print(f"""{ansi['green']}TMAX ESTADUAL DIÁRIA{ansi['reset']}
+Mínima: {tmax.idxmin(axis=1).min()}
+Máxima: {tmax.idxmax(axis=1).max()}""")
+
+print(f"""{ansi['green']}TMIN ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {tmin_sem.idxmin(axis=1).min()}
+Máxima: {tmin_sem.idxmax(axis=1).max()}""")
+
+print(f"""{ansi['green']}TMED ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {tmed_sem.idxmin(axis=1).min()}
+Máxima: {tmed_sem.idxmax(axis=1).max()}""")
+
+print(f"""{ansi['green']}TMAX ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {tmax_sem.idxmin(axis=1).min()}
+Máxima: {tmax_sem.idxmax(axis=1).max()}""")
+
+prec = prec.apply(pd.to_numeric, errors='coerce').dropna()
+prec = prec.idxmax(axis=1).max()
+#prec = prec.max()
+print(f"""{ansi['green']}PREC ESTADUAL DIÁRIA{ansi['reset']}
+Máxima: {prec}""")
+
+#prec_sem = prec.apply(pd.to_numeric, errors='coerce')
+prec_sem = prec_sem.idxmax(axis=1).max()
+#prec_sem = prec_sem.max()
+print(f"""{ansi['green']}PREC ESTADUAL SEMANAL{ansi['reset']}
+Máxima: {prec_sem}""")
 
 sys.exit()
 
+Mínima: {prec.idxmin(axis=1).min()}
+
+Mínima: {prec_sem.idxmin(axis=1).min()}
+
+
+print(f"""{ansi['green']}PREC ESTADUAL SEMANAL{ansi['reset']}
+Mínima: {prec_sem.idxmin(axis=1).min()}
+Máxima: {prec_sem.idxmax(axis=1).max()}""")
 
 
 tmin = prepross_var(tmin, "tmin")
