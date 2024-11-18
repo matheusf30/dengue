@@ -80,6 +80,8 @@ ansi = {"bold" : "\033[1m", "red" : "\033[91m",
         "blue" : "\033[34m", "magenta" : "\033[35m",
         "cyan" : "\033[36m", "white" : "\033[37m", "reset" : "\033[0m"}
 
+print(f"\ncasos.iloc[:522,:]:\n{casos.iloc[:522,:]}\n")
+casos = casos.iloc[:522,:]
 
 ####################################### Definindo Classes e Funções #######################################
 class Modelo:
@@ -418,8 +420,8 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = casos["Semana"]
 		final["Casos"] = casos[cidade]
-		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir-_horizonte:], axis=0, inplace = True)
 		previsoes = previsao
 		"""
 		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
@@ -672,10 +674,10 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		final = pd.DataFrame()
 		final["Semana"] = focos["Semana"]
 		final["Focos"] = focos[cidade]
-		final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
-		final.drop(final.index[-_retroagir:], axis=0, inplace = True)
+		#final.drop([d for d in range(_retroagir)], axis=0, inplace = True)
+		final.drop(final.index[-_retroagir-_horizonte:], axis=0, inplace = True)
 		previsoes = previsao
-		previsoes = previsoes[:len(final)]
+		previsoes = previsoes[-len(final):]
 		final["Previstos"] = previsoes
 		final["Semana"] = pd.to_datetime(final["Semana"])
 		final["Erro"] = final["Focos"] - final["Previstos"]
@@ -799,7 +801,7 @@ Conjunto de Treino com as Variáveis Explicativas (Explicitamente Indicadas)(<20
 		lista_previsao = [previsoes[v] for v in range(len(previsoes))]
 		final["Previstos"] = lista_previsao
 		"""
-		previsoes = previsoes[:len(final)]
+		previsoes = previsoes[-len(final):]
 		final["Previstos"] = previsoes
 		final["Semana"] = pd.to_datetime(final["Semana"])
 		final["Erro"] = final["Focos"] - final["Previstos"]
