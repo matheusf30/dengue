@@ -784,13 +784,9 @@
 	french,				% idioma adicional para hifenização
 	spanish,			% idioma adicional para hifenização
 	brazil				% o último idioma é o principal do documento
-	]{abntex2}
+	dvipsnames, table]{abntex2}
 
-%sudo apt update
-%sudo apt install texlive-latex-extra (instalar pacote abntex2)
-
-\usepackage{abntex2}
-
+\usepackage{siunitx}
 \usepackage{setspace}
 \usepackage{conf-ifsc}	
 \usepackage{hyperref}
@@ -808,7 +804,7 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{float}
-\usepackage{subfig}
+% \usepackage{subfig}
 \floatstyle{plaintop}
 \restylefloat{quadro}
 \usepackage{chngcntr}
@@ -817,7 +813,8 @@
 \usepackage{tocvsec2}
 \usepackage{boxhandler}
 \usepackage[font={bf,small},labelfont=small]{caption}
-\usepackge{url}
+\usepackage{url}
+\usepackage{lscape}
 
 
 \newcommand{\source}[1]{\caption*{\normalfont Fonte: {#1}}}
@@ -830,6 +827,8 @@
 
 \newcommand{\ingles}[1]{{\textit{#1}}}
 \newcommand{\latim}[1]{{\textit{#1}}}
+
+\graphicspath{ {./figuras/} }
 % \renewcommand{\coorientadorb}{coorientador:}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -863,6 +862,8 @@
 \makeglossaries
 %\newacronym{}{}{} Anvisa/Dive/Gezoo/DATASUS, TABNET, VIGILANTOS 
 \newacronym{GFS}{GFS}{Global Forecast System}
+\newacronym{GSM}{GSM}{Global Spectral Model}
+\newacronym{FV3}{FV3}{Finite-Volume Cubed-Sphere}
 \newacronym{CFS}{CFS}{Climate Forecast System}
 \newacronym{NCEP}{NCEP}{National Centers for Environmental Prediction}
 \newacronym{NOAA}{NOAA}{National Oceanic and Atmospheric Administration}
@@ -870,7 +871,8 @@
 \newacronym{MERGE}{MERGE}{Merging Technique}
 \newacronym{SAMeT}{SAMeT}{South American Mapping of Temperature}
 \newacronym{IBGE}{IBGE}{Instituto Brasileiro de Geografia e Estatística}
-\newacronym{TRMM}{TRMM}{Tropical Rainfall Measuring Mission }
+\newacronym{TRMM-TMPA}{TRMM-TMPA}{Tropical Rainfall Measuring Mission Multi-satellite Precipitation Analysis}
+\newacronym{GPM-IMERG}{GPM-IMERG}{Integrated Multi-satellitE Retrievals for Global Precipitation Measurement}
 \newacronym{ERA5}{ERA5}{ECMWF Reanalysis 5th Generation}
 \newacronym{ECMWF}{ECMWF}{European Centre for Medium-Range Weather Forecasts}
 \newacronym{GTOPO30}{GTOPO30}{Global Digital Elevation}
@@ -884,6 +886,7 @@
 \newacronym{ZCAS}{ZCAS}{Zona de Convergência do Atlântico Sul}
 \newacronym{CDO}{CDO}{Climate Data Operators}
 \newacronym{GrADS}{GrADS}{Grid Analysis and Display System}
+\newacronym{RNAM}{RNAM}{Rede Neural Artificial Multicamada}
 \newacronym{GTS}{GTS}{Global Telecommunications System}
 \newacronym{CPTEC}{CPTEC}{Centro de Previsão de Tempo e Estudos Climáticos}
 \newacronym{INPE}{INPE}{Instituto Nacional de Pesquisas Espaciais}
@@ -892,20 +895,23 @@
 \newacronym{CAPES}{CAPES}{Coordenaçao de Aperfeiçoamento de Pessoal de Nível Superior}
 \newacronym{ASOS}{ASOS}{Automatic Surface Observation Station}
 \newacronym{OMS}{OMS}{Organização Mundial de Saúde}
+\newacronym{OMSA}{OMSA}{Organização Mundial de Saúde Animal}
 \newacronym{OPAS}{OPAS}{Organização Pan-Americana da Saúde}
 \newacronym{RIMSA}{RIMSA}{Reunião Interamericana de Nível Ministerial sobre Saúde e Agricultura}
-\newacronym{OMSA}{OMSA}{Organização Mundial de Saúde Animal}
-\newacronym{OIE}{OIE}{Office International des Epizooties}
 \newacronym{PNUMA}{PNUMA}{Programa das Nações Unidas para o Meio Ambiente}
 \newacronym{SGISU}{SGISU}{Sistema Global de Inteligência em Saúde Única}
+\newacronym{OIE}{OIE}{Office International des Epizooties}
 \newacronym{ONU}{ONU}{Organização das Nações Unidas}
 \newacronym{FAO}{FAO}{Organização das Nações Unidas para a Alimentação e a Agricultura}
 \newacronym{CFMV}{CFMV}{Conselho Federal de Medicina Veterinária}
+\newacronym{CNS}{CNS}{Conselho Nacional de Saúde}
 \newacronym{CNSU}{CNSU}{Comissão Nacional de Saúde Única}
 \newacronym{CRMV}{CRMV}{Conselho Regional de Medicina Veterinária}
 \newacronym{SC}{SC}{Santa Catarina}
 \newacronym{PR}{PR}{Paraná}
 \newacronym{CEGRADE}{CEGRADE}{Comissão Estadual de Gestão de Riscos de Animais em Desastres}
+\newacronym{CIGERD}{CIGERD}{Centro Integrado de Gestão de Riscos e Desastres}
+\newacronym{SIFAP}{SIFAP}{Sistema Integrado de Ferramentas de Análise e Previsão Hidrometeorológica}
 \newacronym{Cobrade}{Cobrade}{Classificação e Codificação Brasileira de Desastres}
 \newacronym{DF}{DF}{Distrito Federal}
 \newacronym{PNCD}{PNCD}{Programa Nacional de Controle da Dengue}
@@ -921,8 +927,10 @@
 \newacronym{PNVS}{PNVS}{Política Nacional de Vigilância em Saúde}
 \newacronym{Dive}{Dive}{Diretoria de Vigilância Epidemiológica}
 \newacronym{LACEN}{LACEN}{Laboratório Central de Saúde Pública}
+\newacronym{COE}{COE}{Centro de Operação de Emergência}
 %\newacronym{DENV}{DENV}{vírus da dengue}
 \newacronym{ssRNA+}{ssRNA+}{single-stranded and positive-sense Ribonucleic Acid}
+\newacronym{SARS-CoV-2}{SARS-CoV-2}{Severe Acute Respiratory Syndrome Coronavirus 2}
 \newacronym{ITIS}{ITIS}{Integrated Taxonomic Information System}
 \newacronym{IFSC}{IFSC}{Instituto Federal de Ensino, Ciência e Tecnologia de Santa Catarina}
 \newacronym{UFSM}{UFSM}{Universidade Federal de Santa Maria}
@@ -936,6 +944,8 @@
 \newacronym{ICRe}{ICRe}{Índices Corrigidos por Região}
 \newacronym{LACOb}{LACOb}{Limiar de Alta Correlação Observado}
 \newacronym{LACRe}{LACRe}{Limiares de Alta Correlação Regionalizados}
+\newacronym{SAE}{SAE}{Série de Anomalia Estacionária}
+\newacronym{SSS}{SSS}{Série Sem Sazonalidade}
 \newacronym{SBP}{SBP}{Sociedade Brasileira Técnico-Científica de Parasitologia}
 \newacronym{Bdmep/Inmet}{Bdmep/Inmet}{Banco de Dados Meteorológicos do Instituto Nacional de Meteorologia}
 \newacronym{Inmet}{Inmet}{Instituto Nacional de Meteorologia}
@@ -946,12 +956,14 @@
 \newacronym{SVS}{SVS}{Secretaria de Vigilância em Saúde}
 \newacronym{SVSA}{SVSA}{Secretaria de Vigilância em Saúde e Ambiente}
 \newacronym{csv}{csv}{comma separated values}
+\newacronym{nc}{NetCDF4}{Network Common Data Form version 4}
+\newacronym{grib}{GRIB2}{Gridded Binary version 2}
 \newacronym{ReLU}{ReLU}{Rectified Linear Unit}
 \newacronym{RQEQM}{RQEQM}{Raiz Quadrada do Erro Quadrático Médio}
+\newacronym{EQM}{EQM}{Erro Quadrático Médio}
 \newacronym{EMA}{EMA}{Erro Médio Absoluto}
 \newacronym{r2}{R²}{Coeficiente de Determinação}
 \newacronym{r}{r}{Coeficiente de Correlação}
-
 %----------------------------------------------------------------------%
 
 
@@ -962,10 +974,30 @@
 %---------------------------------------------------------------------%
 
 % \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
-% Papel dos elementos meteorológicos na reprodução do \latim{Aedes aegypti}\\
+% ECOEPIDEMIOLOGIA DE ARBOVIROSES NO ESTADO DE SANTA CATARINA}
+
+% \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
+% GEOMEDICINA APLICADA A ARBOVIROSES\\
+% VETORIZADAS POR \latim{Aedes aegypti} (Linnaeus, 1762)\\
+% NO ESTADO DE SANTA CATARINA}
+
+%  \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
+% GEOMEDICINA APLICADA AO VETOR BIOLÓGICO\\
+% \latim{Aedes aegypti} (Linnaeus, 1762)\\ %NÃO UTILIZAR AUTOR NO TÍTULO
+% NO ESTADO DE SANTA CATARINA}
+
+% \titulo{VARIABILIDADE CLIMÁTICA E SAÚDE ÚNICA:\\
+% Relação entre os Elementos Meteorológicos e o Vetor Biológico\\
+% \latim{Aedes aegypti}\\
 % no Estado de Santa Catarina}
+
+% \titulo{Papel dos elementos meteorológicos na reprodução do \latim{Aedes aegypti}\\ no Estado de Santa Catarina}
+
 % \titulo{Utilização de Produtos Meteorológicos de Reanálise para\\Análise de Relação de Focos de  \latim{Aedes} sp. e Casos de Dengue\\no Estado de Santa Catarina}
-\titulo{Análise das Relações entre Produtos Meteorológicos de Reanálise,\\Focos de  \latim{Aedes} sp. e Casos de Dengue no Estado de Santa Catarina}
+
+% \titulo{Análise das Relações entre Produtos Meteorológicos de Reanálise,\\Focos de  \latim{Aedes} sp. e Casos de Dengue no Estado de Santa Catarina}
+
+\titulo{Análise das Relações entre Elementos Climatológicos,\\Focos de  \latim{Aedes} sp. e Casos de Dengue no Estado de Santa Catarina}
 
 \autor{MATHEUS FERREIRA DE SOUZA}
 
@@ -1003,9 +1035,7 @@
 % ELEMENTOS PRÉ-TEXTUAIS
 % ----------------------------------------------------------
 % \pretextual
-
 \imprimircapa
-
 \imprimirfolhaderosto* %(o * indica que haverá a ficha bibliográfica)
 
 %---------------------------------------------------------------------%
@@ -1036,31 +1066,33 @@
 \begin{dedicatoria}
     \vspace*{\fill}
 	\begin{flushright}
+    Dedico este trabalho ao avanço e persistência da ciência, especialmente nos períodos conturbados. Também dedico a todos que tiveram a vida cessada, seja por falsa informação, desinformação ou negação da ciência. 
 
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{|||||||||| \textcolor{white}{AO AVANÇO}}\\
-\fcolorbox{red}{red}{  \textcolor{white}{E PERSISTÊNCIA}}\\
-\fcolorbox{red}{red}{||||||||| \textcolor{white}{DA CIÊNCIA,}}\\
-\fcolorbox{red}{red}{\textcolor{white}{PRINCIPALMENTE}}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||| \textcolor{white}{NOS}}\\
-\fcolorbox{red}{red}{|||||||||||| \textcolor{white}{PERÍODOS}}\\
-\fcolorbox{red}{red}{ \textcolor{white}{CONTURBADOS. }}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
-\fcolorbox{red}{red}{||||||||||||||| \textcolor{white}{A TODOS}}\\
-\fcolorbox{red}{red}{|||||||||| \textcolor{white}{QUE A VIDA}}\\
-\fcolorbox{red}{red}{||||||||||||| \textcolor{white}{CESSOU...}}\\
-\vspace{1.15cm}
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{|||||||||| \textcolor{white}{AO AVANÇO}}\\
+% \fcolorbox{red}{red}{  \textcolor{white}{E PERSISTÊNCIA}}\\
+% \fcolorbox{red}{red}{||||||||| \textcolor{white}{DA CIÊNCIA,}}\\
+% \fcolorbox{red}{red}{\textcolor{white}{PRINCIPALMENTE}}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||| \textcolor{white}{NOS}}\\
+% \fcolorbox{red}{red}{|||||||||||| \textcolor{white}{PERÍODOS}}\\
+% \fcolorbox{red}{red}{ \textcolor{white}{CONTURBADOS. }}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{|||||||||||||||||||||||||||||||||}\\
+% \fcolorbox{red}{red}{||||||||||||||| \textcolor{white}{A TODOS}}\\
+% \fcolorbox{red}{red}{|||||||||| \textcolor{white}{QUE A VIDA}}\\
+% \fcolorbox{red}{red}{||||||||||||| \textcolor{white}{CESSOU...}}\\
+% \vspace{1.15cm}
 
-\fcolorbox{red}{red}{|||||||| \textcolor{white}{...POR FALSA}}\\
-\fcolorbox{red}{red}{|||||| \textcolor{white}{INFORMAÇÃO,}}\\
-\fcolorbox{red}{red}{\textcolor{white}{DESINFORMAÇÃO}}\\
-\fcolorbox{red}{red}{||||||| \textcolor{white}{OU NEGAÇÃO}}\\
-\fcolorbox{red}{red}{||||||||||| \textcolor{white}{DA MESMA.}}
+% \fcolorbox{red}{red}{|||||||| \textcolor{white}{...POR FALSA}}\\
+% \fcolorbox{red}{red}{|||||| \textcolor{white}{INFORMAÇÃO,}}\\
+% \fcolorbox{red}{red}{\textcolor{white}{DESINFORMAÇÃO}}\\
+% \fcolorbox{red}{red}{||||||| \textcolor{white}{OU NEGAÇÃO}}\\
+% \fcolorbox{red}{red}{||||||||||| \textcolor{white}{DA MESMA.}}
 
+      
       
 	\end{flushright}
 \end{dedicatoria}
@@ -1072,7 +1104,28 @@
 % Agradecimentos
 %---------------------------------------------------------------------%
 \begin{agradecimentos}
-    Elemento opcional que não pode ultrapassar o limite de uma página.
+\indent Agradeço, antes de tudo, a minha família, pelo suporte prestado, especialmente ao meu pai e minha mãe.
+
+\indent Agradeço ao orientador, por não estar tão próximo, confiando e deixando seguir com minhas próprias pernas; ao mesmo tempo em que não está tão longe, dando apoio sempre que necessário. Essa é a primeira vez, durante minha vida acadêmica, que tenho uma pessoa para me orientar e, diga-se de passagem, que excelente pessoa.
+
+\indent Igualmente, agradeço aos co-orientadores, que nos poucos debates ocorridos, foram decisivos para sanar dúvidas. Assim como também agradeço à banca, sejam titulares ou suplentes, por sinalizar disponibilidade e contribuir com o projeto.
+
+\indent Nominalmente, e começando pela turma, devo um enorme agradecimento à Ana Paula Marcon Hanada, prestando socorro, mesmo após ter defendido; Glenda Fauth e João Manoel Nascimento, pelos bons momentos de debate rumo a Itajaí; e um especial agradecimento à Lua, Maria Rita lua de Quadro, por enorme apoio e ombro amigo, mantendo-me no programa, além de ser "co-orientadora não oficial".
+
+\indent Agradeço aos egressos do Programa, principalmente a Cleusa Matiola, Roseli de Oliveira, Caio Guerra de Oliveira e Alfeu Luz Losso. Uma breve conversa, seja com café ou com chopp, rendem soluções eficientes. Também agradeço aos "calouros" Mabel Simm Milan Bueno, Diogo Ricardo Roesner e Erasmo Carlos Ferreira, por buscarem soluções conjuntas aos problemas semelhantes.
+
+\indent Em relação aos bolsistas, agradeço aos momentos de "descompressão" com café, especialmente a Julia Barreto da Silva, Everton Weber Galliani, Amanda Rodrigues Joris, Beatriz Campanharo Garcia Carneiro e Maitê Ocker. A pausa (da tela) é necessária, mesmo que a conversa continue científica; tudo nos é dado, só nos falta fé. 
+
+\indent Externamente ao programa, não posso deixar de agradecer a Laynara da Silva Vieira e Elmo dos Santos Neto, por me iniciarem e continuarem me ajudando na linguagem da programação; e pelo suporte logístico e pscicológico, eterna gratidão a Daniele Freitas Pacheco, Renan Osvaldo Pacheco, Alice Deorrist Rampon e Claudete Medeiros. Meu agradecimento ao Anderson Spohr Nedel, por debates e oportunidades em biometeorologia, agregando muito ao projeto.
+
+\indent Assim como também devo agradecer aos professores, do Ifsc campus Garopaba, Sandra Beatriz Koelling, por me confiar bolsista do projeto ArteEducação e ao João Henrique Quoos, por comentar sobre o edital de seleção do mestrado e continuar dando dicas tão boas quanto...
+
+\indent - "Sério? O Ifsc tem programa de mestrado?"
+
+\indent - "Sim... Público, gratuito e de qualidade!"
+
+
+
 \end{agradecimentos}
 % ---
 
@@ -1094,7 +1147,7 @@
 \renewcommand{\baselinestretch}{1} 
 \begin{resumo}
     % O resumo deve mostrar a natureza e o objetivo do trabalho, o método que foi empregado, os resultados e as conclusões. O resumo deve conter entre 150 e 500 palavras e constitui-se de um único parágrafo, sem recuo.
-A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Atualmente é um dos principais problemas de saúde coletiva no mundo. Está presente nas regiões tropicais e subtropicais do planeta, sendo estimado que 390 milhões de pessoas sejam infectadas anualmente pelos quatro sorotipos. Há tendência de resposta à sazonalidade em relação ao número de focos de dengue, na qual os meses com temperaturas mais elevadas se observa crescimento, principalmente quando retroagidos por um período de 30 dias; e tem diminuição nos meses mais frios, logo, temperatura é um elemento crítico para o desenvolvimento do mosquito. A geomedicina porporciona base para o próprio estudo espacializado de doenças, sendo assim, a seguinte proposta tem o objetivo direto de observar a relação entre o histórico e a distribuição de focos do vetor biológico \latim{Aedes aegypti}, transmissor das principais arboviroses no Estado de Santa Catarina (dengue, febre amarela, zika e chikungunya), e o comportamento de elementos climáticos. Foram utilizados dados de temperatura do \ingles{\acrfull{GFS}}, após isso, foi sintetizado o \acrfull{ICOb}, utilizando-se o \acrfull{LACOb}. Dessa forma, pode-se modelar e visualizar cartograficamente esses resultados, como previsão de aumento regionalizado de focos de \latim{Aedes aegypti} no Estado de Santa Catarina. Ademais, pretende-se alcançar outros objetivos, tais como: mapeamento das ocorrências dentro do Estado, análise de dados entomológicos e epidemiológico; além de relacionar aos dados socioeconômicos da população catarinense. Investigar esses múltiplos aspectos e compreender essas informações auxiliam no processo de tomada de decisões, buscando, assim, uma melhor resposta frente a zoonoses emergentes e re-emergentes.
+A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do mosquito \latim{Aedes aegypti} (Linnaeus, 1762) e \latim{Aedes albopictus} (Skuse, 1895). Atualmente é um dos principais problemas de saúde coletiva no mundo. Está presente nas regiões tropicais e subtropicais do planeta, sendo estimado que 390 milhões de pessoas sejam infectadas anualmente pelos quatro sorotipos. Há tendência de resposta à sazonalidade em relação ao número de focos de dengue, na qual os meses com temperaturas mais elevadas se observa crescimento, principalmente quando retroagidos por um período de 30 dias; e tem diminuição nos meses mais frios. Logo, temperatura é um elemento crítico para o desenvolvimento do mosquito. A geomedicina proporciona base para o próprio estudo espacializado de doenças. Sendo assim, a seguinte proposta tem o objetivo direto de observar a relação entre a distribuição de casos de dengue, número de focos dos vetores biológicos do gênero \latim{Aedes} (Meigen, 1818), transmissores do vírus da dengue no Estado de \acrlong{SC}, e o comportamento de elementos climáticos. Foram utilizados dados de temperaturas (mínima, máxima e média) do \ingles{\acrfull{SAMeT}} e precipitação do \ingles{\acrfull{MERGE}}, assim como dados do \ingles{\acrfull{GFS}} para modelagem preditiva. Percebe-se, através da sazonalidade anual em \acrlong{SC}, regiões de maior incidência de casos de dengue e com maior proliferação de \latim{Aedes} sp., justamente onde se apresentam os maiores valores de temperaturas. As regiões serranas, patamares e planaltos do Estado catarinense demonstram ser limitantes naturais para ocorrência do vetor e, consequentemente, da doença. No Estado de \acrlong{SC}, os picos de dengue comumente ocorrem durante o outono austral. Há correlação média a alta negativa ao relacionar casos de dengue e limiares de temperaturas retrocedidos no tempo nos municípios de Florianópolis, Itajaí, Joinville e Chapecó. Durante o processo de aprendizado de máquina, modelagem por \ingles{Random Forest} apresentou melhores respostas de predição, quando comparado a modelos por \acrfull{RNAM}. Ao analisar histogramas dos erros, modelagens preditivas nos municípios de Florianópolis e Joinville obtiveram adensamento do erro próximo a zero (0), porém sugerem valores de previsão subestimados. o \acrfull{PTT} demonstra capacidade preditiva de 14 dias (2 semanas epidemiológicas) para os casos de dengue no Estado de \acrlong{SC}, sendo visualizado por cartografia preditiva em semanas epidemiológicas. Investigar esses múltiplos aspectos e compreender essas informações auxiliam no processo de tomada de decisões, buscando, assim, uma melhor resposta frente a zoonoses emergentes e re-emergentes.
  
    \noindent 
     \textbf{Palavras-chave}: Variabilidade Climática. Geomedicina. Saúde Única. Zoonose. 
@@ -1105,7 +1158,7 @@ A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do m
 \begin{resumo}[Abstract]
  \begin{otherlanguage*}{english}
    % The abstract should show the nature and scope of work, the method that was used, the results and conclusions. The abstract may contain between 150 and 500 words, and it must be only one paragraph. 
- Dengue is an viral infectious disease transmitted by the female mosquito \latim{Aedes aegypti} (Linnaeus, 1762). Nowadays, it is one of the main public health problems in the world. It is present in the tropical and subtropical regions of the planet, with an estimated 390 million people are infected annually with all four serotypes. There is a tendency to respond to seasonality in relation to the number of dengue outbreaks, in which the months with higher temperatures are observed growth, mainly when retroacted for a period of 30 days; and observe decrease in the colder months, therefore, temperature is a critical element for the growth of the mosquito. Geomedicine provides a basis for the spatialized study of diseases, thus, this project has the direct objective of observing the relationship between the history and the distribution of outbreaks of the biological vector \latim{Aedes aegypti}, transmitter of the main arboviruses in the State of Santa Catarina (dengue, yellow fever, zika and chikungunya), and the observation of climate elements. The temperature data were used from the \acrfull{GFS}, after which the Combined Index by Observation [\acrfull{ICOb}] was synthesized, using the Observed High Correlation Limit [\acrfull{LACOb}]. In this way, it is possible to model and visualize these results cartographically, as forecast of a regionalized increase in outbreaks of \latim{Aedes aegypti} in the State of Santa Catarina. Furthermore, it is intended to achieve other objectives, such as: mapping of occurrences within the State, analysis of entomological and epidemiological data; in addition to relating to socioeconomic data of the Santa Catarina population. Investigate these multiple aspects and understand this information assist in the decision-making process, thus seeking a better response to emerging and reemerging  zoonotic diseases. 
+ Dengue is an viral infectious disease transmitted by the female mosquito \latim{Aedes aegypti} (Linnaeus, 1762) and \latim{Aedes albopictus} (Skuse, 1895). Nowadays, it is one of the main public health problems in the world. It is present in the tropical and subtropical regions of the planet, with an estimated 390 million people are infected annually with all four serotypes. There is a trend to respond to seasonality in relation to the number of dengue outbreaks, in which the months with higher temperatures are observed increase, mainly when retroacted for a period of 30 days; and observe decrease in the colder months. Therefore, temperature is a critical element for the growth of the mosquito. Geomedicine provides a basis for the spatialized study of diseases. Thus, this project has the direct objective of observing the relationship between the distribution of dengue cases, proliferation of the biological vector of genus \latim{Aedes} (Meigen, 1818), the main vector to transmit arboviruses in the \acrlong{SC} State, and the climate elements. The data of temperatures (max., mean and min.) were used from the \acrfull{SAMeT} and precipitation data from \acrfull{MERGE}, and so \acrfull{GFS} to prediction. It is observed, through the annual seasonality in \acrlong{SC} State, that regions with higher incidence of dengue cases and greater proliferation of \latim{Aedes} sp. are precisely those with the highest temperature values. Some regions in \acrlong{SC} demonstrate natural limitations for the occurrence of the vector and, consequently, the disease, like mountain range and plateaus. In the \acrlong{SC} State, dengue outbreaks commonly occur during the austral autumn. There is a medium to high negative correlation when relating dengue cases with temperature thresholds lagged in time in the municipalities of Florianópolis, Itajaí, Joinville, and Chapecó. During the machine learning process, Random Forest models showed better prediction results when compared to Multi-layer Artificial Neural Network modeling. When analyzing the histograms of errors, predictive models for the municipalities of Florianópolis and Joinville showed error density close to zero (0), but suggested underestimated forecast values. The Technical-Technological Product (in portuguese, \ingles{\acrfull{PTT}}) demonstrates predictive capacity for 14 days (2 epidemiological weeks) for dengue cases in the state of \acrlong{SC}, which is visualized through predictive cartography in epidemiological weeks. Investigate these multiple aspects and understand this information assist in the decision-making process, thus seeking a better response to emerging and reemerging  zoonotic diseases. 
 
    %\vspace{-0.8cm}
  
@@ -1127,16 +1180,16 @@ A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do m
 % inserir lista de quadros
 %---------------------------------------------------------------------%
 
-\renewcommand{\listquadroname}{Lista de quadros}
-\newfloat{quadro}{\quadroname}{loq}[chapter]
-\setfloatlocations{quadro}{hbtp}
-\newlistof{listofquadros}{loq}{\listquadroname}
-\newlistentry{quadro}{loq}{0}
-\renewcommand{\cftquadroname}{\quadroname\space}
-\renewcommand*{\cftquadroaftersnum}{\hfill\textendash\hfill}
-\counterwithout{quadro}{chapter}
-\listofquadros* 
-\cleardoublepage
+% \renewcommand{\listquadroname}{Lista de quadros}
+% \newfloat{quadro}{\quadroname}{loq}[chapter]
+% \setfloatlocations{quadro}{hbtp}
+% \newlistof{listofquadros}{loq}{\listquadroname}
+% \newlistentry{quadro}{loq}{0}
+% \renewcommand{\cftquadroname}{\quadroname\space}
+% \renewcommand*{\cftquadroaftersnum}{\hfill\textendash\hfill}
+% \counterwithout{quadro}{chapter}
+% \listofquadros* 
+% \cleardoublepage
 
 
 
@@ -1205,15 +1258,15 @@ A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do m
 % ----------------------------------------------------------
 % Referências bibliográficas
 % ----------------------------------------------------------
-\bibliography{bibliografia}
+\bibliography{tex/bibliografia}
 
 % ----------------------------------------------------------
 % Apêndices
 % ----------------------------------------------------------
- % \begin{apendicesenv}         
- %     \partapendices
- %     \include{tex/Apendices}
- % \end{apendicesenv}
+ \begin{apendicesenv}         
+     \partapendices
+     \include{tex/apendices}
+ \end{apendicesenv}
 
 % ----------------------------------------------------------
 % Anexos
@@ -1223,7 +1276,7 @@ A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do m
  %     \include{tex/Anexos}
  % \end{anexosenv}
 
-%---------------------------------------------------------------------
+%-------------------Update MATHEUS_dissertacao_PCAM.tex--------------------------------------------------
 % INDICE REMISSIVO
 %---------------------------------------------------------------------
 %\phantompart
@@ -1231,4 +1284,4 @@ A dengue é uma doença viral infecciosa, transmitida pela picada da fêmea do m
 %---------------------------------------------------------------------
 
 \end{document}
-
+% cartografia_preditiva_casos.py
