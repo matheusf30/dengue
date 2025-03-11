@@ -1,4 +1,4 @@
-### Bibliotecas Correlata
+### Bibliotecas Correlata	
 import matplotlib.pyplot as plt 
 import matplotlib as mpl             
 import pandas as pd
@@ -342,8 +342,10 @@ anomalia_estacionaria_tmax = abrir_anomalia_estacionaria("tmax")
 
 lista_cidades = ["Balneário Camboriú", "Bombinhas", "Porto Belo", "Imbituba",
 					"Florianópolis", "Itajaí", "Joinville", "Chapecó",
-					"Blumenau", "Criciúma", "Concórdia", "Xanxerê",
-					"Jaraguá do Sul", "Palhoça", "São José", "Biguaçu"]
+					"Blumenau", "Criciúma", "Concórdia", "Xanxerê", "Nova Trento",
+					"Jaraguá do Sul", "Palhoça", "São José", "Biguaçu",
+					"São Miguel do Oeste", "Lages", "Pinhalzinho", "Tangará",
+					"Erval Velho", "Água Doce", "Curitibanos", "Passo de Torres"]
 for str_cidade in lista_cidades:
 	grafico_anomalia_estacionaria(anomalia_estacionaria_casos, anomalia_estacionaria_focos,
 									anomalia_estacionaria_prec, anomalia_estacionaria_tmin,
