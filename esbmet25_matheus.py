@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl             
 import pandas as pd
 from matplotlib import cm
-import matplotlib.colors as cls     
+import matplotlib.colors as cls
+import matplotlib.dates as mdates  
 import cmocean
 from datetime import timedelta
 import numpy as np
@@ -161,12 +162,27 @@ plt.show()
 
 serie_joinville = pd.DataFrame()
 serie_joinville["Semana"] = serie_tmin["Semana"]
-serie_joinville = serie_joinville.merge(serie_casos["JOINVILLE"], how = "inner", on = "Semana")
-serie_joinville = serie_joinville.merge(serie_focos["JOINVILLE"], how = "inner", on = "Semana")
-serie_joinville = serie_joinville.merge(serie_tmin["JOINVILLE"], how = "inner", on = "Semana")
-serie_joinville = serie_joinville.merge(serie_tmed["JOINVILLE"], how = "inner", on = "Semana")
-serie_joinville = serie_joinville.merge(serie_tmax["JOINVILLE"], how = "inner", on = "Semana")
-serie_joinville = serie_joinville.merge(serie_prec["JOINVILLE"], how = "inner", on = "Semana")
+serie_casos_j = serie_casos[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_casos_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "casos"})
+serie_focos_j = serie_focos[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_focos_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "focos"})
+serie_tmin_j = serie_tmin[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_tmin_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmin"})
+serie_tmed_j = serie_tmed[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_tmed_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmed"})
+serie_tmax_j = serie_tmax[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_tmax_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmax"})
+serie_prec_j = serie_prec[["Semana", "JOINVILLE"]]
+serie_joinville = serie_joinville.merge(serie_prec_j, how = "inner", on = "Semana")
+serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "prec"})
+serie_joinville["str_semana"] = serie_joinville["Semana"]
+serie_joinville["Semana"] = pd.to_datetime(serie_joinville["Semana"], errors = "coerce")
+serie_joinville.set_index("Semana", inplace=True)
 """
 serie_joinville["casos"] = serie_casos["JOINVILLE"]
 serie_joinville["focos"] = serie_focos["JOINVILLE"]
@@ -175,7 +191,8 @@ serie_joinville["tmin"] = serie_tmin["JOINVILLE"]
 serie_joinville["tmed"] = serie_tmed["JOINVILLE"]
 serie_joinville["tmax"] = serie_tmax["JOINVILLE"]
 """
-print(f"\n{green}JOINVILLE\n{reset}{serie_joinville}\n")
+print(f"\n{green}JOINVILLE (Série Histórica)\n{reset}{serie_joinville}\n")
+print(serie_joinville.index.tz)
 #sys.exit()
 
 ### Visualização Gráfica
@@ -194,7 +211,7 @@ ax2.set_ylabel("Focos de _Aedes_ sp.")
 ax2.legend(loc = "upper right")
 axs[1].set_facecolor("honeydew") #.gcf()
 ax3 = axs[1].twinx()#.set_facecolor("honeydew")
-sns.barplot(x = serie_joinville["semana"], y = serie_joinville["prec"],  ax = ax3,
+sns.barplot(x = serie_joinville.index, y = serie_joinville["prec"],  ax = ax3,
 				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
 ax3.set_ylabel("Precipitação (mm)")
 ax3.legend(loc = "lower right")
@@ -203,12 +220,22 @@ sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmin"],  ax = axs[1
 sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmed"],  ax = axs[1],
 				color = "orange", linewidth = 1.5, label = "Temperatura Média")
 sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmax"],  ax = axs[1],
-				color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+				color = "red", linewidth = 1.5, label = "Temperatura Máxima")
 axs[1].set_ylabel("Temperaturas (C)")
 axs[1].legend(loc = "upper center")
 axs[1].grid(False)
 axs[1].set_xlabel("Semanas Epidemiológicas")
+#serie_joinville["Semana"] = pd.to_datetime(serie_joinville["Semana"])
+#serie_joinville.set_index("Semana", inplace = True)
+xticks_por_ano = serie_joinville.groupby(serie_joinville.index.year).head(1).index
+axs[1].set_xticks(xticks_por_ano)
+axs[1].set_xticklabels([str(ano.year) for ano in xticks_por_ano])
+
+
+#axs[1].xaxis.set_major_locator(mdates.YearLocator())
+#axs[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE JOINVILLE, SANTA CATARINA.")
+print(f"\n{green}JOINVILLE (Série Histórica)\n{reset}{serie_joinville}\n")
 nome_arquivo = f"esbmet25_distribuicao_historica_subplots_joinville.pdf"
 caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 #if _SALVAR == True:
