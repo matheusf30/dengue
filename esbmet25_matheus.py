@@ -101,7 +101,7 @@ print(f"\n{green}TEMPERATURA MÍNIMA (Série Histórica)\n{reset}{serie_tmin}\n"
 print(f"\n{green}TEMPERATURA MÉDIA (Série Histórica)\n{reset}{serie_tmed}\n")
 print(f"\n{green}TEMPERATURA MÁXIMA (Série Histórica)\n{reset}{serie_tmax}\n")
 
-### Pré-Processamento
+### Pré-Processamento (Climatologia)
 
 joinville = pd.DataFrame()
 joinville["semana"] = focos["semana_epi"]
@@ -112,8 +112,8 @@ joinville["tmin"] = tmin["JOINVILLE"]
 joinville["tmed"] = tmed["JOINVILLE"]
 joinville["tmax"] = tmax["JOINVILLE"]
 print(f"\n{green}JOINVILLE\n{reset}{joinville}\n")
-sys.exit()
-
+#sys.exit()
+'''
 ### Visualização Gráfica
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
 axs[0].set_facecolor("honeydew") #.gcf()
@@ -155,4 +155,69 @@ print(f"""\n{green}SALVO COM SUCESSO!\n
 NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
 #if _VISUALIZAR == True:
 print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
-plt.show()	
+plt.show()
+'''
+### Pré-Processamento (Série Histórica)
+
+serie_joinville = pd.DataFrame()
+serie_joinville["Semana"] = serie_tmin["Semana"]
+serie_joinville = serie_joinville.merge(serie_casos["JOINVILLE"], how = "inner", on = "Semana")
+serie_joinville = serie_joinville.merge(serie_focos["JOINVILLE"], how = "inner", on = "Semana")
+serie_joinville = serie_joinville.merge(serie_tmin["JOINVILLE"], how = "inner", on = "Semana")
+serie_joinville = serie_joinville.merge(serie_tmed["JOINVILLE"], how = "inner", on = "Semana")
+serie_joinville = serie_joinville.merge(serie_tmax["JOINVILLE"], how = "inner", on = "Semana")
+serie_joinville = serie_joinville.merge(serie_prec["JOINVILLE"], how = "inner", on = "Semana")
+"""
+serie_joinville["casos"] = serie_casos["JOINVILLE"]
+serie_joinville["focos"] = serie_focos["JOINVILLE"]
+serie_joinville["prec"] = serie_prec["JOINVILLE"]
+serie_joinville["tmin"] = serie_tmin["JOINVILLE"]
+serie_joinville["tmed"] = serie_tmed["JOINVILLE"]
+serie_joinville["tmax"] = serie_tmax["JOINVILLE"]
+"""
+print(f"\n{green}JOINVILLE\n{reset}{serie_joinville}\n")
+#sys.exit()
+
+### Visualização Gráfica
+fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
+axs[0].set_facecolor("honeydew") #.gcf()
+ax2 = axs[0].twinx()
+sns.lineplot(x = serie_joinville.index, y = serie_joinville["casos"], ax = axs[0],
+				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+axs[0].fill_between(serie_joinville.index, serie_joinville["casos"], color = "purple", alpha = 0.3)
+axs[0].set_ylabel("Casos de Dengue")
+axs[0].legend(loc = "upper center")
+sns.lineplot(x = serie_joinville.index, y = serie_joinville["focos"],  ax = ax2,
+				color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+ax2.fill_between(serie_joinville.index, serie_joinville["focos"], color = "darkgreen", alpha = 0.35)
+ax2.set_ylabel("Focos de _Aedes_ sp.")
+ax2.legend(loc = "upper right")
+axs[1].set_facecolor("honeydew") #.gcf()
+ax3 = axs[1].twinx()#.set_facecolor("honeydew")
+sns.barplot(x = serie_joinville["semana"], y = serie_joinville["prec"],  ax = ax3,
+				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
+ax3.set_ylabel("Precipitação (mm)")
+ax3.legend(loc = "lower right")
+sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmin"],  ax = axs[1],
+				color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
+sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmed"],  ax = axs[1],
+				color = "orange", linewidth = 1.5, label = "Temperatura Média")
+sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmax"],  ax = axs[1],
+				color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+axs[1].set_ylabel("Temperaturas (C)")
+axs[1].legend(loc = "upper center")
+axs[1].grid(False)
+axs[1].set_xlabel("Semanas Epidemiológicas")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE JOINVILLE, SANTA CATARINA.")
+nome_arquivo = f"esbmet25_distribuicao_historica_subplots_joinville.pdf"
+caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
+#if _SALVAR == True:
+os.makedirs(caminho_estatistica, exist_ok = True)
+#plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
+print(f"""\n{green}SALVO COM SUCESSO!\n
+{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
+NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+#if _VISUALIZAR == True:
+print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
+plt.show()
+
