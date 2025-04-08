@@ -211,7 +211,10 @@ ax2.set_ylabel("Focos de _Aedes_ sp.")
 ax2.legend(loc = "upper right")
 axs[1].set_facecolor("honeydew") #.gcf()
 ax3 = axs[1].twinx()#.set_facecolor("honeydew")
-sns.barplot(x = serie_joinville.index, y = serie_joinville["prec"],  ax = ax3,
+serie_joinville_reset = serie_joinville.reset_index()
+#serie_joinville_reset["Semana"] = pd.to_datetime(serie_joinville_reset["Semana"]).dt.tz_localize(None)
+serie_joinville_reset["Semana"] = pd.to_datetime(serie_joinville_reset["Semana"], errors='coerce')
+sns.barplot(x = "Semana", y = "prec", data = serie_joinville_reset,  ax = ax3,
 				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
 ax3.set_ylabel("Precipitação (mm)")
 ax3.legend(loc = "lower right")
