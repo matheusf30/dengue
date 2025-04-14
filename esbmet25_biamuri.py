@@ -67,7 +67,7 @@ prec = "sazonalidade_semanal_prec.csv"
 tmin = "sazonalidade_semanal_tmin.csv"
 tmed = "sazonalidade_semanal_tmed.csv"
 tmax = "sazonalidade_semanal_tmax.csv"
-serie_casos = "casos_pivot_total.csv"
+serie_casos = "casos_dive_pivot_total.csv"
 serie_focos = "focos_pivot.csv"
 serie_prec = "prec_semana_ate_2023.csv"
 serie_tmin = "tmin_semana_ate_2023.csv"
@@ -353,6 +353,8 @@ print(f"\n{green}SALVO COM SUCESSO\n{cyan}{caminho_dados}caio_clima_litoral_sul.
 #sys.exit()
 
 ### Visualização Gráfica MURI
+
+#gráfico oeste
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
 axs[0].set_facecolor("honeydew") #.gcf()
 ax2 = axs[0].twinx()
@@ -382,7 +384,7 @@ axs[1].set_ylabel("Temperaturas (C)")
 axs[1].legend(loc = "upper center")
 axs[1].grid(False)
 axs[1].set_xlabel("Semanas Epidemiológicas")
-fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA A MESORREGIÃO OESTE DE SANTA CATARINA.")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA A MESORREGIÃO CLIMÁTICA OESTE DE SANTA CATARINA.")
 nome_arquivo = f"esbmet25_distribuicao_sazonal_subplots_oeste.jpeg"
 caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 #if _SALVAR == True:
@@ -394,6 +396,51 @@ NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
 #if _VISUALIZAR == True:
 print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
 plt.show()
+
+
+#gráfico meio_oeste
+fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
+axs[0].set_facecolor("honeydew") #.gcf()
+ax2 = axs[0].twinx()
+sns.lineplot(x = df_meio_oeste.index, y = df_meio_oeste["casos"], ax = axs[0],
+				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+axs[0].fill_between(df_meio_oeste.index, df_meio_oeste["casos"], color = "purple", alpha = 0.3)
+axs[0].set_ylabel("Casos de Dengue")
+axs[0].legend(loc = "upper center")
+sns.lineplot(x = df_meio_oeste.index, y = df_meio_oeste["focos"],  ax = ax2,
+				color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+ax2.fill_between(df_meio_oeste.index, df_meio_oeste["focos"], color = "darkgreen", alpha = 0.35)
+ax2.set_ylabel("Focos de _Aedes_ sp.")
+ax2.legend(loc = "upper right")
+axs[1].set_facecolor("honeydew") #.gcf()
+ax3 = axs[1].twinx()#.set_facecolor("honeydew")
+sns.barplot(x = df_meio_oeste["semana"], y = df_meio_oeste["prec"],  ax = ax3,
+				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
+ax3.set_ylabel("Precipitação (mm)")
+ax3.legend(loc = "lower right")
+sns.lineplot(x = df_meio_oeste.index, y = df_meio_oeste["tmin"],  ax = axs[1],
+				color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
+sns.lineplot(x = df_meio_oeste.index, y = df_meio_oeste["tmed"],  ax = axs[1],
+				color = "orange", linewidth = 1.5, label = "Temperatura Média")
+sns.lineplot(x = df_meio_oeste.index, y = df_meio_oeste["tmax"],  ax = axs[1],
+				color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+axs[1].set_ylabel("Temperaturas (C)")
+axs[1].legend(loc = "upper center")
+axs[1].grid(False)
+axs[1].set_xlabel("Semanas Epidemiológicas")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA A MESORREGIÃO CLIMÁTICA MEIO-OESTE DE SANTA CATARINA.")
+nome_arquivo = f"esbmet25_distribuicao_sazonal_subplots_oeste.jpeg"
+caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
+#if _SALVAR == True:
+os.makedirs(caminho_estatistica, exist_ok = True)
+#plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
+print(f"""\n{green}SALVO COM SUCESSO!\n
+{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
+NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+#if _VISUALIZAR == True:
+print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
+plt.show()
+
 
 ###visualização gráfica BIA
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
