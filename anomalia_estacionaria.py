@@ -74,7 +74,21 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
-casos = casos.iloc[ : 522, : ] # Selecionando até ao final de 2023
+### Pré-Processamento e Seleção Temporal
+#variaveis = [casos, focos, prec, tmin, tmed, tmax]
+def seleciona_1423(csv):
+	csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
+	csv.set_index("Semana", inplace = True)
+	csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2023)]
+	csv.reset_index(inplace = True)
+	return csv
+
+casos = seleciona_1423(casos)
+focos = seleciona_1423(focos)
+prec = seleciona_1423(prec)
+tmin = seleciona_1423(tmin)
+tmed = seleciona_1423(tmed)
+tmax = seleciona_1423(tmax)
 
 print(f"\n{green}CASOS\n{reset}{casos}\n")
 print(f"\n{green}FOCOS\n{reset}{focos}\n")
