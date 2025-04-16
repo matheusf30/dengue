@@ -443,6 +443,9 @@ plt.show()
 
 
 ###visualização gráfica BIA
+
+#Gráfico litoral Norte
+
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
 axs[0].set_facecolor("honeydew") #.gcf()
 ax2 = axs[0].twinx()
@@ -484,4 +487,48 @@ NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
 #if _VISUALIZAR == True:
 print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
 plt.show()	
-	
+
+
+#Gráfico litoral_sul
+
+fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
+axs[0].set_facecolor("honeydew") #.gcf()
+ax2 = axs[0].twinx()
+sns.lineplot(x = df_litoral_sul.index, y = df_litoral_sul["casos"], ax = axs[0],
+				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
+axs[0].fill_between(df_litoral_sul.index, df_litoral_sul["casos"], color = "purple", alpha = 0.3)
+axs[0].set_ylabel("Casos de Dengue")
+axs[0].legend(loc = "upper center")
+sns.lineplot(x = df_litoral_sul.index, y = df_litoral_sul["focos"],  ax = ax2,
+				color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
+ax2.fill_between(df_litoral_sul.index, df_litoral_sul["focos"], color = "darkgreen", alpha = 0.35)
+ax2.set_ylabel("Focos de _Aedes_ sp.")
+ax2.legend(loc = "upper right")
+axs[1].set_facecolor("honeydew") #.gcf()
+ax3 = axs[1].twinx()#.set_facecolor("honeydew")
+sns.barplot(x = df_litoral_sul["semana"], y = df_litoral_sul["prec"],  ax = ax3,
+				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
+ax3.set_ylabel("Precipitação (mm)")
+ax3.legend(loc = "lower right")
+sns.lineplot(x = df_litoral_sul.index, y = df_litoral_sul["tmin"],  ax = axs[1],
+				color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
+sns.lineplot(x = df_litoral_sul.index, y = df_litoral_sul["tmed"],  ax = axs[1],
+				color = "orange", linewidth = 1.5, label = "Temperatura Média")
+sns.lineplot(x = df_litoral_sul.index, y = df_litoral_sul["tmax"],  ax = axs[1],
+				color = "red", linewidth = 1.5, label = "Temperatura Máxima") #alpha = 0.7, linewidth = 3
+axs[1].set_ylabel("Temperaturas (C)")
+axs[1].legend(loc = "upper center")
+axs[1].grid(False)
+axs[1].set_xlabel("Semanas Epidemiológicas")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA A MESORREGIÃO LITORAL SUL DE SANTA CATARINA.")
+nome_arquivo = f"esbmet25_distribuicao_sazonal_subplots_litoral_sul.jpeg"
+caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
+#if _SALVAR == True:
+os.makedirs(caminho_estatistica, exist_ok = True)
+#plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
+print(f"""\n{green}SALVO COM SUCESSO!\n
+{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
+NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
+#if _VISUALIZAR == True:
+print(f"\n{cyan}Visualizando:\n{caminho_estatistica}{nome_arquivo}\n{reset}")
+plt.show()
