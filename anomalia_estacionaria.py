@@ -74,14 +74,37 @@ tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
 tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
 tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
 
+print(f"\n{green}CASOS\n{reset}{casos}\n")
+print(f"\n{green}FOCOS\n{reset}{focos}\n")
+print(f"\n{green}PRECIPITAÇÃO\n{reset}{prec}\n")
+print(f"\n{green}TEMPERATURA MÍNIMA\n{reset}{tmin}\n")
+print(f"\n{green}TEMPERATURA MÉDIA\n{reset}{tmed}\n")
+print(f"\n{green}TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
+
 ### Pré-Processamento e Seleção Temporal
 #variaveis = [casos, focos, prec, tmin, tmed, tmax]
 def seleciona_1423(csv):
-	csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
-	csv.set_index("Semana", inplace = True)
+	#csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
+	#csv.set_index("Semana", inplace = True)
 	csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2023)]
 	csv.reset_index(inplace = True)
+	print(f"\n{green}ARQUIVO [2014;2023]:\n{reset}{csv}\n")
 	return csv
+
+def seleciona_2023(csv):
+	csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
+	csv.set_index("Semana", inplace = True)
+	csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2023)]
+	csv20.reset_index(inplace = True)
+	print(f"\n{green}ARQUIVO [2020;2023]:\n{reset}{csv20}\n")
+	return csv20
+
+casos20 = seleciona_2023(casos)
+focos20 = seleciona_2023(focos)
+prec20 = seleciona_2023(prec)
+tmin20 = seleciona_2023(tmin)
+tmed20 = seleciona_2023(tmed)
+tmax20 = seleciona_2023(tmax)
 
 casos = seleciona_1423(casos)
 focos = seleciona_1423(focos)
@@ -251,6 +274,13 @@ prec_sazonal = sazonalidade(prec, "prec")
 tmin_sazonal = sazonalidade(tmin, "tmin")
 tmed_sazonal = sazonalidade(tmed, "tmed")
 tmax_sazonal = sazonalidade(tmax, "tmax")
+
+focos_sazonal20 = sazonalidade(focos20, "focos20")
+casos_sazonal20 = sazonalidade(casos20, "casos20")
+prec_sazonal20 = sazonalidade(prec20, "prec20")
+tmin_sazonal20 = sazonalidade(tmin20, "tmin20")
+tmed_sazonal20 = sazonalidade(tmed20, "tmed20")
+tmax_sazonal20 = sazonalidade(tmax20, "tmax20")
 
 #sys.exit()
 
