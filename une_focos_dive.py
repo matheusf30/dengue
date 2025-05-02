@@ -17,6 +17,9 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação variáveis pelos arquivos
 ## Dados "Brutos"
 ## Fonte: DIVE/SC
+focos2024_3 = "focos_dive_2024_3"
+focos2024_2 = "focos_dive_2024_2"
+focos2024_1 = "focos_dive_2024_1"
 focos2023dez = "focos_dive_2023_DEZ.csv"
 focos2023nov = "focos_dive_2023_NOV.csv"
 focos2023out = "focos_dive_2023_OUT.csv"
@@ -43,6 +46,9 @@ focos2013 = "focos_dive_2013.csv"
 focos2012 = "focos_dive_2012.csv"
 
 ### Abrindo Arquivos
+focos2024_3 = pd.read_csv(f"{caminho_dados}{focos2024_3}", skiprows = 3)
+focos2024_2 = pd.read_csv(f"{caminho_dados}{focos2024_2}", skiprows = 3)
+focos2024_1 = pd.read_csv(f"{caminho_dados}{focos2024_1}", skiprows = 3)
 focos2023dez = pd.read_csv(f"{caminho_dados}{focos2023dez}", skiprows = 3)
 focos2023nov = pd.read_csv(f"{caminho_dados}{focos2023nov}", skiprows = 3)
 focos2023out = pd.read_csv(f"{caminho_dados}{focos2023out}", skiprows = 3)
@@ -69,11 +75,13 @@ focos2013 = pd.read_csv(f"{caminho_dados}{focos2013}", skiprows = 3)
 focos2012 = pd.read_csv(f"{caminho_dados}{focos2012}", skiprows = 3)
 
 ### Pré-Processamento
+focos2024 = pd.concat([focos2024_3, focos2024_2, focos2024_1])
 focos2023 = pd.concat([focos2023dez, focos2023nov, focos2023out, focos2023set,
                        focos2023ago, focos2023jul, focos2023jun, focos2023mai,
                        focos2023abr, focos2023mar, focos2023fev, focos2023jan])
 focos2022 = pd.concat([focos202202, focos202201])
-pospandemia = pd.concat([focos2023, focos2022, focos2021, focos2020], ignore_index = True)
+##
+pospandemia = pd.concat([focos2024, focos2023, focos2022, focos2021, focos2020], ignore_index = True)
 prepandemia = pd.concat([focos2019, focos2018, focos2017, focos2016], ignore_index = True)
 inicial = pd.concat([focos2015, focos2014, focos2013, focos2012], ignore_index = True)
 prepandemia = pd.concat([prepandemia, inicial], ignore_index= True)
@@ -178,6 +186,14 @@ print("~"*80)
 print(focos2023.dtypes)
 print("~"*80)
 print(focos2023)
+print("="*80)
+
+print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2024 \n")
+print(focos2024.info())
+print("~"*80)
+print(focos2024.dtypes)
+print("~"*80)
+print(focos2024)
 print("="*80)
 
 print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA ANTES DA PANDEMIA \n")
