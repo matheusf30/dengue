@@ -19,7 +19,7 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 
 ### Renomeação variáveis pelos arquivos
 focosdive = "focos_dive_total.csv"
-municipios = "SC_Municipios_2022.shp"
+municipios = "shapefiles/SC_Municipios_2022.shp"
 
 ### Abrindo Arquivo
 focosdive = pd.read_csv(f"{caminho_dados}{focosdive}", low_memory = False)

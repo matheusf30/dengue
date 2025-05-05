@@ -17,9 +17,9 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação variáveis pelos arquivos
 ## Dados "Brutos"
 ## Fonte: DIVE/SC
-focos2024_3 = "focos_dive_2024_3"
-focos2024_2 = "focos_dive_2024_2"
-focos2024_1 = "focos_dive_2024_1"
+focos2024_3 = "focos_dive_2024_3.csv"
+focos2024_2 = "focos_dive_2024_2.csv"
+focos2024_1 = "focos_dive_2024_1.csv"
 focos2023dez = "focos_dive_2023_DEZ.csv"
 focos2023nov = "focos_dive_2023_NOV.csv"
 focos2023out = "focos_dive_2023_OUT.csv"
@@ -76,6 +76,7 @@ focos2012 = pd.read_csv(f"{caminho_dados}{focos2012}", skiprows = 3)
 
 ### Pré-Processamento
 focos2024 = pd.concat([focos2024_3, focos2024_2, focos2024_1])
+#focos2024 = 
 focos2023 = pd.concat([focos2023dez, focos2023nov, focos2023out, focos2023set,
                        focos2023ago, focos2023jul, focos2023jun, focos2023mai,
                        focos2023abr, focos2023mar, focos2023fev, focos2023jan])
@@ -92,7 +93,7 @@ focostotal.to_csv(f"{caminho_dados}focos_dive_total.csv", index = False)
 pospandemia.to_csv(f"{caminho_dados}focos_dive_pospandemia.csv", index = False)
 
 ### Printando Informações
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2012 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2012 \n")
 print(focos2012.info())
 print("~"*80)
 print(focos2012.dtypes)
@@ -100,7 +101,7 @@ print("~"*80)
 print(focos2012)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2013 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2013 \n")
 print(focos2013.info())
 print("~"*80)
 print(focos2013.dtypes)
@@ -116,7 +117,7 @@ print("~"*80)
 print(focos2014)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2015 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2015 \n")
 print(focos2015.info())
 print("~"*80)
 print(focos2015.dtypes)
@@ -124,7 +125,7 @@ print("~"*80)
 print(focos2015)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2016 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2016 \n")
 print(focos2016.info())
 print("~"*80)
 print(focos2016.dtypes)
@@ -132,7 +133,7 @@ print("~"*80)
 print(focos2016)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2017 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2017 \n")
 print(focos2017.info())
 print("~"*80)
 print(focos2017.dtypes)
@@ -140,7 +141,7 @@ print("~"*80)
 print(focos2017)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2018 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2018 \n")
 print(focos2018.info())
 print("~"*80)
 print(focos2018.dtypes)
@@ -148,7 +149,7 @@ print("~"*80)
 print(focos2018)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2019 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2019 \n")
 print(focos2019.info())
 print("~"*80)
 print(focos2019.dtypes)
@@ -156,7 +157,7 @@ print("~"*80)
 print(focos2019)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2020 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2020 \n")
 print(focos2020.info())
 print("~"*80)
 print(focos2020.dtypes)
@@ -164,7 +165,7 @@ print("~"*80)
 print(focos2020)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2021 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2021 \n")
 print(focos2021.info())
 print("~"*80)
 print(focos2021.dtypes)
@@ -172,7 +173,7 @@ print("~"*80)
 print(focos2021)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2022 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2022 \n")
 print(focos2022.info())
 print("~"*80)
 print(focos2022.dtypes)
@@ -180,7 +181,7 @@ print("~"*80)
 print(focos2022)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2023 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2023 \n")
 print(focos2023.info())
 print("~"*80)
 print(focos2023.dtypes)
@@ -188,7 +189,7 @@ print("~"*80)
 print(focos2023)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA NO ANO DE 2024 \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA NO ANO DE 2024 \n")
 print(focos2024.info())
 print("~"*80)
 print(focos2024.dtypes)
@@ -196,7 +197,7 @@ print("~"*80)
 print(focos2024)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA ANTES DA PANDEMIA \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA ANTES DA PANDEMIA \n")
 print(prepandemia.info())
 print("~"*80)
 print(prepandemia.dtypes)
@@ -204,7 +205,7 @@ print("~"*80)
 print(prepandemia)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA DURANTE E APÓS PANDEMIA \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA DURANTE E APÓS PANDEMIA \n")
 print(pospandemia.info())
 print("~"*80)
 print(pospandemia.dtypes)
@@ -212,7 +213,7 @@ print("~"*80)
 print(pospandemia)
 print("="*80)
 
-print("\n \n FOCOS DE _Aedes_ sp. EM SANTA CATARINA - SÉRIE HISTÓRICA \n")
+print("\n \n FOCOS DE _Aedes_ spp. EM SANTA CATARINA - SÉRIE HISTÓRICA \n")
 print(focostotal.info())
 print("~"*80)
 print(focostotal.dtypes)
