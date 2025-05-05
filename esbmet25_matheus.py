@@ -62,12 +62,12 @@ else:
 print(f"\n{green}OS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n{reset}\n{caminho_dados}\n\n")
 
 ### Renomeação das Variáveis pelos Arquivos
-casos = "sazonalidade_semanal_casos.csv"
-focos = "sazonalidade_semanal_focos.csv"
-prec = "sazonalidade_semanal_prec.csv"
-tmin = "sazonalidade_semanal_tmin.csv"
-tmed = "sazonalidade_semanal_tmed.csv"
-tmax = "sazonalidade_semanal_tmax.csv"
+casos = "sazonalidade_semanal_casos20.csv"
+focos = "sazonalidade_semanal_focos20.csv"
+prec = "sazonalidade_semanal_prec20.csv"
+tmin = "sazonalidade_semanal_tmin20.csv"
+tmed = "sazonalidade_semanal_tmed20.csv"
+tmax = "sazonalidade_semanal_tmax20.csv"
 serie_casos = "casos_dive_pivot_total.csv"
 serie_focos = "focos_pivot.csv"
 serie_prec = "prec_semana_ate_2023.csv"
