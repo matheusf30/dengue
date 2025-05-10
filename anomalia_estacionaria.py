@@ -61,10 +61,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos
 casos = "casos_dive_pivot_total.csv"  # TabNet/DiveSC
 focos = "focos_pivot.csv"
-prec = "prec_semana_ate_2023.csv"
-tmin = "tmin_semana_ate_2023.csv"
-tmed = "tmed_semana_ate_2023.csv"
-tmax = "tmax_semana_ate_2023.csv"
+prec = "prec_semana_ate_2024.csv"
+tmin = "tmin_semana_ate_2024.csv"
+tmed = "tmed_semana_ate_2024.csv"
+tmax = "tmax_semana_ate_2024.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -83,35 +83,35 @@ print(f"\n{green}TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
 
 ### Pré-Processamento e Seleção Temporal
 #variaveis = [casos, focos, prec, tmin, tmed, tmax]
-def seleciona_1423(csv):
+def seleciona_1424(csv):
 	#csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
 	#csv.set_index("Semana", inplace = True)
-	csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2023)]
+	csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2024)]
 	csv.reset_index(inplace = True)
-	print(f"\n{green}ARQUIVO [2014;2023]:\n{reset}{csv}\n")
+	print(f"\n{green}ARQUIVO [2014;2024]:\n{reset}{csv}\n")
 	return csv
 
-def seleciona_2023(csv):
+def seleciona_2024(csv):
 	csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
 	csv.set_index("Semana", inplace = True)
-	csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2023)]
+	csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2024)]
 	csv20.reset_index(inplace = True)
-	print(f"\n{green}ARQUIVO [2020;2023]:\n{reset}{csv20}\n")
+	print(f"\n{green}ARQUIVO [2020;2024]:\n{reset}{csv20}\n")
 	return csv20
 
-casos20 = seleciona_2023(casos)
-focos20 = seleciona_2023(focos)
-prec20 = seleciona_2023(prec)
-tmin20 = seleciona_2023(tmin)
-tmed20 = seleciona_2023(tmed)
-tmax20 = seleciona_2023(tmax)
+casos20 = seleciona_2024(casos)
+focos20 = seleciona_2024(focos)
+prec20 = seleciona_2024(prec)
+tmin20 = seleciona_2024(tmin)
+tmed20 = seleciona_2024(tmed)
+tmax20 = seleciona_2024(tmax)
 
-casos = seleciona_1423(casos)
-focos = seleciona_1423(focos)
-prec = seleciona_1423(prec)
-tmin = seleciona_1423(tmin)
-tmed = seleciona_1423(tmed)
-tmax = seleciona_1423(tmax)
+casos = seleciona_1424(casos)
+focos = seleciona_1424(focos)
+prec = seleciona_1424(prec)
+tmin = seleciona_1424(tmin)
+tmed = seleciona_1424(tmed)
+tmax = seleciona_1424(tmax)
 
 print(f"\n{green}CASOS\n{reset}{casos}\n")
 print(f"\n{green}FOCOS\n{reset}{focos}\n")

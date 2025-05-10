@@ -52,7 +52,7 @@ except:
 
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_shape}\n\n{caminho_merge}\n\n{caminho_samet}\n\n")
 
-_ANO_FINAL = "2023" # Até quando os produtos de reanálise foram compilados
+_ANO_FINAL = "2024" # Até quando os produtos de reanálise foram compilados
 
 ### Renomeação variáveis pelos arquivos
 """
@@ -75,11 +75,11 @@ samet_tmin = "TMIN/SAMeT_CPTEC_DAILY_TMIN_2024.nc"
 municipios = "SC_Municipios_2022.shp"
 
 ### Abrindo Arquivos
-prec = xr.open_dataset(f"{caminho_merge}{merge}")
-tmax = xr.open_dataset(f"{caminho_samet}{samet_tmax}")
-tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}")
-tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}")
-municipios = gpd.read_file(f"{caminho_shape}{municipios}")
+prec = xr.open_dataset(f"{caminho_merge}{merge}", decode_times = False)
+tmax = xr.open_dataset(f"{caminho_samet}{samet_tmax}", decode_times = False)
+tmed = xr.open_dataset(f"{caminho_samet}{samet_tmed}", decode_times = False)
+tmin = xr.open_dataset(f"{caminho_samet}{samet_tmin}", decode_times = False)
+municipios = gpd.read_file(f"{caminho_shape}{municipios}", decode_times = False)
 
 print(f'\n{green}tmin.variables["tmin"][:]\n{reset}{tmin.variables["tmin"][:]}\n')
 print(f'\n{green}tmin.variables["time"][:]\n{reset}{tmin.variables["tmin"][:]}\n')

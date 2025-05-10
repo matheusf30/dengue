@@ -121,7 +121,7 @@ def grafico_sazonalidade(csv_casos, csv_focos, csv_prec, csv_tmin, csv_tmed, csv
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 	if _SALVAR == True:
 		os.makedirs(caminho_estatistica, exist_ok = True)
-		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
@@ -167,7 +167,7 @@ def grafico_sazonalidade_subplots(csv_casos, csv_focos, csv_prec, csv_tmin, csv_
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 	if _SALVAR == True:
 		os.makedirs(caminho_estatistica, exist_ok = True)
-		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
@@ -184,7 +184,7 @@ def grafico_sem_sazonalidade(csv_casos, csv_focos, csv_prec, csv_tmin, csv_tmed,
 	csv_tmin["semana"] = pd.to_datetime(csv_tmin["semana"], errors = "coerce")
 	csv_tmed["semana"] = pd.to_datetime(csv_tmed["semana"], errors = "coerce")
 	csv_tmax["semana"] = pd.to_datetime(csv_tmax["semana"], errors = "coerce")
-	ano_serie = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+	ano_serie = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 	csv_casos = csv_casos[csv_casos["semana"].dt.year.isin(ano_serie)]
 	csv_focos = csv_focos[csv_focos["semana"].dt.year.isin(ano_serie)]
 	csv_prec = csv_prec[csv_prec["semana"].dt.year.isin(ano_serie)]
@@ -235,7 +235,7 @@ def grafico_sem_sazonalidade(csv_casos, csv_focos, csv_prec, csv_tmin, csv_tmed,
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sem_sazonal/"
 	if _SALVAR == True:
 		os.makedirs(caminho_estatistica, exist_ok = True)
-		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
@@ -252,7 +252,7 @@ def grafico_anomalia_estacionaria(csv_casos, csv_focos, csv_prec, csv_tmin, csv_
 	csv_tmin["semana"] = pd.to_datetime(csv_tmin["semana"], errors = "coerce")
 	csv_tmed["semana"] = pd.to_datetime(csv_tmed["semana"], errors = "coerce")
 	csv_tmax["semana"] = pd.to_datetime(csv_tmax["semana"], errors = "coerce")
-	ano_serie = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+	ano_serie = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
 	csv_casos = csv_casos[csv_casos["semana"].dt.year.isin(ano_serie)]
 	csv_focos = csv_focos[csv_focos["semana"].dt.year.isin(ano_serie)]
 	csv_prec = csv_prec[csv_prec["semana"].dt.year.isin(ano_serie)]
@@ -303,7 +303,7 @@ def grafico_anomalia_estacionaria(csv_casos, csv_focos, csv_prec, csv_tmin, csv_
 	caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/anomalia_estacionaria/"
 	if _SALVAR == True:
 		os.makedirs(caminho_estatistica, exist_ok = True)
-		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 1200,  bbox_inches = "tight", pad_inches = 0.0)
+		plt.savefig(f'{caminho_estatistica}{nome_arquivo}', format = "pdf", dpi = 300,  bbox_inches = "tight", pad_inches = 0.0)
 		print(f"""\n{green}SALVO COM SUCESSO!\n
 	{cyan}ENCAMINHAMENTO: {caminho_estatistica}\n
 	NOME DO ARQUIVO: {nome_arquivo}{reset}\n""")
