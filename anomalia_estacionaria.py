@@ -269,7 +269,7 @@ def anomalia_estacionaria(csv, str_var): #sem_sazonalidade.csv
 			print(f"{cyan}\nVARIÁVEL\n\n{str_var.upper()} - {c}{reset}\n")
 			print(f"\n{green}sem_sazonal[c]\n{reset}{csv[c]}\n")
 			print(f"\n{green}tendencia\n{reset}{tendencia}\n")
-			sem_tendencia = csv[c] -(tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
+			sem_tendencia = csv[c] - (tendencia.slope + tendencia.intercept)# * len(sem_sazonal[c]))
 			anomalia_estacionaria[c] = sem_tendencia
 		else:
 			print(f"{red}Coluna Faltante: {c}\nINSUFICIÊNCIA DE DADOS!\n(Tamanho: {len(csv[c])}).{reset}")
