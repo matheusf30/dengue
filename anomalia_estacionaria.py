@@ -61,10 +61,10 @@ print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminh
 ### Renomeação das Variáveis pelos Arquivos
 casos = "casos_dive_pivot_total.csv"  # TabNet/DiveSC
 focos = "focos_pivot.csv"
-prec = "prec_semana_ate_2024.csv"
-tmin = "tmin_semana_ate_2024.csv"
-tmed = "tmed_semana_ate_2024.csv"
-tmax = "tmax_semana_ate_2024.csv"
+prec = "prec_diario_ate_2024.csv"
+tmin = "tmin_diario_ate_2024.csv"
+tmed = "tmed_diario_ate_2024.csv"
+tmax = "tmax_diario_ate_2024.csv"
 
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
@@ -81,22 +81,38 @@ print(f"\n{green}TEMPERATURA MÍNIMA\n{reset}{tmin}\n")
 print(f"\n{green}TEMPERATURA MÉDIA\n{reset}{tmed}\n")
 print(f"\n{green}TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
 
+#sys.exit()
+
 ### Pré-Processamento e Seleção Temporal
 #variaveis = [casos, focos, prec, tmin, tmed, tmax]
 def seleciona_1424(csv):
-	#csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
-	#csv.set_index("Semana", inplace = True)
-	csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2024)]
-	csv.reset_index(inplace = True)
-	print(f"\n{green}ARQUIVO [2014;2024]:\n{reset}{csv}\n")
+	try:
+		csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
+		csv.set_index("Semana", inplace = True)
+		csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2024)]
+		csv.reset_index(inplace = True)
+		print(f"\n{green}ARQUIVO [2014;2024]:\n{reset}{csv}\n")
+	except KeyError as e:
+		csv["Data"] = pd.to_datetime(csv["Data"], errors = "coerce")
+		csv.set_index("Data", inplace = True)
+		csv = csv[(csv.index.year >= 2014) & (csv.index.year <= 2024)]
+		csv.reset_index(inplace = True)
+		print(f"\n{green}ARQUIVO [2014;2024]:\n{red}{e}\n{reset}{csv}\n")
 	return csv
 
 def seleciona_2024(csv):
-	csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
-	csv.set_index("Semana", inplace = True)
-	csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2024)]
-	csv20.reset_index(inplace = True)
-	print(f"\n{green}ARQUIVO [2020;2024]:\n{reset}{csv20}\n")
+	try:
+		csv["Semana"] = pd.to_datetime(csv["Semana"], errors = "coerce")
+		csv.set_index("Semana", inplace = True)
+		csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2024)]
+		csv20.reset_index(inplace = True)
+		print(f"\n{green}ARQUIVO [2020;2024]:\n{reset}{csv20}\n")
+	except KeyError as e:
+		csv["Data"] = pd.to_datetime(csv["Data"], errors = "coerce")
+		csv.set_index("Data", inplace = True)
+		csv20 = csv[(csv.index.year >= 2020) & (csv.index.year <= 2024)]
+		csv20.reset_index(inplace = True)
+		print(f"\n{green}ARQUIVO [2020;2024]:\n{red}{e}\n{reset}{csv20}\n")
 	return csv20
 
 casos20 = seleciona_2024(casos)
@@ -171,7 +187,7 @@ def tratando_sazonalidade(csv, str_var):
 	csv["semana"] = pd.to_datetime(csv["Semana"]).dt.date
 	csv = csv.astype({"semana": "datetime64[ns]"})
 	csv.drop(columns = "Semana", inplace = True)
-	csv["semana_epi"] = csv['semana'].apply(semana_epidemio)
+	csv["semana_epi"] = csv["semana"].apply(semana_epidemio)
 	print(f"\n{green}{str_var.upper()}\n{reset}{csv}\n")
 	print(f"\n{green}{str_var.upper()}.info()\n{reset}{csv.info()}\n")
 	print(f"\n{green}{str_var.upper()}.dtypes\n{reset}{csv.dtypes}\n")
@@ -180,7 +196,9 @@ def tratando_sazonalidade(csv, str_var):
 	colunas = colunas_csv.columns
 	media_semana = csv.groupby("semana_epi")[colunas].mean().round(2)
 	media_semana.reset_index(inplace = True)
+	media_semana["semana_epi"] = pd.to_datetime(media_semana["semana_epi"])
 	print(f"\n{green}media_semana\n{reset}{media_semana}\n{green}media_semana.index\n{reset}{media_semana.index}")
+	print(f"\n{red}TESTE:\n{reset}{csv}\n")
 	componente_sazonal = csv.merge(media_semana, left_on = "semana_epi", how = "left", suffixes = ("", "_media"), right_index = True)
 	sem_sazonal = pd.DataFrame(index = csv.index)
 	semanas  = componente_sazonal["semana"]
@@ -291,6 +309,13 @@ tmin_sem_sazonal = tratando_sazonalidade(tmin, "tmin")
 tmed_sem_sazonal = tratando_sazonalidade(tmed, "tmed")
 tmax_sem_sazonal = tratando_sazonalidade(tmax, "tmax")
 
+focos_sem_sazonal20 = tratando_sazonalidade(focos20, "focos20")
+casos_sem_sazonal20 = tratando_sazonalidade(casos20, "casos20")
+prec_sem_sazonal20 = tratando_sazonalidade(prec20, "prec20")
+tmin_sem_sazonal20 = tratando_sazonalidade(tmin20, "tmin20")
+tmed_sem_sazonal20 = tratando_sazonalidade(tmed20, "tmed20")
+tmax_sem_sazonal20 = tratando_sazonalidade(tmax20, "tmax20")
+
 #sys.exit()
 
 tendencia(focos_sem_sazonal)
@@ -300,6 +325,13 @@ tendencia(tmin_sem_sazonal)
 tendencia(tmed_sem_sazonal)
 tendencia(tmax_sem_sazonal)
 
+tendencia(focos_sem_sazonal20)
+tendencia(casos_sem_sazonal20)
+tendencia(prec_sem_sazonal20)
+tendencia(tmin_sem_sazonal20)
+tendencia(tmed_sem_sazonal20)
+tendencia(tmax_sem_sazonal20)
+
 #sys.exit()
 
 focos_anomalia_estacionaria = anomalia_estacionaria(focos_sem_sazonal, "focos")
@@ -308,6 +340,13 @@ prec_anomalia_estacionaria = anomalia_estacionaria(prec_sem_sazonal, "prec")
 tmin_anomalia_estacionaria = anomalia_estacionaria(tmin_sem_sazonal, "tmin")
 tmed_anomalia_estacionaria = anomalia_estacionaria(tmed_sem_sazonal, "tmed")
 tmax_anomalia_estacionaria = anomalia_estacionaria(tmax_sem_sazonal, "tmax")
+
+focos_anomalia_estacionaria = anomalia_estacionaria(focos_sem_sazonal20, "focos20")
+casos_anomalia_estacionaria = anomalia_estacionaria(casos_sem_sazonal20, "casos20")
+prec_anomalia_estacionaria = anomalia_estacionaria(prec_sem_sazonal20, "prec20")
+tmin_anomalia_estacionaria = anomalia_estacionaria(tmin_sem_sazonal20, "tmin20")
+tmed_anomalia_estacionaria = anomalia_estacionaria(tmed_sem_sazonal20, "tmed20")
+tmax_anomalia_estacionaria = anomalia_estacionaria(tmax_sem_sazonal20, "tmax20")
 
 sys.exit()
 
