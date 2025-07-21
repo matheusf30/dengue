@@ -87,6 +87,7 @@ print(f'\n{green}tmin.variables["nobs"][:]\n{reset}{tmin.variables["nobs"][:]}\n
 print(f"{green}tmin\n{reset}{tmin}\n")
 print(f"{green}municipios\n{reset}{municipios}\n")
 
+sys.exit()
 
 ### Pré-processamento e Definição de Função
 
