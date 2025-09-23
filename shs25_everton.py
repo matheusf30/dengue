@@ -104,48 +104,48 @@ print(f"\n{green}TEMPERATURA MÁXIMA (Série Histórica)\n{reset}{serie_tmax}\n"
 
 ### Pré-Processamento (Climatologia)
 
-joinville = pd.DataFrame()
-joinville["semana"] = focos["semana_epi"]
-joinville["casos"] = casos["JOINVILLE"]
-joinville["focos"] = focos["JOINVILLE"]
-joinville["prec"] = prec["JOINVILLE"]
-joinville["tmin"] = tmin["JOINVILLE"]
-joinville["tmed"] = tmed["JOINVILLE"]
-joinville["tmax"] = tmax["JOINVILLE"]
-print(f"\n{green}JOINVILLE\n{reset}{joinville}\n")
+cidade = pd.DataFrame()
+cidade["semana"] = focos["semana_epi"]
+cidade["casos"] = casos["FLORIANÓPOLIS"]
+cidade["focos"] = focos["FLORIANÓPOLIS"]
+cidade["prec"] = prec["FLORIANÓPOLIS"]
+cidade["tmin"] = tmin["FLORIANÓPOLIS"]
+cidade["tmed"] = tmed["FLORIANÓPOLIS"]
+cidade["tmax"] = tmax["FLORIANÓPOLIS"]
+print(f"\n{green}FLORIANÓPOLIS\n{reset}{cidade}\n")
 #sys.exit()
 
 ### Visualização Gráfica (SAZONALIDADE)
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
 axs[0].set_facecolor("honeydew") #.gcf()
 ax2 = axs[0].twinx()
-sns.lineplot(x = joinville.index, y = joinville["casos"], ax = axs[0],
+sns.lineplot(x = cidade.index, y = cidade["casos"], ax = axs[0],
 				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
-axs[0].fill_between(joinville.index, joinville["casos"], color = "purple", alpha = 0.3)
+axs[0].fill_between(cidade.index, cidade["casos"], color = "purple", alpha = 0.3)
 axs[0].set_ylabel("Casos de Dengue")
 axs[0].legend(loc = "upper center")
-sns.lineplot(x = joinville.index, y = joinville["focos"],  ax = ax2,
+sns.lineplot(x = cidade.index, y = cidade["focos"],  ax = ax2,
 				color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
-ax2.fill_between(joinville.index, joinville["focos"], color = "darkgreen", alpha = 0.35)
+ax2.fill_between(cidade.index, cidade["focos"], color = "darkgreen", alpha = 0.35)
 ax2.set_ylabel("Focos de _Aedes_ sp.")
 ax2.legend(loc = "upper left")
 axs[1].set_facecolor("honeydew") #.gcf()
 ax3 = axs[1].twinx()#.set_facecolor("honeydew")
-sns.barplot(x = joinville["semana"], y = joinville["prec"],  ax = ax3,
+sns.barplot(x = cidade["semana"], y = cidade["prec"],  ax = ax3,
 				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
 ax3.set_ylabel("Precipitação (mm)")
 ax3.legend(loc = "lower left")
-sns.lineplot(x = joinville.index, y = joinville["tmax"],  ax = axs[1],
+sns.lineplot(x = cidade.index, y = cidade["tmax"],  ax = axs[1],
 				color = "red", linewidth = 1.5, label = "Temperatura Máxima")
-sns.lineplot(x = joinville.index, y = joinville["tmed"],  ax = axs[1],
+sns.lineplot(x = cidade.index, y = cidade["tmed"],  ax = axs[1],
 				color = "orange", linewidth = 1.5, label = "Temperatura Média")
-sns.lineplot(x = joinville.index, y = joinville["tmin"],  ax = axs[1],
+sns.lineplot(x = cidade.index, y = cidade["tmin"],  ax = axs[1],
 				color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima") #alpha = 0.7, linewidth = 3
 axs[1].set_ylabel("Temperaturas (C)")
 axs[1].legend(loc = "upper center")
 axs[1].grid(False)
 axs[1].set_xlabel("Semanas Epidemiológicas")
-fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE JOINVILLE, SANTA CATARINA.")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE FLORIANÓPOLIS, SANTA CATARINA.")
 nome_arquivo = f"esbmet25_distribuicao_sazonal_subplots_joinville.pdf"
 caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 #if _SALVAR == True:
@@ -160,40 +160,40 @@ plt.show()
 
 ### Pré-Processamento (Série Histórica)
 
-serie_joinville = pd.DataFrame()
+serie_cidade = pd.DataFrame()
 semanas = serie_casos["Semana"]
-serie_joinville["Semana"] = semanas
-serie_casos_j = serie_casos[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_casos_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "casos"})
-serie_focos_j = serie_focos[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_focos_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "focos"})
-serie_tmin_j = serie_tmin[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_tmin_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmin"})
-serie_tmed_j = serie_tmed[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_tmed_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmed"})
-serie_tmax_j = serie_tmax[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_tmax_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "tmax"})
-serie_prec_j = serie_prec[["Semana", "JOINVILLE"]]
-serie_joinville = serie_joinville.merge(serie_prec_j, how = "inner", on = "Semana")
-serie_joinville = serie_joinville.rename(columns = {"JOINVILLE" : "prec"}) 
-serie_joinville.to_csv(f"{caminho_dados}serie_historica_joinville.csv", index = False)
+serie_cidade["Semana"] = semanas
+serie_casos_j = serie_casos[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_casos_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "casos"})
+serie_focos_j = serie_focos[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_focos_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "focos"})
+serie_tmin_j = serie_tmin[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_tmin_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "tmin"})
+serie_tmed_j = serie_tmed[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_tmed_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "tmed"})
+serie_tmax_j = serie_tmax[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_tmax_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "tmax"})
+serie_prec_j = serie_prec[["Semana", "FLORIANÓPOLIS"]]
+serie_cidade = serie_cidade.merge(serie_prec_j, how = "inner", on = "Semana")
+serie_cidade = serie_cidade.rename(columns = {"FLORIANÓPOLIS" : "prec"}) 
+serie_cidade.to_csv(f"{caminho_dados}serie_historica_joinville.csv", index = False)
 print(f"""\n{green}SALVO COM SUCESSO!\n
 {cyan}ENCAMINHAMENTO: {caminho_dados}\n
 NOME DO ARQUIVO: serie_historica_joinville.csv{reset}\n""")
-serie_joinville["Semana"] = pd.to_datetime(serie_joinville["Semana"])
-serie_joinville.set_index("Semana", inplace = True)
+serie_cidade["Semana"] = pd.to_datetime(serie_cidade["Semana"])
+serie_cidade.set_index("Semana", inplace = True)
 """
-#serie_joinville["str_semana"] = serie_joinville["Semana"]
-serie_joinville["Semana"] = pd.to_datetime(serie_joinville["Semana"], errors = "coerce")
-serie_joinville.set_index("Semana", inplace=True)
-print(serie_joinville.index.tz)
+#serie_cidade["str_semana"] = serie_cidade["Semana"]
+serie_cidade["Semana"] = pd.to_datetime(serie_cidade["Semana"], errors = "coerce")
+serie_cidade.set_index("Semana", inplace=True)
+print(serie_cidade.index.tz)
 """
-print(f"\n{green}JOINVILLE (Série Histórica)\n{reset}{serie_joinville}\n")
+print(f"\n{green}FLORIANÓPOLIS (Série Histórica)\n{reset}{serie_cidade}\n")
 
 #sys.exit()
 
@@ -201,46 +201,46 @@ print(f"\n{green}JOINVILLE (Série Histórica)\n{reset}{serie_joinville}\n")
 fig, axs = plt.subplots(2, 1, figsize = (12, 6), layout = "tight", frameon = False,  sharex = True)
 axs[0].set_facecolor("honeydew") #.gcf()
 ax2 = axs[0].twinx()
-sns.lineplot(x = serie_joinville.index, y = serie_joinville["casos"], ax = axs[0],
+sns.lineplot(x = serie_cidade.index, y = serie_cidade["casos"], ax = axs[0],
 				color = "purple", linewidth = 1, linestyle = "--", label = "Casos de Dengue")
-axs[0].fill_between(serie_joinville.index, serie_joinville["casos"], color = "purple", alpha = 0.3)
+axs[0].fill_between(serie_cidade.index, serie_cidade["casos"], color = "purple", alpha = 0.3)
 axs[0].set_ylabel("Casos de Dengue")
 axs[0].legend(loc = "upper center")
-sns.lineplot(x = serie_joinville.index, y = serie_joinville["focos"],  ax = ax2,
+sns.lineplot(x = serie_cidade.index, y = serie_cidade["focos"],  ax = ax2,
 				color = "darkgreen", linewidth = 1, linestyle = ":", label = "Focos de _Aedes_ sp.")
-ax2.fill_between(serie_joinville.index, serie_joinville["focos"], color = "darkgreen", alpha = 0.35)
+ax2.fill_between(serie_cidade.index, serie_cidade["focos"], color = "darkgreen", alpha = 0.35)
 ax2.set_ylabel("Focos de _Aedes_ sp.")
 ax2.legend(loc = "upper left")
 axs[1].set_facecolor("honeydew") #.gcf()
 ax3 = axs[1].twinx()#.set_facecolor("honeydew")
 """
-serie_joinville_reset = serie_joinville.reset_index()
+serie_joinville_reset = serie_cidade.reset_index()
 serie_joinville_reset["Semana"] = pd.to_datetime(serie_joinville_reset["Semana"]).dt.tz_localize(None)
 serie_joinville_reset["Semana"] = pd.to_datetime(serie_joinville_reset["Semana"], errors = "coerce")
-sns.barplot(x = serie_joinville_reset["Semana"], y = serie_joinville["prec"],  ax = ax3,
+sns.barplot(x = serie_joinville_reset["Semana"], y = serie_cidade["prec"],  ax = ax3,
 				color = "royalblue", linewidth = 1.5, alpha = 0.8, label = "Precipitação")
 """
-ax3.bar(serie_joinville.index, serie_joinville["prec"],
+ax3.bar(serie_cidade.index, serie_cidade["prec"],
         color = "royalblue", alpha = 0.8, label = "Precipitação", width = 5)
 ax3.set_ylabel("Precipitação (mm)")
 ax3.legend(loc = "lower left")
-sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmax"],  ax = axs[1],
+sns.lineplot(x = serie_cidade.index, y = serie_cidade["tmax"],  ax = axs[1],
 				color = "red", linewidth = 1.5, label = "Temperatura Máxima")
-sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmed"],  ax = axs[1],
+sns.lineplot(x = serie_cidade.index, y = serie_cidade["tmed"],  ax = axs[1],
 				color = "orange", linewidth = 1.5, label = "Temperatura Média")
-sns.lineplot(x = serie_joinville.index, y = serie_joinville["tmin"],  ax = axs[1],
+sns.lineplot(x = serie_cidade.index, y = serie_cidade["tmin"],  ax = axs[1],
 				color = "darkblue", linewidth = 1.5, label = "Temperatura Mínima")
 axs[1].set_ylabel("Temperaturas (C)")
 axs[1].legend(loc = "upper left")
 axs[1].grid(False)
 axs[1].set_xlabel("Semanas Epidemiológicas")
-#xticks_por_ano = serie_joinville.groupby(serie_joinville.index.year).head(1).index
+#xticks_por_ano = serie_cidade.groupby(serie_cidade.index.year).head(1).index
 #axs[1].set_xticks(xticks_por_ano)
 #axs[1].set_xticklabels([str(ano.year) for ano in xticks_por_ano])
 axs[1].xaxis.set_major_locator(mdates.YearLocator())
 axs[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE JOINVILLE, SANTA CATARINA.")
-print(f"\n{green}JOINVILLE (Série Histórica)\n{reset}{serie_joinville}\n")
+fig.suptitle(f"CASOS DE DENGUE, FOCOS DE _Aedes_ sp., TEMPERATURAS (MÍNIMA, MÉDIA E MÁXIMA) E PRECIPITAÇÃO.\nSAZONALIDADE POR MÉDIAS SEMANAIS PARA O MUNICÍPIO DE FLORIANÓPOLIS, SANTA CATARINA.")
+print(f"\n{green}FLORIANÓPOLIS (Série Histórica)\n{reset}{serie_cidade}\n")
 nome_arquivo = f"esbmet25_distribuicao_historica_subplots_joinville.pdf"
 caminho_estatistica = "/home/sifapsc/scripts/matheus/dengue/resultados/estatistica/sazonalidade/"
 #if _SALVAR == True:
