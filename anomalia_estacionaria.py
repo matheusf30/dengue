@@ -26,7 +26,7 @@ _SALVAR = True if _SALVAR == "True" else False               #####
 ##################################################################
 
 _RETROAGIR = 16 # Semanas Epidemiológicas
-_ANO = "2023" # "2023" # "2022" # "2021" # "2020" # "total"
+_ANO = "2024" # "2023" # "2022" # "2021" # "2020" # "total"
 _CIDADE = "Florianópolis" #"Florianópolis"#"Itajaí"#"Joinville"#"Chapecó"
 _METODO = "spearman" # "pearson" # "spearman" # "kendall"
 
@@ -54,6 +54,7 @@ elif _LOCAL == "IFSC":
 	caminho_resultados = "/home/sifapsc/scripts/matheus/dengue/resultados/modelagem/"
 	caminho_correlacao = "/home/sifapsc/scripts/matheus/dengue/resultados/correlacao/"
 	caminho_cartografia = "/home/sifapsc/scripts/matheus/dengue/resultados/cartografia/"
+	caminho_gh = "https://raw.githubusercontent.com/matheusf30/operacional_dengue/refs/heads/main/dados_operacao/2024/"
 else:
 	print("CAMINHO NÃO RECONHECIDO! VERIFICAR LOCAL!")
 print(f"\nOS DADOS UTILIZADOS ESTÃO ALOCADOS NOS SEGUINTES CAMINHOS:\n\n{caminho_dados}\n\n")
@@ -69,10 +70,10 @@ tmax = "tmax_diario_ate_2024.csv"
 ### Abrindo Arquivo
 casos = pd.read_csv(f"{caminho_dados}{casos}", low_memory = False)
 focos = pd.read_csv(f"{caminho_dados}{focos}", low_memory = False)
-prec = pd.read_csv(f"{caminho_dados}{prec}", low_memory = False)
-tmin = pd.read_csv(f"{caminho_dados}{tmin}", low_memory = False)
-tmed = pd.read_csv(f"{caminho_dados}{tmed}", low_memory = False)
-tmax = pd.read_csv(f"{caminho_dados}{tmax}", low_memory = False)
+prec = pd.read_csv(f"{caminho_gh}{prec}", low_memory = False)
+tmin = pd.read_csv(f"{caminho_gh}{tmin}", low_memory = False)
+tmed = pd.read_csv(f"{caminho_gh}{tmed}", low_memory = False)
+tmax = pd.read_csv(f"{caminho_gh}{tmax}", low_memory = False)
 
 print(f"\n{green}CASOS\n{reset}{casos}\n")
 print(f"\n{green}FOCOS\n{reset}{focos}\n")
@@ -81,6 +82,14 @@ print(f"\n{green}TEMPERATURA MÍNIMA\n{reset}{tmin}\n")
 print(f"\n{green}TEMPERATURA MÉDIA\n{reset}{tmed}\n")
 print(f"\n{green}TEMPERATURA MÁXIMA\n{reset}{tmax}\n")
 
+prec = prec.drop(columns = "prec")
+prec.rename(columns = {"Data":"Semana"}, inplace = True)
+tmin = tmin.drop(columns = "tmin")
+tmin.rename(columns = {"Data":"Semana"}, inplace = True)
+tmed = tmed.drop(columns = "tmed")
+tmed.rename(columns = {"Data":"Semana"}, inplace = True)
+tmax = tmax.drop(columns = "tmax")
+tmax.rename(columns = {"Data":"Semana"}, inplace = True)
 #sys.exit()
 
 ### Pré-Processamento e Seleção Temporal
